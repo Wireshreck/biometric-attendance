@@ -1,0 +1,20 @@
+flowchart TD
+  Finger[Finger touch] --> Sensor[AS608 capture and on-module match]
+  Sensor -->|matched slot ID; no image/template payload| MCU[ESP32]
+  RTC[DS3231] -->|timestamp with configured offset| MCU
+  MCU --> Event[event UUID + slot + capture time + sync status]
+  Event --> Online{Local API reachable?}
+  Online -->|yes| Post[POST /api/v1/attendance]
+  Online -->|no| Persist[(Append durably to LittleFS)]
+  Persist -->|retry same UUID in capture-time order| Post
+  Post --> Validate[Authenticate device and validate payload]
+  Validate --> Decide{UUID already seen?}
+  Decide -->|yes| ReturnSaved[Return stored outcome; no new insert]
+  Decide -->|no| Resolve[Resolve active student for device slot]
+  Resolve --> Window{Accepted scan within 60 s?}
+  Window -->|yes| Suppressed[(Store DUPLICATE_SUPPRESSED)]
+  Window -->|no| Recorded[(Store RECORDED)]
+  Recorded --> API[FastAPI / SQLite]
+  Suppressed --> API
+  ReturnSaved --> MCU
+  API -->|SSE committed events; REST reports| Dashboard[Dashboard: accepted scans and daily distinct presence]

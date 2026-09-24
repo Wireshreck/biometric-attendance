@@ -1,0 +1,20 @@
+{
+	"nodes":[
+		{"id":"privacy","type":"text","text":"Privacy boundary\nMatching on sensor; no raw image/template to host\nSecurity claims require validation","x":-30,"y":380,"width":300,"height":130},
+		{"id":"ui","type":"text","text":"Vanilla HTML/CSS/JS dashboard\nStatic files served by FastAPI\nNot implemented","x":620,"y":360,"width":280,"height":120},
+		{"id":"ai","type":"text","text":"Optional local read-only assistant\nProposal only; core system independent","x":1020,"y":300,"width":280,"height":120},
+		{"id":"api","type":"text","text":"Local FastAPI service\nDevice ingestion + admin/query API\nNot implemented","x":700,"y":-20,"width":260,"height":120},
+		{"id":"queue","type":"text","text":"Offline queue\nLittleFS proposal\nNot implemented","x":220,"y":-200,"width":220,"height":100},
+		{"id":"device","type":"text","text":"ESP32 edge terminal\nAS608 sensor • OLED • RTC\nFirmware: planned","x":-30,"y":40,"width":240,"height":120},
+		{"id":"db","type":"text","text":"SQLite (WAL)\nIdentity + attendance metadata\nNo sensor templates planned","x":1080,"y":-260,"width":250,"height":120}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"device","fromSide":"right","toNode":"queue","toSide":"left","label":"queue when offline"},
+		{"id":"e2","fromNode":"queue","fromSide":"right","toNode":"api","toSide":"left","label":"replay over local Wi-Fi"},
+		{"id":"e3","fromNode":"device","fromSide":"right","toNode":"api","toSide":"left","label":"attendance event"},
+		{"id":"e4","fromNode":"api","fromSide":"right","toNode":"db","toSide":"left","label":"validated persistence"},
+		{"id":"e5","fromNode":"ui","fromSide":"top","toNode":"api","toSide":"bottom","label":"local API"},
+		{"id":"e6","fromNode":"ai","fromSide":"left","toNode":"api","toSide":"right","label":"read-only calls"},
+		{"id":"e7","fromNode":"privacy","fromSide":"right","toNode":"device","toSide":"bottom","label":"on-sensor matching"}
+	]
+}

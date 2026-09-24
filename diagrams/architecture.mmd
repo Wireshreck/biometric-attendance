@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph Edge[ESP32 terminal - planned]
+    Sensor[AS608 sensor]
+    MCU[ESP32 firmware]
+    RTC[DS3231 RTC]
+    UIhw[OLED, LEDs, buzzer]
+    Queue[(LittleFS durable event queue)]
+    Sensor -->|UART2 / slot result only| MCU
+    RTC -->|offset-qualified local time| MCU
+    MCU --> UIhw
+    MCU -->|network unavailable| Queue
+  end
+
+  AP[Isolated local Wi-Fi]
+  API[FastAPI service - planned]
+  DB[(SQLite WAL - planned)]
+  Web[Vanilla HTML CSS JS dashboard - planned]
+  AI[Optional local read-only assistant - deferred]
+  MCU -->|Local HTTP JSON POST; synthetic demo only| AP --> API
+  Queue -->|retry same event UUID on reconnect| API
+  API --> DB
+  Web -->|REST fetch + authenticated SSE| API
+  AI -.->|allowlisted read-only API calls only| API

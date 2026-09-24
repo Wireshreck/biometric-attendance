@@ -1,0 +1,51 @@
+name: Bootstrap Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-firmware:
+    name: ESP32 Firmware Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Compile ESP32 Firmware
+        run: |
+          cd firmware
+          pio run
+
+  validate-backend:
+    name: Backend Environment Smoke Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Verify declared environment dependencies and SQLite basics
+        run: |
+          cd backend
+          python test_env.py

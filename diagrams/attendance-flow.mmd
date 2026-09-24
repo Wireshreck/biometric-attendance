@@ -1,0 +1,35 @@
+sequenceDiagram
+  autonumber
+  actor User as Demonstration participant
+  participant Sensor as AS608
+  participant ESP as ESP32
+  participant RTC as DS3231
+  participant Queue as LittleFS queue
+  participant API as FastAPI
+  participant DB as SQLite
+  participant UI as Dashboard
+
+  User->>Sensor: Place finger
+  Sensor->>Sensor: Capture and compare on-module
+  alt Match found
+    Sensor-->>ESP: Slot ID and sensor result
+    ESP->>RTC: Read configured local time
+    RTC-->>ESP: Date/time; firmware applies configured timezone offset
+    ESP->>ESP: Create persistent event UUID
+    ESP-->>User: Show generic success prompt and local feedback
+    alt API reachable
+      ESP->>API: POST event with same UUID on retries
+    else Offline
+      ESP->>Queue: Persist event before acknowledging queued state
+      Note over ESP,Queue: On reconnect, replay oldest first; remove only after accepted server response
+      ESP->>API: Replay event with original capture time and UUID
+    end
+    API->>DB: Transaction: idempotency check, slot resolve, 60-second check, insert outcome
+    DB-->>API: RECORDED or DUPLICATE_SUPPRESSED
+    API-->>ESP: Stored outcome
+    UI->>API: Poll attendance/report endpoints
+    API-->>UI: Accepted events; daily presence counts distinct students
+  else No match
+    Sensor-->>ESP: No-match result
+    ESP-->>User: Generic failure prompt; do not reveal another student's identity
+  end

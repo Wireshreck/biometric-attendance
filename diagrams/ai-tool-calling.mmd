@@ -1,0 +1,16 @@
+sequenceDiagram
+  actor Admin as Authorized operator
+  participant LLM as Optional local model
+  participant Runner as Allowlisted read-only runner
+  participant API as Admin-authenticated report API
+  participant DB as SQLite
+  Admin->>LLM: Ask for an attendance summary
+  LLM->>Runner: Structured tool name and bounded arguments
+  Runner->>Runner: Validate name, date range, and caller authorization
+  Runner->>API: GET report endpoint only
+  API->>DB: Parameterized SELECT
+  DB-->>API: Verified rows/aggregates
+  API-->>Runner: Structured result
+  Runner-->>LLM: Data plus provenance/date
+  LLM-->>Admin: Explanation labeled as model-generated from returned records
+  Note over LLM,DB: Optional and deferred; no model write access, SQL access, sensor control, or cloud transmission

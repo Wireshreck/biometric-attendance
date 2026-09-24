@@ -1,0 +1,8 @@
+# Backend Dependencies for Biometric School Attendance System
+# Python 3.13 compatible
+
+fastapi==0.115.0
+uvicorn[standard]==0.31.0
+pydantic==2.9.2
+aiosqlite==0.20.0
+tzdata==2026.4

@@ -1,0 +1,18 @@
+flowchart LR
+  USB[USB 5V data/power] --> ESP[ESP32-WROOM-32 DevKit]
+  ESP -->|UART RX GPIO16 provisional; verify module and voltage| Sensor[AS608 UART]
+  ESP -->|UART TX GPIO17 provisional; verify module| Sensor
+  ESP -->|3V3 logic only; verify exact module first| Sensor
+  ESP -->|GPIO21 SDA / GPIO22 SCL| Bus[I2C shared bus]
+  Bus --> OLED[SSD1306 4-pin I2C]
+  Bus --> RTC[DS3231 RTC]
+  ESP -->|GPIO18 via resistor| Green[Green LED]
+  ESP -->|GPIO19 via resistor| Red[Red LED]
+  ESP -->|GPIO23 signal; use transistor-driver module| Buzzer[Active buzzer]
+  ESP --- GND[Common ground]
+  Sensor --- GND
+  OLED --- GND
+  RTC --- GND
+  Buzzer --- GND
+  Note[All voltages, pull-ups, pin labels and power draw unverified until exact boards arrive]:::warning
+  classDef warning fill:#fff2cc,stroke:#b8860b,color:#111

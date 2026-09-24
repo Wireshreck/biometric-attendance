@@ -1,0 +1,30 @@
+sequenceDiagram
+  autonumber
+  actor Admin as Local operator
+  participant UI as Dashboard
+  participant API as FastAPI
+  participant DB as SQLite
+  participant ESP as ESP32 USB serial console
+  participant Sensor as AS608
+
+  Admin->>UI: Create synthetic student record
+  UI->>API: POST /api/v1/students (admin auth)
+  API->>DB: Insert PENDING_ENROLLMENT and reserve free slot
+  API-->>UI: Student UUID and assigned slot
+  Admin->>ESP: Physical console command to enroll student UUID
+  ESP->>API: GET enrollment assignment (device token)
+  API->>DB: Verify pending state; read slot
+  API-->>ESP: Assigned slot only
+  loop Two impressions of same finger
+    ESP->>Sensor: Capture impression
+    Sensor-->>ESP: Capture/template result
+    Admin->>Admin: Ask participant to lift finger between captures
+  end
+  ESP->>Sensor: Merge and store template in assigned slot
+  Sensor-->>ESP: Confirm slot write
+  ESP->>API: POST enrollment complete (device token; no template data)
+  API->>DB: Set student ACTIVE; write audit entry
+  API-->>ESP: Confirm activation
+  API-->>UI: Student now active on next refresh
+
+  Note over Admin,Sensor: Enrollment/deletion requires authorized physical access; no fingerprint bytes enter the API.

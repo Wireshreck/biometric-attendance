@@ -1,0 +1,41 @@
+erDiagram
+  STUDENTS ||--o{ ATTENDANCE_EVENTS : generates
+  DEVICES ||--o{ ATTENDANCE_EVENTS : submits
+
+  STUDENTS {
+    INTEGER id PK
+    TEXT student_uuid UK
+    TEXT roll_number UK
+    TEXT first_name
+    TEXT last_name
+    TEXT grade_class
+    INTEGER fingerprint_slot_id UK
+    TEXT status
+    TEXT created_at_utc
+  }
+  DEVICES {
+    INTEGER id PK
+    TEXT device_uuid UK
+    TEXT token_hash
+    TEXT status
+    TEXT last_seen_at_utc
+  }
+  ATTENDANCE_EVENTS {
+    TEXT event_uuid PK
+    INTEGER student_id FK
+    INTEGER device_id FK
+    INTEGER fingerprint_slot_id
+    TEXT captured_at_utc
+    TEXT received_at_utc
+    TEXT sync_status
+    TEXT outcome
+  }
+  ADMIN_AUDIT_LOG {
+    INTEGER id PK
+    TEXT occurred_at_utc
+    TEXT actor
+    TEXT action
+    TEXT target_type
+    TEXT target_id
+    TEXT details_json
+  }
