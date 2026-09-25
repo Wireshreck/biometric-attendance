@@ -70,10 +70,10 @@ No `configuration` table is needed for the MVP. Operational configuration comes 
 
 ## Constraints and processing rules
 
-- Enable `PRAGMA foreign_keys=ON`, `journal_mode=WAL`, `busy_timeout=5000`; use `synchronous=FULL` for durability unless measured hardware behavior justifies a documented change.
+- Enable `PRAGMA foreign_keys=ON`, `journal_mode=WAL`, `busy_timeout=5000`; use `synchronous=FULL` for durability unless measured hardware behavior justifies a documented change. Concurrent first-open attempts retry transient WAL-mode locks for a bounded interval before failing closed.
 - Normalize accepted timestamps to UTC in the backend. The device sends a timezone-qualified RFC3339 timestamp; the configured IANA timezone (default `Asia/Kolkata`) determines the local attendance date. Never append `Z` to a local time.
 - Reject timestamps outside a configured clock-skew bound for live events. Replayed events may be older; retain their original capture time and expose replay status.
-- Under one write transaction: look up `event_uuid`; if present return its stored outcome. Resolve active student by `(device_id, fingerprint_slot_id)`; query accepted events for that student where `abs(captured_at_utc - incoming_time) <= 60 seconds`; insert `DUPLICATE_SUPPRESSED` if found, otherwise `RECORDED`. SQLite timestamps should be compared as integer epoch milliseconds in application code or consistently normalized lexicographic UTC strings.
+- Under one write transaction: look up `event_uuid`; if present return its stored outcome. Resolve active student by `(device_id, fingerprint_slot_id)`; compare the incoming UTC timestamp against that student's accepted events at full precision and suppress when the absolute difference is `<= 60 seconds`. Python parses normalized timezone-qualified values as UTC datetimes; do not use SQLite floating-point `julianday()` for this inclusive boundary.
 - Reports count only `RECORDED` rows and distinct active students for presence. Sort attendance by capture time, then event UUID for stable ordering.
 - If a student is deactivated, preserve records for the configured retention period and block matching. On approved erasure, clear the sensor slot physically, then transactionally set historical `student_id` and `fingerprint_slot_id` to NULL and delete identity. Never reuse a slot until sensor deletion is confirmed.
 - Revoke a device by setting `REVOKED`; do not delete it while its attendance rows reference it.

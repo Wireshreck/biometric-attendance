@@ -306,13 +306,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 raise HTTPException(409, {"code": "unknown_slot", "message": "Slot has no active student assignment"})
             student_id = student["id"]
             async with connection.execute(
-                """SELECT 1 FROM attendance_events
-                   WHERE student_id=? AND outcome='RECORDED'
-                     AND abs((julianday(captured_at_utc)-julianday(?))*86400.0) <= 60.0
-                   LIMIT 1""",
-                (student_id, captured_text),
+                "SELECT captured_at_utc FROM attendance_events WHERE student_id=? AND outcome='RECORDED'",
+                (student_id,),
             ) as cursor:
-                duplicate = await cursor.fetchone() is not None
+                accepted_events = await cursor.fetchall()
+            # SQLite's julianday() is floating-point and can misclassify the
+            # exact 60-second boundary. Compare parsed UTC datetimes instead.
+            duplicate = any(
+                abs((captured - datetime.fromisoformat(row[0].replace("Z", "+00:00")).astimezone(UTC)).total_seconds()) <= 60
+                for row in accepted_events
+            )
             outcome = "DUPLICATE_SUPPRESSED" if duplicate else "RECORDED"
             await connection.execute(
                 """INSERT INTO attendance_events

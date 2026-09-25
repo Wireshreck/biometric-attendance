@@ -29,7 +29,7 @@
 
 ### Current API evidence and remaining coverage
 
-`backend/tests/test_api.py` currently verifies health/migration readiness, admin authentication and student create/read/list/deactivate/slot-conflict behavior, local provisioning stores only the token hash, device enrollment assignment/completion, event authentication/active-slot checks, timestamp validation, UUID replay, and inclusive 60s suppression versus 61s acceptance. It does not verify concurrent ingest contention, revocation, reports/timezone boundaries, CSV, SSE, deletion/cleanup, firmware, or hardware. Do not mark the full TC-API-01..05 procedures complete based on this partial suite.
+`backend/tests/test_api.py` currently verifies health/migration readiness, admin authentication and student create/read/list/deactivate/slot-conflict behavior, local provisioning stores only the token hash, device enrollment assignment/completion, event authentication/active-slot checks, timestamp validation, UUID replay, and inclusive 60s suppression versus 61s acceptance. The 60s edge is checked using full-precision UTC timestamps because SQLite Julian-date floating-point arithmetic may round the boundary differently across platforms. It does not verify concurrent ingest contention, revocation, reports/timezone boundaries, CSV, SSE, deletion/cleanup, firmware, or hardware. Do not mark the full TC-API-01..05 procedures complete based on this partial suite.
 
 ## Test-data and reporting rules
 

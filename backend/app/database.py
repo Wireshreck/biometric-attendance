@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import re
 import sqlite3
 from pathlib import Path
@@ -107,6 +108,24 @@ async def _apply_migrations(
             ) from exc
 
 
+async def _enable_wal(connection: aiosqlite.Connection) -> str:
+    """Enable persistent WAL mode, retrying transient concurrent-open locks."""
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + 5
+    delay = 0.01
+    while True:
+        try:
+            cursor = await connection.execute("PRAGMA journal_mode = WAL")
+            mode = str((await cursor.fetchone())[0]).lower()
+            await cursor.close()
+            return mode
+        except sqlite3.OperationalError as exc:
+            if not any(word in str(exc).lower() for word in ("locked", "busy")) or loop.time() >= deadline:
+                raise
+            await asyncio.sleep(delay)
+            delay = min(delay * 2, 0.2)
+
+
 async def connect_database(
     db_path: str | Path,
     *,
@@ -129,9 +148,7 @@ async def connect_database(
         await connection.execute("PRAGMA synchronous = FULL")
 
         if path_text != ":memory:":
-            cursor = await connection.execute("PRAGMA journal_mode = WAL")
-            journal_mode = str((await cursor.fetchone())[0]).lower()
-            await cursor.close()
+            journal_mode = await _enable_wal(connection)
             if journal_mode != "wal":
                 raise DatabaseMigrationError(
                     f"SQLite refused WAL mode for file database (got {journal_mode})"
