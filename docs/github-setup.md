@@ -1,6 +1,6 @@
 # Git and GitHub Setup
 
-**Current milestone (checked 2026-09-25):** API implementation commit `42c0849` is on `main`; baseline `9bb5801` and prior history are preserved. `origin` is `https://github.com/Wireshreck/biometric-attendance.git`; GitHub CLI authentication was confirmed for `Wireshreck`. Check `git status --short --branch` and the latest GitHub Actions run for live sync/CI state.
+**Current milestone (checked 2026-09-25):** API implementation commit `42c0849` and its CI-discovered duplicate-boundary/startup fix `a7aa14e` are on `main`; baseline `9bb5801` and prior history are preserved. `origin` is `https://github.com/Wireshreck/biometric-attendance.git`; GitHub CLI authentication was confirmed for `Wireshreck`. Check `git status --short --branch` and the latest GitHub Actions run for live sync/CI state.
 
 ## Local workflow
 
