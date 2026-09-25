@@ -1,6 +1,6 @@
 ---
 type: project-handoff
-status: VERIFIED
+status: IN PROGRESS
 updated: 2026-09-25
 ---
 
@@ -12,12 +12,14 @@ Biometric School Attendance System: a science-fair local attendance demonstrator
 
 ## Current verified repository state (2026-09-25)
 
-- Git: branch `main`; baseline commit `9bb5801` (`Initial project baseline`) is preserved. The completed milestone is `310559e` (`feat: add SQLite schema v1 and Obsidian handoff workspace`), one local commit ahead of `origin/main` (`https://github.com/Wireshreck/biometric-attendance.git`); it has not been pushed. Author identity is configured; `gh auth status` reported `Wireshreck` authenticated.
+- Git: existing `main` branch and `origin` history are preserved. Run `git status --short --branch`, `git log --oneline --decorate -5`, and `git rev-list --left-right --count origin/main...HEAD` for the exact current commit/remote state. Never reset or rewrite shared history.
 - Firmware: only a toolchain-check sketch and configuration; `pio run -d firmware` compiled successfully on 2026-09-25. No board flash or physical test, sensor enrollment, attendance loop, RTC integration, display behavior, networking, authentication, or offline queue.
-- Backend: dependency manifests, `.env.example`, environment/SQLite smoke check, schema v1 migration/connection setup, and migration tests. No FastAPI app or routes exist.
+- Backend: schema v1 and migrations; FastAPI implements `/health`, admin student list/create/read/deactivate, authenticated device enrollment assignment/completion, and authenticated atomic attendance ingestion. Student creation assigns an available slot only after a single active device has reported capacity. Device bearer tokens are SHA-256 hashed in SQLite; admin Basic credentials come from `.env`. Reports, attendance query, CSV, SSE, device heartbeat/status/cleanup/deletion, frontend/static serving, and integration are not implemented.
+- API verification: 10 pytest tests pass (6 migration/constraint and 4 API/provisioning tests). Coverage includes 60-second duplicate suppression, 61-second acceptance, UUID replay, validation/auth/slot errors, enrollment/deactivation state, and hash-only device provisioning. Temporary databases and synthetic identities only; no physical sensor or firmware was exercised.
 - Frontend: plan only; no HTML/CSS/JS implementation.
 - Hardware: planning and provisional wiring only. Procurement, arrival, exact variants, and measurements are unknown.
-- Docs: canonical requirements, architecture, API/database, security/privacy, testing, hardware, deployment, backup, and presentation plans exist. Treat plans as plans.
+- Build instructions: [[18 - Complete Build Guide]] is an honest in-progress guide. The software setup is executable; physical wiring and full-system procedure have hardware/implementation stop gates because component revisions and verified electrical data are unknown.
+- Docs: canonical requirements, architecture, API/database, security/privacy, testing, hardware, deployment, backup, and presentation plans exist. Use their status labels; treat remaining API/UI/hardware plans as plans.
 - CI/GitHub: workflow files exist; do not assume a successful run.
 
 ## Decisions and constraints
@@ -26,17 +28,17 @@ See [[Decision Log]] for decision rationale and status. Key constraints: synthet
 
 ## Current blockers and next work
 
-1. **API-01 — backend vertical slice:** use the database module to implement configuration, health, authentication, and student state. Schema v1 is the current independent implementation milestone.
-2. **HW-01 — procurement facts:** owner must confirm purchase/delivery and exact module revisions; do not infer from old target dates.
-3. **Hardware-dependent work:** physical voltage, pinout, sensor, RTC, and display tests require exact parts and safe bench measurements.
-4. After DB-01, implement API configuration/auth/health and student state; then attendance ingestion; then firmware/UI integration per [[TODO]] and `docs/project-plan.md`.
+1. **API-03:** implement report/query, CSV-safe export, SSE, device management/heartbeat and cleanup/delete operations according to `docs/api-plan.md`.
+2. **HW-01:** purchase/delivery and exact module revisions need owner confirmation; do not infer from dates or provisional BOMs.
+3. **Hardware-dependent work:** electrical checks, pinout, sensor, RTC and display tests require exact parts and safe bench measurements.
+4. Continue with frontend/API and firmware integration after API-03, following [[TODO]] and `docs/project-plan.md`.
 
 ## Checks run during the current handoff
 
-- Backend environment smoke check passed under `backend/.venv`: pinned dependency imports and a temporary SQLite file/WAL/foreign-key/CRUD check. Database migration/constraint tests: 6 passed with pytest on 2026-09-25.
+- Backend environment smoke check passed under `backend/.venv`; `python -m pytest tests -q` passed 10 tests on 2026-09-25 (6 DB + 4 API/provisioning). One third-party Starlette/AnyIO deprecation warning remains.
 - PowerShell scripts and `backend/pyproject.toml` parsed; authored Markdown relative links and the Canvas JSON were checked.
 - `pio run -d firmware` passed on 2026-09-25. It emitted one warning from the pinned Arduino framework's `uartSetPins` implementation; the validation sketch itself compiled. No firmware was flashed or hardware behavior verified.
-- The database migration/constraint suite passes; no API/attendance/UI/integration suite or hardware test has passed.
+- The database migration/constraint and API vertical-slice suites pass. No UI, full firmware/attendance, end-to-end integration, or hardware test has passed.
 
 ## Git workflow
 

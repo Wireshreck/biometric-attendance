@@ -1,6 +1,6 @@
 # Test and Acceptance Plan
 
-**Status:** IMPLEMENTED — database migration/constraint tests. PLANNED — API, UI, firmware, integration, and hardware testing. No recognition accuracy, performance measurements, or reliability results are present. Traceability is in [requirements-traceability.md](requirements-traceability.md); bench sequence is [hardware/test-plan.md](../hardware/test-plan.md).
+**Status:** VERIFIED — database migration/constraint tests and the implemented API vertical slice (temporary DBs, synthetic identities). PLANNED — remaining API, UI, firmware, integration, and hardware testing. No recognition accuracy, performance measurements, or reliability results are present. Traceability is in [requirements-traceability.md](requirements-traceability.md); bench sequence is [hardware/test-plan.md](../hardware/test-plan.md). Latest local run: `python -m pytest tests -q` from `backend/`: 10 passed on 2026-09-25.
 
 | Test ID | Level | Setup/action | Acceptance evidence |
 | --- | --- | --- | --- |
@@ -26,6 +26,10 @@
 | TC-BACKUP-01 | Recovery | Online DB backup; restore to isolated temp location; integrity check | Counts/relations match fixture; documented restore time and backup checksum |
 | TC-PERF-01 | Performance | Repeat at least 30 scans on stated setup | Report p50/p95 and sample conditions; target local feedback <=1.2s, SSE visibility <=500ms after commit; no fabricated pass |
 | TC-STRESS-01 | Stress | 50 synthetic scans, mixed online/offline, inspect heap/queue/DB | No crash/data loss; all event UUIDs reconciled; record any duplicate/suppression behavior |
+
+### Current API evidence and remaining coverage
+
+`backend/tests/test_api.py` currently verifies health/migration readiness, admin authentication and student create/read/list/deactivate/slot-conflict behavior, local provisioning stores only the token hash, device enrollment assignment/completion, event authentication/active-slot checks, timestamp validation, UUID replay, and inclusive 60s suppression versus 61s acceptance. It does not verify concurrent ingest contention, revocation, reports/timezone boundaries, CSV, SSE, deletion/cleanup, firmware, or hardware. Do not mark the full TC-API-01..05 procedures complete based on this partial suite.
 
 ## Test-data and reporting rules
 

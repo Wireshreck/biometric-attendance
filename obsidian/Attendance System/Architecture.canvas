@@ -251,6 +251,51 @@
       "y": 820,
       "width": 320,
       "height": 190
+    },
+    {
+      "id": "api_source",
+      "type": "file",
+      "file": "backend/app/main.py",
+      "x": 2480,
+      "y": 860,
+      "width": 350,
+      "height": 230
+    },
+    {
+      "id": "api_auth",
+      "type": "file",
+      "file": "backend/app/auth.py",
+      "x": 2080,
+      "y": 1120,
+      "width": 320,
+      "height": 200
+    },
+    {
+      "id": "api_tests",
+      "type": "file",
+      "file": "backend/tests/test_api.py",
+      "x": 2900,
+      "y": 350,
+      "width": 340,
+      "height": 230
+    },
+    {
+      "id": "provision",
+      "type": "file",
+      "file": "backend/app/provision_device.py",
+      "x": 1680,
+      "y": 1080,
+      "width": 340,
+      "height": 210
+    },
+    {
+      "id": "build_guide",
+      "type": "file",
+      "file": "obsidian/Attendance System/18 - Complete Build Guide.md",
+      "x": 430,
+      "y": 1370,
+      "width": 370,
+      "height": 280
     }
   ],
   "edges": [
@@ -557,6 +602,62 @@
       "toNode": "tests",
       "toSide": "left",
       "label": "verification tasks"
+    },
+    {
+      "id": "e39",
+      "fromNode": "api",
+      "fromSide": "right",
+      "toNode": "api_source",
+      "toSide": "left",
+      "label": "implemented route subset"
+    },
+    {
+      "id": "e40",
+      "fromNode": "api_source",
+      "fromSide": "right",
+      "toNode": "api_auth",
+      "toSide": "left",
+      "label": "auth dependencies"
+    },
+    {
+      "id": "e41",
+      "fromNode": "api_source",
+      "fromSide": "right",
+      "toNode": "api_tests",
+      "toSide": "left",
+      "label": "software verification"
+    },
+    {
+      "id": "e42",
+      "fromNode": "provision",
+      "fromSide": "right",
+      "toNode": "api_auth",
+      "toSide": "left",
+      "label": "device token provisioning"
+    },
+    {
+      "id": "e43",
+      "fromNode": "build_guide",
+      "fromSide": "right",
+      "toNode": "hardware",
+      "toSide": "left",
+      "label": "physical build gates"
+    },
+    {
+      "id": "e44",
+      "fromNode": "build_guide",
+      "fromSide": "right",
+      "toNode": "backend_plan",
+      "toSide": "left",
+      "label": "verified software setup"
+    },
+    {
+      "id": "e45",
+      "fromNode": "handoff",
+      "fromSide": "right",
+      "toNode": "build_guide",
+      "toSide": "left",
+      "label": "human build manual"
     }
   ]
 }

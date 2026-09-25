@@ -1,6 +1,6 @@
 # Dependency Inventory
 
-Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. Backend routes and firmware attendance behavior are not implemented. SQLite schema setup exists in `backend/app/database.py`; its tests use temporary synthetic databases.
+Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. The backend currently implements a tested API subset; firmware attendance behavior is not implemented. SQLite schema setup exists in `backend/app/database.py`; database/API tests use temporary synthetic databases.
 
 | Name | Pinned version/range | Used for | Required? | Install/verification | License note |
 | --- | --- | --- | --- | --- | --- |

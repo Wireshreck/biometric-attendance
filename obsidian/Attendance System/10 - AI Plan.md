@@ -12,4 +12,4 @@ updated: 2026-09-25
 
 If considered after core verification, keep it local and limited to allowlisted aggregate report endpoints. It must have no database, write, enrollment, or hardware access. Core attendance must work with this component disabled. Do not send student or attendance data to a cloud model.
 
-Related: [AI tool-calling diagram](../../diagrams/ai-tool-calling.mmd), [privacy and security](11 - Privacy & Security.md).
+Related: [AI tool-calling diagram](../../diagrams/ai-tool-calling.mmd), [[11 - Privacy & Security]].

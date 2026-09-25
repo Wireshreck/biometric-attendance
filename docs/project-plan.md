@@ -2,7 +2,7 @@
 
 **Project:** Biometric Attendance (school attendance demonstrator)  
 **Target event:** 2026-10-09  
-**Current phase:** Early implementation; SQLite schema v1 is verified. API/application code and physical hardware validation remain unimplemented/unconfirmed.
+**Current phase:** Early implementation; SQLite schema v1 and a software-tested FastAPI vertical slice are verified. Remaining API/application features and physical hardware validation remain incomplete/unconfirmed.
 
 ## Objective
 
@@ -29,9 +29,9 @@ Production school deployment, cloud synchronization, real student/biometric data
 | --- | --- | --- |
 | F0 Foundation | Requirements traceability, architecture, BOM, setup, security boundaries, Git baseline | Baseline commit `9bb5801`; continue with focused commits and evidence |
 | H1 Procurement/bench | Confirm purchases and exact variants; safe power/I2C/UART/RTC bring-up | Parts received; measured hardware gates pass |
-| D1 Data/backend | Extend schema v1 with query/transaction services, then config/auth/health and student enrollment state | Current schema/constraint tests pass; remaining DB/API contract tests are pending |
+| D1 Data/backend | Schema/migrations, config/health, admin/device auth, student slot reservation/enrollment state implemented; remaining report/query/device lifecycle routes | 10 DB/API/provisioning tests pass for the current slice; API-03 contract tests remain |
 | F1 Firmware local | Sensor enrollment/search/delete, RTC, generic feedback and errors | Physical sensor test evidence; no identity/image leak |
-| D2 Attendance API | Device heartbeat, event UUID, transaction, 60s suppression, reports and SSE | API/idempotency/timezone tests pass |
+| D2 Attendance API | Event UUID, authenticated transactional ingest and 60s suppression implemented; device heartbeat, reports and SSE remain | Tests verify UUID replay and 60/61-second rule; concurrent load, timezone reports and SSE tests remain |
 | F2 Offline firmware | LittleFS durable queue, overflow behavior and reconnect replay | Power-loss/outage/replay tests pass |
 | W1 Dashboard | Students, today/history, reports, status, SSE, CSV download | UI and authorization/error-state tests pass |
 | I1 Integration | Enroll → scan → API → DB → dashboard; duplicate and offline recovery | Repeated synthetic end-to-end evidence |

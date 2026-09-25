@@ -1,6 +1,6 @@
 # Software Stack
 
-**Status:** PLANNED — stack selected; application implementation is pending. Exact dependency sources are [PlatformIO config](../firmware/platformio.ini), [Python pyproject](../backend/pyproject.toml), and [requirements files](../backend/requirements.txt). See [dependency inventory](dependencies.md).
+**Status:** IN PROGRESS — selected stack with compile-only firmware validation, SQLite schema/migrations, and a partial FastAPI implementation. Exact dependency sources are [PlatformIO config](../firmware/platformio.ini), [Python pyproject](../backend/pyproject.toml), and [requirements files](../backend/requirements.txt). See [dependency inventory](dependencies.md).
 
 | Layer | Selected technology | Current state |
 | --- | --- | --- |
@@ -8,8 +8,8 @@
 | Sensor/display/RTC | Adafruit fingerprint, SSD1306/GFX, RTClib | Dependency declarations only; no product firmware |
 | Offline storage | ESP32 LittleFS | Build setting only; queue unimplemented |
 | Device transport | Local HTTP JSON, per-device bearer credential | Planned; no TLS; synthetic demo data only |
-| Backend | Python 3.13, FastAPI, Uvicorn, Pydantic, aiosqlite | Environment smoke check and SQLite migrations/tests; no FastAPI app/routes |
-| Database | Standard SQLite in Python, WAL | Schema v1 migration and connection helper implemented; six migration/constraint tests pass; attendance processing remains planned |
+| Backend | Python 3.13, FastAPI, Uvicorn, Pydantic, aiosqlite | Health/student/enrollment/attendance API subset and temporary-DB tests; no reports/CSV/SSE/static dashboard |
+| Database | Standard SQLite in Python, WAL | Schema v1 migrations and attendance ingest API-tested; six migration/constraint tests pass |
 | UI | Static semantic HTML/CSS/ES modules | No UI files or Node tooling |
 | Live updates | Authenticated Server-Sent Events + REST `fetch()` | API/UI plan only; meets stated update target if verified |
 | Optional reporting assistant | Local LLM via allowlisted read-only API tools | Deferred; core does not depend on it |

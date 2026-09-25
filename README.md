@@ -11,14 +11,15 @@
 | Milestone | Status |
 | :--- | :---: |
 | Python/backend environment smoke check | VERIFIED |
-| Git history | VERIFIED (baseline `9bb5801` preserved; milestone `310559e` committed locally, one commit ahead of `origin/main`; not pushed) |
+| Git history | VERIFIED (baseline preserved; branch tracks configured `origin/main`; see `git log` for current milestone) |
 | GitHub CLI authentication | VERIFIED locally (`gh auth status`; CI result not checked) |
 | Hardware selection and BOM | IMPLEMENTED (planning docs; procurement unconfirmed) |
 | Purchase/delivery confirmation | BLOCKED (owner status unknown) |
 | Firmware toolchain validation sketch | VERIFIED (compile only; flashing and hardware behavior NEEDS HARDWARE) |
-| Backend application/API | PLANNED |
+| Backend API vertical slice | VERIFIED (10 software tests; physical integration unverified) |
+| Remaining API (reports/CSV/SSE/device lifecycle) | PLANNED |
 | Obsidian project workspace | VERIFIED (repo root is vault; guide/handoff/file-backed Canvas link to source files) |
-| Architecture documentation | VERIFIED (implementation remains planned) |
+| Architecture documentation | VERIFIED (firmware/dashboard and full integration remain planned) |
 | Hardware bench tests | NEEDS HARDWARE |
 | Attendance firmware | PLANNED; NEEDS HARDWARE for sensor validation |
 | Database schema v1 migration | VERIFIED (6 temporary-database migration/constraint tests passed) |

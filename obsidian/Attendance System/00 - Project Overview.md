@@ -9,7 +9,7 @@ updated: 2026-09-25
 Welcome to the project workspace for the **local-first Biometric School Attendance demonstrator**. Open the repository root as the Obsidian vault so this workspace can navigate the actual source, plans, configuration, and tests.
 
 > [!NOTE]
-> **Current Status:** `IN PROGRESS` — database foundation verified; backend/API and device/product implementation remain
+> **Current Status:** `IN PROGRESS` — database and software-tested API vertical slice verified; reports, dashboard, firmware and physical integration remain
 > **Exhibition Date:** 09 October 2026  
 > **Target Platform:** ESP32-WROOM-32 + AS608 + FastAPI + SQLite  
 
@@ -18,6 +18,7 @@ Welcome to the project workspace for the **local-first Biometric School Attendan
 ## 📌 Project Navigation Index
 
 - [[AI Development Guide|AI / contributor operating guide]] · [[AI Project Handoff|Current project handoff]] · [[Decision Log|Architecture decision log]] · [[Milestones|Milestone status]]
+- [[18 - Complete Build Guide|Human build guide (in progress; hardware stop gates are explicit)]]
 
 * 📋 **Specifications & Goals:**
   * [[01 - Requirements|System Requirements (Functional & Non-Functional)]]
@@ -57,11 +58,12 @@ Welcome to the project workspace for the **local-first Biometric School Attendan
 | Area | Status | Evidence / remaining work |
 | --- | --- | --- |
 | Repository-root Obsidian workspace and AI handoff | VERIFIED | Guide, handoff, decision log, task tracker and file-backed Canvas |
-| Git baseline / GitHub remote / CLI auth | VERIFIED | `main`, baseline `9bb5801`, `origin/main`, local `gh auth status` |
+| Git baseline / GitHub remote / CLI auth | VERIFIED | Preserved baseline and configured `origin/main`; see current hash/state in [[AI Project Handoff]] |
 | Python environment and SQLite smoke check | VERIFIED | `backend/test_env.py` passed in `backend/.venv` |
 | SQLite schema v1 migration | VERIFIED | Six temporary-database migration/constraint tests passed |
 | Firmware toolchain sketch | VERIFIED | `pio run -d firmware` passed; compile only, no board flash or hardware test |
-| FastAPI, attendance firmware, dashboard | PLANNED | Product application layers not implemented |
+| FastAPI vertical slice | VERIFIED (software tests) | Health, admin student lifecycle, enrollment assignment/completion, attendance ingestion; remaining routes tracked in [[TODO]] |
+| Attendance firmware and dashboard | PLANNED | No sensor integration, browser UI or full event pipeline |
 | Procurement / physical hardware | BLOCKED / NEEDS HARDWARE | Purchase status and exact module revisions are unknown |
 | Integrated science-fair demo | PLANNED | Requires application work and hardware evidence |
 

@@ -8,7 +8,7 @@ We are investigating whether a low-cost local biometric attendance demonstrator 
 
 ### What is built today?
 
-The repository contains plans, a PlatformIO toolchain-check sketch that compiles for `esp32dev`, environment setup, and a static dashboard architecture decision. SQLite schema v1 migrations and migration/constraint tests are implemented. Product enrollment, matching loop, API, dashboard, and offline sync are not implemented. Add only verified work here after testing.
+The repository contains plans, a PlatformIO toolchain-check sketch that compiles for `esp32dev`, SQLite schema v1, and a partial FastAPI API for student slot reservation, device enrollment completion, and authenticated synthetic attendance ingestion. The backend tests pass against temporary databases. Product sensor enrollment/matching firmware, dashboard, reports/SSE, offline sync, and physical integration are not implemented or verified. Add only verified work here after testing.
 
 ### Why fingerprint rather than RFID or face recognition?
 

@@ -8,8 +8,8 @@ updated: 2026-09-25
 
 [[00 - Project Overview|⬅️ Back to Hub]] | [[08 - Database Plan|⬅️ Database]] | [[10 - AI Plan|Next: AI ➡️]]
 
-**Status:** PLANNED — endpoints are not implemented. Canonical contract: [API plan](../../docs/api-plan.md).
+**Status:** IN PROGRESS — the implemented endpoint subset and evidence are listed in the canonical [API plan](../../docs/api-plan.md); all other contract routes remain PLANNED.
 
-The documented FastAPI interface covers student/device administration, enrollment/cleanup, attendance ingest/query, reports, CSV, and SSE. The API is not implemented. The schema migration exists, but device/admin authentication, validation, idempotency, and transport controls do not. The local HTTP design is only for synthetic data on an isolated network.
+The contract covers student/device administration, enrollment/cleanup, attendance ingest/query, reports, CSV, and SSE. Current tested routes cover health, student creation/list/read/deactivation, enrollment assignment/completion, and attendance ingestion. Reports, CSV, SSE, cleanup, broad device management, firmware integration, and dashboard are not implemented. Local HTTP is only for synthetic data on an isolated network.
 
-Related: [Backend plan](07 - Backend Plan.md), [database plan](08 - Database Plan.md).
+Related: [[07 - Backend Plan]], [[08 - Database Plan]].

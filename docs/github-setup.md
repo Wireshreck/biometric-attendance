@@ -1,6 +1,6 @@
 # Git and GitHub Setup
 
-**Current state (checked 2026-09-25):** local repository root is on `main`; baseline `9bb5801` (`Initial project baseline`) is preserved. The current database/Obsidian milestone `310559e` is one local commit ahead of `origin/main` at `https://github.com/Wireshreck/biometric-attendance.git` and has not been pushed. A local author identity is configured; `gh auth status` reports an authenticated `Wireshreck` account. No claim is made that CI has run successfully.
+**Last synced state (checked 2026-09-25):** branch `main` was at `8e1f368` and matched `origin/main` at `https://github.com/Wireshreck/biometric-attendance.git`; baseline `9bb5801` and subsequent history are preserved. This API milestone is being verified for a focused commit; GitHub CLI authentication was confirmed for `Wireshreck`. Check the live remote and CI before relying on this snapshot.
 
 ## Local workflow
 
@@ -18,7 +18,7 @@
    git diff --cached
    git commit -m "feat(database): add transactional schema v1"
    ```
-4. Use a short-lived `feature/<topic>` branch; make focused commits. Merge through a reviewed pull request to `main`. Keep `main` releasable. A separate `develop` branch is not required for this small project.
+4. For a user-authorized milestone on the existing `main` branch, make one focused commit, push with `git push origin main`, and verify the remote commit and CI result. For larger changes not explicitly directed to `main`, use a short-lived feature branch and reviewed pull request. Never force-push or rewrite history.
 5. Tag a demonstrated/verified milestone only after recording the tested commit and results, e.g. `v0.1.0-demo`; do not tag planning work as a release.
 
 Before staging, scan for private config and personal data. Confirm ignored artifacts with `git check-ignore -v <path>`. Never commit `backend/.env`, `firmware/include/local_config.h`, SQLite files, student data, biometric data, or unencrypted sensitive backups.

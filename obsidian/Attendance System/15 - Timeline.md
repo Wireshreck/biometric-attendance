@@ -12,12 +12,12 @@ updated: 2026-09-25
 
 | Target date | Gate |
 | --- | --- |
-| Sep 25, noon | Hardware order placed |
-| Sep 28 | Hardware received and bench bring-up |
-| Oct 01 | Standalone biometric prototype |
-| Oct 04 | End-to-end demo |
-| Oct 06 | Testing and code freeze |
-| Oct 08 | Backup and rehearsal |
+| Sep 25, noon | Hardware order status UNKNOWN; owner confirmation needed |
+| Sep 28 | Receipt/bench bring-up NEEDS HARDWARE; exact revisions unconfirmed |
+| Oct 01 | Standalone biometric prototype PLANNED; firmware/hardware gates remain |
+| Oct 04 | End-to-end demo PLANNED; API-03, UI and physical integration incomplete |
+| Oct 06 | Testing and code freeze PLANNED |
+| Oct 08 | Backup and rehearsal PLANNED |
 | Oct 09 | Science fair |
 
 Update actual status and dates in the canonical schedule when procurement or delivery changes.

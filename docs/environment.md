@@ -30,26 +30,28 @@
    deactivate
    cd ..
    ```
-   This verifies dependencies and SQLite/WAL basics; no FastAPI application exists yet.
+   This verifies dependencies and SQLite/WAL basics. The tested API subset is documented in `docs/api-plan.md`; launch it from `backend/` after configuring the ignored `.env`.
 5. Run `pwsh .\scripts\validate-environment.ps1` for available local checks. Connect hardware only after using the [bring-up plan](../hardware/test-plan.md).
 
 If PowerShell blocks virtualenv activation, use `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` for that terminal only, or invoke `.venv\Scripts\python.exe` directly.
 
 ## Configuration and secrets
 
-- Backend: copy `backend/.env.example` to `backend/.env`; keep local credentials blank until the app is implemented. `.env` is ignored.
+- Backend: copy `backend/.env.example` to `backend/.env`; set a unique local admin username/password (at least 16 characters). `.env` is ignored.
 - Firmware: copy `firmware/include/local_config.example.h` to `local_config.h` and configure a demo SSID/password. `local_config.h` is ignored. Never commit real values.
 - Set `APP_TIMEZONE=Asia/Kolkata` for demo reporting; device timestamps must include an explicit offset.
 - No Node runtime, Docker, cloud account, or GitHub login is needed for offline local firmware/environment work.
 
-## Future application startup (not runnable yet)
+## Local API startup
 
-There is no `backend/app/main.py`. Once implemented, use a local server first:
+From the backend directory after configuring `.env`:
 
 ```powershell
 cd .\backend
 .\.venv\Scripts\Activate.ps1
-uvicorn app.main:app --host 127.0.0.1 --port 8000
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
+
+Check `http://127.0.0.1:8000/health` and run `python -m pytest tests -q`. Reports, SSE, dashboard, and terminal integration are not implemented yet.
 
 For ESP32 access, bind to the laptop's reachable demo-network address (or `0.0.0.0` only when necessary), restrict Windows Firewall to the isolated demo network, and do not port-forward. The current HTTP design is only for synthetic demonstration data.

@@ -21,8 +21,10 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 | FND-05 | Add AI guide, current handoff, decision log and milestone index | Obsidian | P0 | VERIFIED | FND-04 | Source-of-truth map, workflow, status vocabulary, commands and current Git/app state reviewed |
 | GIT-01 | Preserve baseline branch/remote/history and use focused milestone commits | Development | P0 | VERIFIED | — | `git status`, `git log`, `git remote`, author identity; no force-push |
 | DB-01 | Implement schema v1 and transactional migration/connection setup | Backend/DB | P0 | VERIFIED | FND-02 | `backend/tests/test_database.py`; temporary file DB, constraints, rollback, version, pragmas; 6 passed |
-| API-01 | Implement config, health, admin/device authentication and student/enrollment routes | Backend/API | P0 | PLANNED | DB-01 | Contract tests; health/schema readiness, auth failures, state transitions |
-| API-02 | Implement authenticated attendance ingest, idempotency, duplicate window, timezone and reports/SSE/CSV | Backend/API | P0 | PLANNED | API-01 | Contract/concurrency tests for 59/60/61 seconds, replay, timezone, export safety |
+| API-01 | Implement config, health, authentication, student slot reservation, enrollment and deactivation | Backend/API | P0 | VERIFIED (software tests) | DB-01 | `backend/tests/test_api.py`; health, auth, student conflict, slot assignment and state transitions; no physical enrollment verification |
+| API-02 | Implement authenticated attendance ingest with idempotency, timestamp checks and 60-second policy | Backend/API | P0 | VERIFIED (software tests) | API-01 | API tests cover replay, 60/61-second boundary, invalid timestamp/auth/slot; concurrency and firmware queue replay remain unverified |
+| API-03 | Implement daily/range reports, CSV-safe export, attendance query, SSE, device heartbeat/status and cleanup/deletion routes | Backend/API | P0 | PLANNED | API-01/API-02 | Contract tests for timezone/date bounds, CSV formula escaping, SSE cursor and lifecycle safety |
+| BUILD-01 | Complete the human build procedure using identified parts, verified electrical specifications, bench evidence, and tested software/integration steps | Documentation/Hardware | P0 | IN PROGRESS | HW-01/HW-02; firmware/UI/integration implementation | Build guide and checklists match actual variants, measurements, tested procedures, and demo recovery evidence |
 | HW-01 | Confirm purchase/order/delivery and exact board/sensor/module revisions | Procurement | P0 | BLOCKED | Owner confirmation | Record actual variant, seller, paid total, receipt/order and expected/actual arrival |
 | HW-02 | Bench-test safe power, I2C, outputs, sensor UART, RTC and combined load | Hardware | P0 | NEEDS HARDWARE | HW-01, exact parts in hand | Record board IDs, meter/logic evidence and pass/fail in `hardware/test-plan.md` |
 | FW-00 | Compile toolchain validation sketch for pinned `esp32dev` target | Firmware | P0 | VERIFIED | — | `pio run -d firmware` passed 2026-09-25; compile only |
@@ -40,12 +42,12 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 
 - Hardware purchase/arrival and exact revisions remain unconfirmed; no electrical or biometric bench result exists.
 - Firmware sketch compile passes. Flashing, sensor/RTC/display behavior, and electrical validation require physical hardware.
-- There is no FastAPI application/API, attendance firmware, frontend source, or end-to-end product suite. The DB migration tests do not verify attendance business behavior.
+- The implemented FastAPI slice covers health, student lifecycle, enrollment completion, and attendance ingestion. Reports/CSV/SSE/device operations, attendance firmware, frontend source, and end-to-end product suite are still absent. API/database tests do not verify physical enrollment or attendance behavior.
 - Prototype transport is planned local HTTP and is unencrypted; synthetic data only, isolated demo LAN only. No production/school deployment.
 
 ## Evidence from current milestone
 
-- `backend/.venv/Scripts/python.exe -m pytest tests -q` from `backend/`: 6 database migration/constraint tests passed on 2026-09-25.
+- `backend/.venv/Scripts/python.exe -m pytest tests -q` from `backend/`: 10 tests passed (6 migration/constraint and 4 API/provisioning tests) on 2026-09-25.
 - `pio run -d firmware`: passed on 2026-09-25 (compile only; framework warning noted in [[AI Project Handoff]]).
 - Backend environment smoke check previously passed; rerun after dependency changes.
 - Git baseline `9bb5801` is preserved; milestone commit `310559e` contains the reviewed coherent changes and is one commit ahead of `origin/main`. It was not pushed.

@@ -1,10 +1,10 @@
 # Backend Service Plan
 
-**Status:** IMPLEMENTED / VERIFIED — SQLite schema v1 and transactional migration/connection setup in `app/database.py` and `migrations/`; six migration/constraint tests pass. There is no `app/main.py`, router, authentication, or API behavior. `test_env.py` is an environment smoke check.
+**Status:** IN PROGRESS — schema/migrations plus a tested FastAPI vertical slice are implemented: health, admin student list/create/read/deactivate, device-scoped enrollment assignment/completion, and authenticated attendance ingestion with UUID idempotency and the 60-second duplicate rule. Reports, device management/heartbeat, cleanup/deletion, CSV, SSE, static dashboard, and firmware integration are not implemented.
 
 ## Selected runtime
 
-Python 3.13 on Windows, FastAPI, Uvicorn, Pydantic, aiosqlite, SQLite WAL. Vanilla frontend is served by FastAPI. AI is optional and deferred. Dependency manifests: `pyproject.toml`, `requirements.txt`, `requirements-dev.txt`.
+Python 3.13 on Windows, FastAPI, Uvicorn, Pydantic, aiosqlite, SQLite WAL. Serving the planned vanilla frontend from FastAPI is not implemented. AI is optional and deferred. Dependency manifests: `pyproject.toml`, `requirements.txt`, `requirements-dev.txt`.
 
 ## Current and planned module layout
 
@@ -12,15 +12,15 @@ Python 3.13 on Windows, FastAPI, Uvicorn, Pydantic, aiosqlite, SQLite WAL. Vanil
 backend/
   app/
     database.py             # implemented SQLite connections, pragmas, migrations
-    main.py                 # planned lifespan, health, static mount
-    config.py               # environment settings, fail-fast validation
-    auth.py                 # admin and per-device auth dependencies
-    schemas.py              # Pydantic request/response models
-    routers/                # students, attendance, reports, devices, SSE
-    services/               # enrollment state, idempotency/60s duplicate policy
+    main.py                 # implemented app factory, health and MVP routes
+    config.py               # implemented environment settings and fail-fast validation
+    auth.py                 # implemented admin and per-device auth dependencies
+    dependencies.py         # implemented request-scoped DB/settings dependencies
+    schemas.py              # implemented bounded Pydantic request/response models
+    provision_device.py     # implemented one-time local device provisioning CLI
     migrations/             # implemented schema v1; add ordered follow-up SQL
   data/                     # runtime database (ignored by Git)
-  tests/                    # migration/constraint tests; API tests planned
+  tests/                    # migration/constraint tests and API vertical-slice tests
 ```
 
 Keep business rules in services/transactions, parameterize SQL, validate inputs at the boundary, and avoid a second ORM/framework for the small local workload.
@@ -36,18 +36,25 @@ python test_env.py
 python -m pytest tests
 ```
 
-`test_env.py` verifies environment dependencies only. The pytest suite currently verifies DB migrations/constraints; no routes exist yet. Configuration template: `.env.example`; `.env` is ignored. The future app should fail fast when credentials are empty outside explicit development mode.
+`test_env.py` verifies environment dependencies and SQLite basics. Pytest covers migrations/constraints and the implemented API slice. Configuration template: `.env.example`; `app.config` reads `backend/.env`; `.env` is ignored. The app refuses to start unless the admin username/password are configured; use a unique password of at least 16 characters and synthetic data only.
 
-After `app/main.py` and routes exist, intended launch is `uvicorn app.main:app --host 127.0.0.1 --port 8000`. For an ESP32 on an isolated demo network, bind to the laptop's LAN interface or `0.0.0.0` only as needed, apply host firewall rules, and use synthetic data because the MVP HTTP transport is unencrypted.
+With `.env` configured, launch with `python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`; `/health` and `/docs` are available locally. After confirming capacity from the exact sensor, provision the device in PowerShell:
+
+```powershell
+$verifiedCapacity = Read-Host "Enter the capacity verified for this sensor"
+python -m app.provision_device --name "Demo terminal" --location "Lab" --sensor-capacity $verifiedCapacity
+```
+
+Save the one-time printed bearer token only in ignored local firmware configuration. For an ESP32 on an isolated demo network, bind to the laptop's LAN interface only as needed, apply host firewall rules, and use synthetic data because the MVP HTTP transport is unencrypted.
 
 ## Implementation order
 
-1. Settings, health endpoint, database connection/pragmas and versioned schema.
-2. Device/admin authentication and synthetic device provisioning.
-3. Student creation/enrollment state, then transactional attendance ingest with event UUID and 60-second behavior.
-4. Reports, CSV-safe export, admin audit actions, authenticated SSE with resume cursor.
-5. Static mount and CORS disabled/same-origin; explicit request limits and errors.
-6. Unit/API/migration/security tests using temporary databases; add actual tests before CI claims a test suite.
+1. **Implemented:** settings, health, DB connection/migrations, admin/device authentication, one-time local device provisioning.
+2. **Implemented:** student creation/list/read/deactivation, slot reservation and device enrollment completion.
+3. **Implemented and API-tested:** atomic event ingest, UUID replay, active-slot resolution and 60-second duplicate suppression.
+4. **Next:** report/date queries, CSV-safe export, authenticated SSE, device status/heartbeat, deletion/cleanup flows.
+5. Static same-origin dashboard serving, explicit body limits, browser integration, and device/firmware contract.
+6. Keep tests database-backed and synthetic; the existing API tests do not verify physical enrollment or firmware-to-API networking.
 
 Initial device provisioning is a local-only CLI action: generate a high-entropy token, store only its hash and device metadata, print the raw token once for local firmware configuration, and never expose a route that returns it again. Student creation binds the slot to the sole active MVP device; multi-device enrollment remains deferred.
 

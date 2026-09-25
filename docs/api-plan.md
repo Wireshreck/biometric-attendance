@@ -1,6 +1,6 @@
 # MVP HTTP API Contract
 
-**Status:** PLANNED — no API routes exist in the repository.
+**Status:** IN PROGRESS — see implementation matrix below. Contract items without an implemented route remain PLANNED.
 **Base path:** `/api/v1`; JSON over the isolated local demo network.  
 **Frontend transport:** `fetch()` for commands/queries plus authenticated Server-Sent Events for live updates.  
 **Canonical data model:** [database design](database-plan.md); [requirements](requirements-traceability.md).
@@ -10,11 +10,27 @@
 - `GET /health` returns process health and schema version only; it exposes no student/device details.
 - Device routes require `Authorization: Bearer <device-token>`. Store only a strong token hash in `devices`; compare in constant time and reject revoked devices. Configure/provision tokens locally, never through committed examples.
 - Administrative routes require HTTP Basic credentials sourced from local environment variables. This is only acceptable for synthetic demo data on a dedicated, WPA2-protected local network. HTTP does not encrypt these credentials; do not use real student data or deploy this prototype in a school. Production requires TLS, durable identity management, role separation, and security review.
-- JSON errors use `{"error":{"code":"...","message":"..."}}`; never include SQL, secrets, stack traces, or biometric payloads. Dates use RFC3339 with an explicit offset; the server normalizes to UTC.
+- Implemented JSON errors use `{"error":{"code":"...","message":"...","correlation_id":"..."}}`; request validation currently returns 422. Never include SQL, secrets, stack traces, or biometric payloads. Dates use RFC3339 with an explicit offset; the server normalizes to UTC.
 - Use Python `zoneinfo.ZoneInfo(APP_TIMEZONE)` with the pinned `tzdata` fallback on Windows. Default report zone is `Asia/Kolkata`; do not derive local date from server machine locale.
 - List endpoints enforce `limit` 1–100 and non-negative `offset`; invalid fields return `422`. Missing resources return `404`, duplicate/invalid state transitions `409`, unauthenticated requests `401`, forbidden operations `403`, and unexpected failures `500` with a correlation ID only.
 
 ## Endpoints
+
+### Implementation status (verified in repository)
+
+| Endpoint | State | Evidence / limit |
+| --- | --- | --- |
+| `GET /health` | VERIFIED | Opens/migrates configured DB and returns schema version; unavailable DB returns 503. |
+| `GET /api/v1/students` | VERIFIED | Admin Basic auth, filters and bounded pagination. |
+| `POST /api/v1/students` | VERIFIED | Reserves a free slot only with exactly one active device and a reported capacity; writes an audit record. |
+| `GET /api/v1/students/{student_uuid}` | VERIFIED | Admin Basic auth; no template/token data. |
+| `POST /api/v1/students/{student_uuid}/deactivate` | VERIFIED | Blocks future slot resolution; physical sensor cleanup and deletion are still separate/unimplemented. |
+| `GET /api/v1/devices/{device_uuid}/enrollment/{student_uuid}` | VERIFIED | Device Bearer auth; returns pending slot assignment only. |
+| `POST /api/v1/devices/{device_uuid}/enrollment/{student_uuid}/complete` | VERIFIED | Device-authenticated success report transitions pending student to active. No physical sensor has been tested. |
+| `POST /api/v1/attendance` | VERIFIED | Device Bearer auth, timezone-qualified timestamp, reported-capacity/active-slot checks, serialized insert, UUID idempotency and 60-second rule. |
+| All other rows below | PLANNED | No implementation or endpoint tests yet. |
+
+Current endpoint tests use temporary SQLite databases and synthetic records. A route marked VERIFIED is software/API evidence only; no sensor, networked terminal, or dashboard has been verified.
 
 | Method and path | Auth | Request | Response / side effect | Statuses |
 | --- | --- | --- | --- | --- |
@@ -37,7 +53,7 @@
 | `GET /api/v1/reports/daily` | Admin | Required `date=YYYY-MM-DD`; optional configured timezone/class | `{date,timezone,active_roster_count,present_count,absent_count,percentage}`; distinct students with a recorded event count once. | 200, 401, 422 |
 | `GET /api/v1/reports/export.csv` | Admin | Required bounded `from`,`to`; optional class | RFC4180 attachment; quote/escape fields and neutralize spreadsheet formulas; audit export. | 200, 401, 422 range |
 
-All JSON endpoints use common error envelope `{"error":{"code":"...","message":"...","correlation_id":"..."}}`. In addition to table statuses: malformed JSON/body size errors are 400/413; missing/invalid credentials 401; authenticated wrong role 403; missing resource 404; illegal state/unique conflict 409; field/range validation 422; unavailable dependency 503. No response includes SQL, tracebacks, secrets, or biometric payload.
+All implemented routes use the common error envelope `{"error":{"code":"...","message":"...","correlation_id":"..."}}`. Implemented behavior returns 401 for missing/invalid credentials, 404 for missing resources, 409 for state/slot conflicts, 422 for request validation and timestamp errors, and 503 when the health database check fails. A request body size limit, dedicated malformed-JSON 400, role-based authorization, and comprehensive error matrix are not implemented yet. No response includes SQL, tracebacks, secrets, or biometric payload.
 
 ## Attendance payload and duplicate rules
 

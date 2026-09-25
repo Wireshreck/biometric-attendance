@@ -1,6 +1,6 @@
 # Database Design
 
-**Status:** VERIFIED — schema v1 migration and connection setup are implemented in `backend/migrations/001_initial_schema.sql` and `backend/app/database.py`; six migration/constraint tests pass. Product data-access/attendance processing remains PLANNED.
+**Status:** VERIFIED — schema v1 migration and connection setup are implemented in `backend/migrations/001_initial_schema.sql` and `backend/app/database.py`; six migration/constraint tests pass. The API also implements and tests a limited transactional attendance-ingest path. Reports, data exports, lifecycle operations, and full integration remain PLANNED.
 **Engine:** SQLite, one local writer, WAL for concurrent dashboard reads.  
 **File:** `backend/data/attendance.db` (generated at runtime; never commit it).
 

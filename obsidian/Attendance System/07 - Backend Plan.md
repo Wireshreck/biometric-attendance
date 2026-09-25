@@ -8,7 +8,7 @@ updated: 2026-09-25
 
 [[00 - Project Overview|⬅️ Hub]] | [[06 - Firmware Plan|Firmware ⬅️]] | [[08 - Database Plan|Database ➡️]]
 
-**Status:** IN PROGRESS — SQLite schema v1 migration/connection setup and migration tests are implemented. There is no FastAPI app entry point, router, or API/integration test.
+**Status:** IN PROGRESS — schema/migrations and a tested API vertical slice now exist: health, admin student management/slot reservation/deactivation, device enrollment assignment/completion, and attendance ingestion with idempotency and duplicate suppression. Remaining planned endpoints and physical/firmware integration are not implemented.
 
 Planned service: `/api/v1`, environment-backed configuration, aiosqlite, SQLite migrations/WAL, device/admin auth, student enrollment state, idempotent attendance ingest, reports/CSV, authenticated SSE and static dashboard serving. Local HTTP limits the prototype to synthetic data on an isolated WLAN.
 

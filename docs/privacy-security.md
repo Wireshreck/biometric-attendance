@@ -1,6 +1,6 @@
 # Privacy and Security Design
 
-**Status:** PLANNED — intended controls only; no production security controls have been implemented or independently audited. The MVP is for a synthetic-data science fair demonstration, not live school attendance.
+**Status:** IN PROGRESS — a prototype device-token hash check and environment-backed admin HTTP Basic check are implemented for part of the API and software-tested. No production security controls have been independently audited. The MVP is for a synthetic-data science fair demonstration, not live school attendance.
 
 ## Data boundaries
 
