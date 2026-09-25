@@ -13,7 +13,7 @@ This is a status index, not a second schedule or task tracker. Individual tasks 
 | Foundation and repository baseline | VERIFIED | Baseline `9bb5801` preserved; current milestone `310559e`; source-of-truth map is in [[AI Project Handoff]] |
 | Obsidian workspace and handoff | VERIFIED | Root vault, file-backed [[Architecture.canvas]], AI guide/handoff, ADR, and task tracker cross-links reviewed |
 | Database foundation | VERIFIED | Schema v1, transactional migrations, temporary database constraints/rollback tests; 6 tests passed; milestone commit `310559e`, see DB-01 in [[TODO]] |
-| Backend/API vertical slice | VERIFIED (software tests) | Authenticated student/enrollment/attendance slice; 10 backend tests pass; commits `42c0849` and `a7aa14e` (boundary/startup correction); see API-01/API-02 |
+| Backend/API vertical slice | VERIFIED (local and CI software tests) | 10 backend tests pass; implementation/fix commits `42c0849` and `a7aa14e`; GitHub Actions `36148997541` passed; see API-01/API-02 |
 | Remaining API: reports, CSV, SSE, device lifecycle | PLANNED | Contract and security tests; see API-03 |
 | Reproducible human build guide | IN PROGRESS | Software setup recorded; hardware/procurement and product integration gates remain; see [[18 - Complete Build Guide]] and BUILD-01 |
 | Hardware/firmware | NEEDS HARDWARE | Exact parts and safe bench evidence; see `hardware/test-plan.md` |

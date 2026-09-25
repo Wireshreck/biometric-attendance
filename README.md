@@ -12,7 +12,7 @@
 | :--- | :---: |
 | Python/backend environment smoke check | VERIFIED |
 | Git history | VERIFIED (baseline preserved; branch tracks configured `origin/main`; see `git log` for current milestone) |
-| GitHub CLI authentication | VERIFIED locally (`gh auth status`; CI result not checked) |
+| GitHub and CI | VERIFIED locally; Actions run `36148997541` passed firmware build and backend smoke/tests on commit `06f7713` |
 | Hardware selection and BOM | IMPLEMENTED (planning docs; procurement unconfirmed) |
 | Purchase/delivery confirmation | BLOCKED (owner status unknown) |
 | Firmware toolchain validation sketch | VERIFIED (compile only; flashing and hardware behavior NEEDS HARDWARE) |

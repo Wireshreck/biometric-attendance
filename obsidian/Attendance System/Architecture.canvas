@@ -1,663 +1,84 @@
 {
-  "nodes": [
-    {
-      "id": "home",
-      "type": "file",
-      "file": "obsidian/Attendance System/00 - Project Overview.md",
-      "x": 0,
-      "y": 0,
-      "width": 340,
-      "height": 230
-    },
-    {
-      "id": "requirements",
-      "type": "file",
-      "file": "docs/requirements.md",
-      "x": 430,
-      "y": 0,
-      "width": 300,
-      "height": 180
-    },
-    {
-      "id": "traceability",
-      "type": "file",
-      "file": "docs/requirements-traceability.md",
-      "x": 430,
-      "y": 260,
-      "width": 300,
-      "height": 190
-    },
-    {
-      "id": "architecture",
-      "type": "file",
-      "file": "docs/architecture.md",
-      "x": 840,
-      "y": 0,
-      "width": 340,
-      "height": 220
-    },
-    {
-      "id": "hardware",
-      "type": "file",
-      "file": "docs/hardware.md",
-      "x": 1280,
-      "y": -390,
-      "width": 300,
-      "height": 180
-    },
-    {
-      "id": "bom",
-      "type": "file",
-      "file": "docs/bill-of-materials.md",
-      "x": 1280,
-      "y": -640,
-      "width": 300,
-      "height": 180
-    },
-    {
-      "id": "wiring",
-      "type": "file",
-      "file": "docs/wiring.md",
-      "x": 1280,
-      "y": -140,
-      "width": 300,
-      "height": 180
-    },
-    {
-      "id": "firmware_plan",
-      "type": "file",
-      "file": "firmware/README.md",
-      "x": 1680,
-      "y": -390,
-      "width": 310,
-      "height": 190
-    },
-    {
-      "id": "firmware_source",
-      "type": "file",
-      "file": "firmware/src/main.cpp",
-      "x": 2080,
-      "y": -390,
-      "width": 310,
-      "height": 190
-    },
-    {
-      "id": "backend_plan",
-      "type": "file",
-      "file": "backend/README.md",
-      "x": 1280,
-      "y": 160,
-      "width": 310,
-      "height": 200
-    },
-    {
-      "id": "database_design",
-      "type": "file",
-      "file": "docs/database-plan.md",
-      "x": 1680,
-      "y": 80,
-      "width": 320,
-      "height": 210
-    },
-    {
-      "id": "database_code",
-      "type": "file",
-      "file": "backend/app/database.py",
-      "x": 2080,
-      "y": 40,
-      "width": 330,
-      "height": 210
-    },
-    {
-      "id": "migration",
-      "type": "file",
-      "file": "backend/migrations/001_initial_schema.sql",
-      "x": 2480,
-      "y": 40,
-      "width": 330,
-      "height": 210
-    },
-    {
-      "id": "database_tests",
-      "type": "file",
-      "file": "backend/tests/test_database.py",
-      "x": 2480,
-      "y": 310,
-      "width": 330,
-      "height": 210
-    },
-    {
-      "id": "api",
-      "type": "file",
-      "file": "docs/api-plan.md",
-      "x": 2080,
-      "y": 470,
-      "width": 320,
-      "height": 210
-    },
-    {
-      "id": "frontend",
-      "type": "file",
-      "file": "frontend/README.md",
-      "x": 2480,
-      "y": 570,
-      "width": 320,
-      "height": 200
-    },
-    {
-      "id": "tests",
-      "type": "file",
-      "file": "docs/testing-plan.md",
-      "x": 2900,
-      "y": 80,
-      "width": 310,
-      "height": 210
-    },
-    {
-      "id": "security",
-      "type": "file",
-      "file": "docs/privacy-security.md",
-      "x": 840,
-      "y": 640,
-      "width": 320,
-      "height": 220
-    },
-    {
-      "id": "deployment",
-      "type": "file",
-      "file": "docs/deployment-plan.md",
-      "x": 1680,
-      "y": 820,
-      "width": 320,
-      "height": 200
-    },
-    {
-      "id": "git",
-      "type": "file",
-      "file": "docs/github-setup.md",
-      "x": 0,
-      "y": 620,
-      "width": 340,
-      "height": 220
-    },
-    {
-      "id": "science_fair",
-      "type": "file",
-      "file": "docs/science-fair.md",
-      "x": 3300,
-      "y": 570,
-      "width": 310,
-      "height": 210
-    },
-    {
-      "id": "ai",
-      "type": "file",
-      "file": "docs/ai-plan.md",
-      "x": 1280,
-      "y": 1080,
-      "width": 300,
-      "height": 180
-    },
-    {
-      "id": "todo",
-      "type": "file",
-      "file": "obsidian/Attendance System/TODO.md",
-      "x": 0,
-      "y": 1050,
-      "width": 340,
-      "height": 230
-    },
-    {
-      "id": "milestones",
-      "type": "file",
-      "file": "obsidian/Attendance System/Milestones.md",
-      "x": 430,
-      "y": 1050,
-      "width": 340,
-      "height": 220
-    },
-    {
-      "id": "decisions",
-      "type": "file",
-      "file": "obsidian/Attendance System/Decision Log.md",
-      "x": 840,
-      "y": 1050,
-      "width": 340,
-      "height": 250
-    },
-    {
-      "id": "ai_guide",
-      "type": "file",
-      "file": "obsidian/Attendance System/AI Development Guide.md",
-      "x": 1280,
-      "y": 1370,
-      "width": 360,
-      "height": 260
-    },
-    {
-      "id": "handoff",
-      "type": "file",
-      "file": "obsidian/Attendance System/AI Project Handoff.md",
-      "x": 1680,
-      "y": 1370,
-      "width": 360,
-      "height": 250
-    },
-    {
-      "id": "ci",
-      "type": "file",
-      "file": ".github/workflows/ci.yml",
-      "x": 2080,
-      "y": 820,
-      "width": 320,
-      "height": 190
-    },
-    {
-      "id": "api_source",
-      "type": "file",
-      "file": "backend/app/main.py",
-      "x": 2480,
-      "y": 860,
-      "width": 350,
-      "height": 230
-    },
-    {
-      "id": "api_auth",
-      "type": "file",
-      "file": "backend/app/auth.py",
-      "x": 2080,
-      "y": 1120,
-      "width": 320,
-      "height": 200
-    },
-    {
-      "id": "api_tests",
-      "type": "file",
-      "file": "backend/tests/test_api.py",
-      "x": 2900,
-      "y": 350,
-      "width": 340,
-      "height": 230
-    },
-    {
-      "id": "provision",
-      "type": "file",
-      "file": "backend/app/provision_device.py",
-      "x": 1680,
-      "y": 1080,
-      "width": 340,
-      "height": 210
-    },
-    {
-      "id": "build_guide",
-      "type": "file",
-      "file": "obsidian/Attendance System/18 - Complete Build Guide.md",
-      "x": 430,
-      "y": 1370,
-      "width": 370,
-      "height": 280
-    }
-  ],
-  "edges": [
-    {
-      "id": "e01",
-      "fromNode": "home",
-      "fromSide": "right",
-      "toNode": "requirements",
-      "toSide": "left",
-      "label": "defines"
-    },
-    {
-      "id": "e02",
-      "fromNode": "requirements",
-      "fromSide": "right",
-      "toNode": "traceability",
-      "toSide": "left",
-      "label": "mapped to verification"
-    },
-    {
-      "id": "e03",
-      "fromNode": "requirements",
-      "fromSide": "right",
-      "toNode": "architecture",
-      "toSide": "left",
-      "label": "constrains design"
-    },
-    {
-      "id": "e04",
-      "fromNode": "architecture",
-      "fromSide": "right",
-      "toNode": "hardware",
-      "toSide": "left",
-      "label": "selects hardware boundary"
-    },
-    {
-      "id": "e05",
-      "fromNode": "hardware",
-      "fromSide": "right",
-      "toNode": "bom",
-      "toSide": "left",
-      "label": "purchase specification"
-    },
-    {
-      "id": "e06",
-      "fromNode": "hardware",
-      "fromSide": "right",
-      "toNode": "wiring",
-      "toSide": "left",
-      "label": "safe connections"
-    },
-    {
-      "id": "e07",
-      "fromNode": "wiring",
-      "fromSide": "right",
-      "toNode": "firmware_plan",
-      "toSide": "left",
-      "label": "pin configuration"
-    },
-    {
-      "id": "e08",
-      "fromNode": "firmware_plan",
-      "fromSide": "right",
-      "toNode": "firmware_source",
-      "toSide": "left",
-      "label": "implemented sketch only"
-    },
-    {
-      "id": "e09",
-      "fromNode": "architecture",
-      "fromSide": "right",
-      "toNode": "backend_plan",
-      "toSide": "left",
-      "label": "service boundary"
-    },
-    {
-      "id": "e10",
-      "fromNode": "backend_plan",
-      "fromSide": "right",
-      "toNode": "database_design",
-      "toSide": "left",
-      "label": "persistence contract"
-    },
-    {
-      "id": "e11",
-      "fromNode": "database_design",
-      "fromSide": "right",
-      "toNode": "database_code",
-      "toSide": "left",
-      "label": "implemented migration runner"
-    },
-    {
-      "id": "e12",
-      "fromNode": "database_code",
-      "fromSide": "right",
-      "toNode": "migration",
-      "toSide": "left",
-      "label": "applies version 1"
-    },
-    {
-      "id": "e13",
-      "fromNode": "migration",
-      "fromSide": "right",
-      "toNode": "database_tests",
-      "toSide": "left",
-      "label": "verified with temporary DB"
-    },
-    {
-      "id": "e14",
-      "fromNode": "database_design",
-      "fromSide": "right",
-      "toNode": "api",
-      "toSide": "left",
-      "label": "API data contract"
-    },
-    {
-      "id": "e15",
-      "fromNode": "api",
-      "fromSide": "right",
-      "toNode": "frontend",
-      "toSide": "left",
-      "label": "REST and SSE contract"
-    },
-    {
-      "id": "e16",
-      "fromNode": "frontend",
-      "fromSide": "right",
-      "toNode": "tests",
-      "toSide": "left",
-      "label": "UI verification plan"
-    },
-    {
-      "id": "e17",
-      "fromNode": "database_tests",
-      "fromSide": "right",
-      "toNode": "tests",
-      "toSide": "left",
-      "label": "database test cases"
-    },
-    {
-      "id": "e18",
-      "fromNode": "traceability",
-      "fromSide": "right",
-      "toNode": "tests",
-      "toSide": "left",
-      "label": "requirement verification"
-    },
-    {
-      "id": "e19",
-      "fromNode": "security",
-      "fromSide": "right",
-      "toNode": "firmware_plan",
-      "toSide": "left",
-      "label": "biometric/data minimization"
-    },
-    {
-      "id": "e20",
-      "fromNode": "security",
-      "fromSide": "right",
-      "toNode": "backend_plan",
-      "toSide": "left",
-      "label": "auth/secret requirements"
-    },
-    {
-      "id": "e21",
-      "fromNode": "security",
-      "fromSide": "right",
-      "toNode": "database_design",
-      "toSide": "left",
-      "label": "retention and audit"
-    },
-    {
-      "id": "e22",
-      "fromNode": "security",
-      "fromSide": "right",
-      "toNode": "api",
-      "toSide": "left",
-      "label": "transport/access control"
-    },
-    {
-      "id": "e23",
-      "fromNode": "tests",
-      "fromSide": "right",
-      "toNode": "science_fair",
-      "toSide": "left",
-      "label": "evidence gates demo claims"
-    },
-    {
-      "id": "e24",
-      "fromNode": "git",
-      "fromSide": "right",
-      "toNode": "ci",
-      "toSide": "left",
-      "label": "workflow and checks"
-    },
-    {
-      "id": "e25",
-      "fromNode": "todo",
-      "fromSide": "right",
-      "toNode": "milestones",
-      "toSide": "left",
-      "label": "task status drives milestones"
-    },
-    {
-      "id": "e26",
-      "fromNode": "decisions",
-      "fromSide": "right",
-      "toNode": "architecture",
-      "toSide": "left",
-      "label": "records rationale"
-    },
-    {
-      "id": "e27",
-      "fromNode": "ai",
-      "fromSide": "right",
-      "toNode": "security",
-      "toSide": "left",
-      "label": "read-only boundary"
-    },
-    {
-      "id": "e28",
-      "fromNode": "ai_guide",
-      "fromSide": "right",
-      "toNode": "todo",
-      "toSide": "left",
-      "label": "development workflow"
-    },
-    {
-      "id": "e29",
-      "fromNode": "handoff",
-      "fromSide": "right",
-      "toNode": "ai_guide",
-      "toSide": "left",
-      "label": "start here"
-    },
-    {
-      "id": "e30",
-      "fromNode": "home",
-      "fromSide": "right",
-      "toNode": "ai_guide",
-      "toSide": "left",
-      "label": "agent instructions"
-    },
-    {
-      "id": "e31",
-      "fromNode": "home",
-      "fromSide": "right",
-      "toNode": "handoff",
-      "toSide": "left",
-      "label": "current status"
-    },
-    {
-      "id": "e32",
-      "fromNode": "milestones",
-      "fromSide": "right",
-      "toNode": "science_fair",
-      "toSide": "left",
-      "label": "dates are canonical in timeline"
-    },
-    {
-      "id": "e33",
-      "fromNode": "deployment",
-      "fromSide": "right",
-      "toNode": "backend_plan",
-      "toSide": "left",
-      "label": "run boundary"
-    },
-    {
-      "id": "e34",
-      "fromNode": "deployment",
-      "fromSide": "right",
-      "toNode": "security",
-      "toSide": "left",
-      "label": "network limitations"
-    },
-    {
-      "id": "e35",
-      "fromNode": "todo",
-      "fromSide": "right",
-      "toNode": "database_code",
-      "toSide": "left",
-      "label": "DB-01"
-    },
-    {
-      "id": "e36",
-      "fromNode": "todo",
-      "fromSide": "right",
-      "toNode": "firmware_plan",
-      "toSide": "left",
-      "label": "FW tasks"
-    },
-    {
-      "id": "e37",
-      "fromNode": "todo",
-      "fromSide": "right",
-      "toNode": "api",
-      "toSide": "left",
-      "label": "API tasks"
-    },
-    {
-      "id": "e38",
-      "fromNode": "todo",
-      "fromSide": "right",
-      "toNode": "tests",
-      "toSide": "left",
-      "label": "verification tasks"
-    },
-    {
-      "id": "e39",
-      "fromNode": "api",
-      "fromSide": "right",
-      "toNode": "api_source",
-      "toSide": "left",
-      "label": "implemented route subset"
-    },
-    {
-      "id": "e40",
-      "fromNode": "api_source",
-      "fromSide": "right",
-      "toNode": "api_auth",
-      "toSide": "left",
-      "label": "auth dependencies"
-    },
-    {
-      "id": "e41",
-      "fromNode": "api_source",
-      "fromSide": "right",
-      "toNode": "api_tests",
-      "toSide": "left",
-      "label": "software verification"
-    },
-    {
-      "id": "e42",
-      "fromNode": "provision",
-      "fromSide": "right",
-      "toNode": "api_auth",
-      "toSide": "left",
-      "label": "device token provisioning"
-    },
-    {
-      "id": "e43",
-      "fromNode": "build_guide",
-      "fromSide": "right",
-      "toNode": "hardware",
-      "toSide": "left",
-      "label": "physical build gates"
-    },
-    {
-      "id": "e44",
-      "fromNode": "build_guide",
-      "fromSide": "right",
-      "toNode": "backend_plan",
-      "toSide": "left",
-      "label": "verified software setup"
-    },
-    {
-      "id": "e45",
-      "fromNode": "handoff",
-      "fromSide": "right",
-      "toNode": "build_guide",
-      "toSide": "left",
-      "label": "human build manual"
-    }
-  ]
+	"nodes":[
+		{"id":"home","type":"file","file":"obsidian/Attendance System/00 - Project Overview.md","x":0,"y":0,"width":340,"height":230},
+		{"id":"requirements","type":"file","file":"docs/requirements.md","x":430,"y":0,"width":300,"height":180},
+		{"id":"traceability","type":"file","file":"docs/requirements-traceability.md","x":430,"y":260,"width":300,"height":190},
+		{"id":"architecture","type":"file","file":"docs/architecture.md","x":840,"y":0,"width":340,"height":220},
+		{"id":"hardware","type":"file","file":"docs/hardware.md","x":1280,"y":-390,"width":300,"height":180},
+		{"id":"bom","type":"file","file":"docs/bill-of-materials.md","x":1280,"y":-640,"width":300,"height":180},
+		{"id":"wiring","type":"file","file":"docs/wiring.md","x":1280,"y":-140,"width":300,"height":180},
+		{"id":"firmware_plan","type":"file","file":"firmware/README.md","x":1680,"y":-390,"width":310,"height":190},
+		{"id":"firmware_source","type":"file","file":"firmware/src/main.cpp","x":2080,"y":-390,"width":310,"height":190},
+		{"id":"backend_plan","type":"file","file":"backend/README.md","x":1280,"y":160,"width":310,"height":200},
+		{"id":"database_design","type":"file","file":"docs/database-plan.md","x":1680,"y":80,"width":320,"height":210},
+		{"id":"database_code","type":"file","file":"backend/app/database.py","x":2080,"y":40,"width":330,"height":210},
+		{"id":"migration","type":"file","file":"backend/migrations/001_initial_schema.sql","x":2480,"y":40,"width":330,"height":210},
+		{"id":"database_tests","type":"file","file":"backend/tests/test_database.py","x":2480,"y":310,"width":330,"height":210},
+		{"id":"api","type":"file","file":"docs/api-plan.md","x":2080,"y":470,"width":320,"height":210},
+		{"id":"frontend","type":"file","file":"frontend/README.md","x":2480,"y":570,"width":320,"height":200},
+		{"id":"tests","type":"file","file":"docs/testing-plan.md","x":2900,"y":80,"width":310,"height":210},
+		{"id":"security","type":"file","file":"docs/privacy-security.md","x":840,"y":640,"width":320,"height":220},
+		{"id":"deployment","type":"file","file":"docs/deployment-plan.md","x":1680,"y":820,"width":320,"height":200},
+		{"id":"git","type":"file","file":"docs/github-setup.md","x":0,"y":620,"width":340,"height":220},
+		{"id":"science_fair","type":"file","file":"docs/science-fair.md","x":3300,"y":570,"width":310,"height":210},
+		{"id":"ai","type":"file","file":"docs/ai-plan.md","x":1280,"y":1080,"width":300,"height":180},
+		{"id":"todo","type":"file","file":"obsidian/Attendance System/TODO.md","x":0,"y":1050,"width":340,"height":230},
+		{"id":"milestones","type":"file","file":"obsidian/Attendance System/Milestones.md","x":430,"y":1050,"width":340,"height":220},
+		{"id":"decisions","type":"file","file":"obsidian/Attendance System/Decision Log.md","x":840,"y":1050,"width":340,"height":250},
+		{"id":"ai_guide","type":"file","file":"obsidian/Attendance System/AI Development Guide.md","x":1280,"y":1370,"width":360,"height":260},
+		{"id":"handoff","type":"file","file":"obsidian/Attendance System/AI Project Handoff.md","x":1680,"y":1370,"width":360,"height":250},
+		{"id":"ci","type":"file","file":".github/workflows/ci.yml","x":2080,"y":820,"width":320,"height":190},
+		{"id":"api_source","type":"file","file":"backend/app/main.py","x":2480,"y":860,"width":350,"height":230},
+		{"id":"api_auth","type":"file","file":"backend/app/auth.py","x":2080,"y":1120,"width":320,"height":200},
+		{"id":"api_tests","type":"file","file":"backend/tests/test_api.py","x":2900,"y":350,"width":340,"height":230},
+		{"id":"provision","type":"file","file":"backend/app/provision_device.py","x":1680,"y":1080,"width":340,"height":210},
+		{"id":"build_guide","type":"file","file":"obsidian/Attendance System/18 - Complete Build Guide.md","x":430,"y":1370,"width":370,"height":280}
+	],
+	"edges":[
+		{"id":"e01","fromNode":"home","fromSide":"right","toNode":"requirements","toSide":"left","label":"defines"},
+		{"id":"e02","fromNode":"requirements","fromSide":"right","toNode":"traceability","toSide":"left","label":"mapped to verification"},
+		{"id":"e03","fromNode":"requirements","fromSide":"right","toNode":"architecture","toSide":"left","label":"constrains design"},
+		{"id":"e04","fromNode":"architecture","fromSide":"right","toNode":"hardware","toSide":"left","label":"selects hardware boundary"},
+		{"id":"e05","fromNode":"hardware","fromSide":"right","toNode":"bom","toSide":"left","label":"purchase specification"},
+		{"id":"e06","fromNode":"hardware","fromSide":"right","toNode":"wiring","toSide":"left","label":"safe connections"},
+		{"id":"e07","fromNode":"wiring","fromSide":"right","toNode":"firmware_plan","toSide":"left","label":"pin configuration"},
+		{"id":"e08","fromNode":"firmware_plan","fromSide":"right","toNode":"firmware_source","toSide":"left","label":"implemented sketch only"},
+		{"id":"e09","fromNode":"architecture","fromSide":"right","toNode":"backend_plan","toSide":"left","label":"service boundary"},
+		{"id":"e10","fromNode":"backend_plan","fromSide":"right","toNode":"database_design","toSide":"left","label":"persistence contract"},
+		{"id":"e11","fromNode":"database_design","fromSide":"right","toNode":"database_code","toSide":"left","label":"implemented migration runner"},
+		{"id":"e12","fromNode":"database_code","fromSide":"right","toNode":"migration","toSide":"left","label":"applies version 1"},
+		{"id":"e13","fromNode":"migration","fromSide":"right","toNode":"database_tests","toSide":"left","label":"verified with temporary DB"},
+		{"id":"e14","fromNode":"database_design","fromSide":"right","toNode":"api","toSide":"left","label":"API data contract"},
+		{"id":"e15","fromNode":"api","fromSide":"right","toNode":"frontend","toSide":"left","label":"REST and SSE contract"},
+		{"id":"e16","fromNode":"frontend","fromSide":"right","toNode":"tests","toSide":"left","label":"UI verification plan"},
+		{"id":"e17","fromNode":"database_tests","fromSide":"right","toNode":"tests","toSide":"left","label":"database test cases"},
+		{"id":"e18","fromNode":"traceability","fromSide":"right","toNode":"tests","toSide":"left","label":"requirement verification"},
+		{"id":"e19","fromNode":"security","fromSide":"right","toNode":"firmware_plan","toSide":"left","label":"biometric/data minimization"},
+		{"id":"e20","fromNode":"security","fromSide":"right","toNode":"backend_plan","toSide":"left","label":"auth/secret requirements"},
+		{"id":"e21","fromNode":"security","fromSide":"right","toNode":"database_design","toSide":"left","label":"retention and audit"},
+		{"id":"e22","fromNode":"security","fromSide":"right","toNode":"api","toSide":"left","label":"transport/access control"},
+		{"id":"e23","fromNode":"tests","fromSide":"right","toNode":"science_fair","toSide":"left","label":"evidence gates demo claims"},
+		{"id":"e24","fromNode":"git","fromSide":"right","toNode":"ci","toSide":"left","label":"workflow and checks"},
+		{"id":"e25","fromNode":"todo","fromSide":"right","toNode":"milestones","toSide":"left","label":"task status drives milestones"},
+		{"id":"e26","fromNode":"decisions","fromSide":"right","toNode":"architecture","toSide":"left","label":"records rationale"},
+		{"id":"e27","fromNode":"ai","fromSide":"right","toNode":"security","toSide":"left","label":"read-only boundary"},
+		{"id":"e28","fromNode":"ai_guide","fromSide":"right","toNode":"todo","toSide":"left","label":"development workflow"},
+		{"id":"e29","fromNode":"handoff","fromSide":"right","toNode":"ai_guide","toSide":"left","label":"start here"},
+		{"id":"e30","fromNode":"home","fromSide":"right","toNode":"ai_guide","toSide":"left","label":"agent instructions"},
+		{"id":"e31","fromNode":"home","fromSide":"right","toNode":"handoff","toSide":"left","label":"current status"},
+		{"id":"e32","fromNode":"milestones","fromSide":"right","toNode":"science_fair","toSide":"left","label":"dates are canonical in timeline"},
+		{"id":"e33","fromNode":"deployment","fromSide":"right","toNode":"backend_plan","toSide":"left","label":"run boundary"},
+		{"id":"e34","fromNode":"deployment","fromSide":"right","toNode":"security","toSide":"left","label":"network limitations"},
+		{"id":"e35","fromNode":"todo","fromSide":"right","toNode":"database_code","toSide":"left","label":"DB-01"},
+		{"id":"e36","fromNode":"todo","fromSide":"right","toNode":"firmware_plan","toSide":"left","label":"FW tasks"},
+		{"id":"e37","fromNode":"todo","fromSide":"right","toNode":"api","toSide":"left","label":"API tasks"},
+		{"id":"e38","fromNode":"todo","fromSide":"right","toNode":"tests","toSide":"left","label":"verification tasks"},
+		{"id":"e39","fromNode":"api","fromSide":"right","toNode":"api_source","toSide":"left","label":"implemented route subset"},
+		{"id":"e40","fromNode":"api_source","fromSide":"right","toNode":"api_auth","toSide":"left","label":"auth dependencies"},
+		{"id":"e41","fromNode":"api_source","fromSide":"right","toNode":"api_tests","toSide":"left","label":"software verification"},
+		{"id":"e42","fromNode":"provision","fromSide":"right","toNode":"api_auth","toSide":"left","label":"device token provisioning"},
+		{"id":"e43","fromNode":"build_guide","fromSide":"right","toNode":"hardware","toSide":"left","label":"physical build gates"},
+		{"id":"e44","fromNode":"build_guide","fromSide":"right","toNode":"backend_plan","toSide":"left","label":"verified software setup"},
+		{"id":"e45","fromNode":"handoff","fromSide":"right","toNode":"build_guide","toSide":"left","label":"human build manual"}
+	]
 }
