@@ -12,7 +12,7 @@ Biometric School Attendance System: a science-fair local attendance demonstrator
 
 ## Current verified repository state (2026-09-25)
 
-- Git: branch `main`, clean at audit start, baseline commit `9bb5801` (`Initial project baseline`), tracking `origin/main` (`https://github.com/Wireshreck/biometric-attendance.git`). Author identity is configured; `gh auth status` reported `Wireshreck` authenticated. No push was made during this handoff.
+- Git: branch `main`; baseline commit `9bb5801` (`Initial project baseline`) is preserved. The completed milestone is `310559e` (`feat: add SQLite schema v1 and Obsidian handoff workspace`), one local commit ahead of `origin/main` (`https://github.com/Wireshreck/biometric-attendance.git`); it has not been pushed. Author identity is configured; `gh auth status` reported `Wireshreck` authenticated.
 - Firmware: only a toolchain-check sketch and configuration; `pio run -d firmware` compiled successfully on 2026-09-25. No board flash or physical test, sensor enrollment, attendance loop, RTC integration, display behavior, networking, authentication, or offline queue.
 - Backend: dependency manifests, `.env.example`, environment/SQLite smoke check, schema v1 migration/connection setup, and migration tests. No FastAPI app or routes exist.
 - Frontend: plan only; no HTML/CSS/JS implementation.

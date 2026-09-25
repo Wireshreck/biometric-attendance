@@ -11,7 +11,7 @@
 | Milestone | Status |
 | :--- | :---: |
 | Python/backend environment smoke check | VERIFIED |
-| Git baseline and origin | VERIFIED (`main` at `9bb5801`, tracking `origin/main`) |
+| Git history | VERIFIED (baseline `9bb5801` preserved; milestone `310559e` committed locally, one commit ahead of `origin/main`; not pushed) |
 | GitHub CLI authentication | VERIFIED locally (`gh auth status`; CI result not checked) |
 | Hardware selection and BOM | IMPLEMENTED (planning docs; procurement unconfirmed) |
 | Purchase/delivery confirmation | BLOCKED (owner status unknown) |
@@ -21,7 +21,7 @@
 | Architecture documentation | VERIFIED (implementation remains planned) |
 | Hardware bench tests | NEEDS HARDWARE |
 | Attendance firmware | PLANNED; NEEDS HARDWARE for sensor validation |
-| Database schema v1 migration | VERIFIED (5 temporary-database migration/constraint tests passed) |
+| Database schema v1 migration | VERIFIED (6 temporary-database migration/constraint tests passed) |
 | Dashboard | PLANNED |
 | End-to-end integration | PLANNED; NEEDS HARDWARE |
 | Science-fair demo | PLANNED |

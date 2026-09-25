@@ -1,6 +1,6 @@
 # Git and GitHub Setup
 
-**Current state (checked 2026-09-25):** local repository root is `main`, based on commit `9bb5801` (`Initial project baseline`), tracking `origin/main` at `https://github.com/Wireshreck/biometric-attendance.git`. A local author identity is configured; `gh auth status` reports an authenticated `Wireshreck` account. No claim is made that CI has run successfully.
+**Current state (checked 2026-09-25):** local repository root is on `main`; baseline `9bb5801` (`Initial project baseline`) is preserved. The current database/Obsidian milestone `310559e` is one local commit ahead of `origin/main` at `https://github.com/Wireshreck/biometric-attendance.git` and has not been pushed. A local author identity is configured; `gh auth status` reports an authenticated `Wireshreck` account. No claim is made that CI has run successfully.
 
 ## Local workflow
 

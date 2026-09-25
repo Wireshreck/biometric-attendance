@@ -48,7 +48,7 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 - `backend/.venv/Scripts/python.exe -m pytest tests -q` from `backend/`: 6 database migration/constraint tests passed on 2026-09-25.
 - `pio run -d firmware`: passed on 2026-09-25 (compile only; framework warning noted in [[AI Project Handoff]]).
 - Backend environment smoke check previously passed; rerun after dependency changes.
-- Git baseline at start of milestone: `9bb5801`; commit current coherent changes after reviewing staged diff. Do not push unless requested.
+- Git baseline `9bb5801` is preserved; milestone commit `310559e` contains the reviewed coherent changes and is one commit ahead of `origin/main`. It was not pushed.
 
 ## Schedule
 
