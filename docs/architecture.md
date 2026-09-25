@@ -1,6 +1,6 @@
 # System Architecture
 
-**Status:** Architecture selected; application behavior remains planned. Source diagrams: [architecture](../diagrams/architecture.mmd), [data flow](../diagrams/data-flow.mmd), [attendance](../diagrams/attendance-flow.mmd), [enrollment](../diagrams/enrollment-flow.mmd), [hardware](../diagrams/hardware.mmd), [database](../diagrams/database.mmd).
+**Status:** PLANNED — architecture is documented; application behavior remains unimplemented. Source diagrams: [architecture](../diagrams/architecture.mmd), [data flow](../diagrams/data-flow.mmd), [attendance](../diagrams/attendance-flow.mmd), [enrollment](../diagrams/enrollment-flow.mmd), [hardware](../diagrams/hardware.mmd), [database](../diagrams/database.mmd).
 
 ## What and why
 
@@ -13,7 +13,7 @@ A low-cost, local-network school attendance demonstrator pairs an ESP32 terminal
 | ESP32-WROOM-32 + AS608 | Capture/match locally; expose slot result only; RTC and display feedback | PlatformIO toolchain-check sketch and pin config only; no attendance firmware |
 | LittleFS queue | Persist event UUID and capture metadata offline; replay in order | Filesystem configured; queue not implemented |
 | FastAPI | Device auth, enrollment status, event processing, reports, static files | No application entry point or routes |
-| SQLite WAL | Student/device metadata, event outcomes, audit | Design only; no migration or generated database in source |
+| SQLite WAL | Student/device metadata, event outcomes, audit | Schema v1 migration and connection helper exist; no runtime DB is committed and attendance processing is not implemented |
 | Vanilla dashboard | Student registration, attendance/report views, device/system status | Architecture decision only; no UI source |
 | Optional local LLM | Explain authorized read-only report results | Deferred; no code/dependency |
 

@@ -1,6 +1,6 @@
 # Backup and Recovery Plan
 
-**Status:** The helper creates an unencrypted content ZIP and includes a verified Git bundle when a commit exists; this repository currently has no commit. A restore has not been verified. The helper can optionally snapshot a synthetic demo DB through SQLite's online backup API. Do not use it for real personal/biometric data.
+**Status:** IMPLEMENTED — helper creates an unencrypted content ZIP and a Git bundle from commits, including baseline `9bb5801`. NEEDS TESTING — restore has not been verified. Optional DB snapshot is restricted to synthetic demo data. Do not use it for real personal/biometric data.
 
 ## What to preserve
 
@@ -11,7 +11,7 @@
 
 ## Frequency and storage
 
-Before a schema migration, after meaningful source milestones, and before travel/demo, create a content backup. A future operational system needs an institution-approved retention/access scheme. Apply the 3-2-1 rule only after selecting two independent media and one off-site location; the repository currently has no remote, and the helper does not automate external copies. Encrypt any backup containing personal data before it leaves the protected host. Do not rely on the ZIP helper for encryption.
+Before a schema migration, after meaningful source milestones, and before travel/demo, create a content backup. A future operational system needs an institution-approved retention/access scheme. The configured Git remote is source control, not a verified backup copy; the helper does not automate independent copies. Encrypt any backup containing personal data before it leaves the protected host. Do not rely on the ZIP helper for encryption.
 
 ## Create and restore
 

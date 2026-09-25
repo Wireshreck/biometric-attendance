@@ -1,3 +1,9 @@
+---
+type: project-navigation
+status: PLANNED
+updated: 2026-09-25
+---
+
 # 14 - Science Fair
 
 [[00 - Project Overview|⬅️ Back to Hub]] | [[13 - GitHub & Development|⬅️ Development]] | [[15 - Timeline|Next: Timeline ➡️]]

@@ -8,7 +8,7 @@
 
 ## 1. Functional Requirements (FR)
 
-* **FR-01: Biometric Enrollment:** The terminal shall allow an authorized administrator to enroll student fingerprints, capturing two consecutive impressions to verify consistency and storing the template in an AS608 hardware slot (1–300).
+* **FR-01: Biometric Enrollment:** The terminal shall allow an authorized administrator to enroll student fingerprints, capturing two consecutive impressions to verify consistency and storing the template in a free slot supported by the exact sensor. Sensor capacity must be measured/confirmed; do not assume 300 slots.
 * **FR-02: Fingerprint Identification:** The system shall capture a scanned fingerprint and search the internal template database within 1.0 second.
 * **FR-03: Real-Time Audio-Visual Feedback:** On a local successful match, show a generic “Attendance recorded” prompt, illuminate the green LED for 1000ms, and emit the short double-beep (100ms on, 50ms off, 100ms on). Offline, show “Saved offline” only after durable queue write. On an unrecognized finger, show “Not recognized / Try again”, illuminate the red LED for 1500ms, and emit the warning beep (600ms). Do not display another person’s name on a publicly visible terminal.
 * **FR-04: Duplicate Scan Suppression:** The system shall suppress and flag another accepted scan for the same student if its capture time is within 60 seconds of an accepted scan. A later scan, including one later the same day, may be recorded. Daily presence counts distinct students with at least one accepted event. Replaying the same `event_uuid` shall return its original result without a second database insert.

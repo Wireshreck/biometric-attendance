@@ -1,6 +1,6 @@
 # Installed Development Tools Record
 
-**Date:** 2026-09-24  
+**Snapshot date:** 2026-09-24; GitHub authentication rechecked 2026-09-25
 **Project:** Biometric School Attendance System (`biometric-attendance`)  
 
 This document logs all development tools installed or configured during the bootstrap process, adhering strictly to the principle of minimal, necessary tool installation.
@@ -34,7 +34,7 @@ This document logs all development tools installed or configured during the boot
   gh --version
   # Output: gh version 2.101.0 (2026-09-15)
   ```
-* **Authentication Status:** Pending user login (`gh auth login`). See `docs/github-setup.md`.
+* **Authentication Status:** `gh auth status` reported authenticated as `Wireshreck` on 2026-09-25. See `docs/github-setup.md` for repository state.
 
 ---
 

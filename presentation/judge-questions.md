@@ -1,6 +1,6 @@
 # Anticipated Judge Questions (Evidence-Led Draft)
 
-Use “planned” for design documents and “verified” only when test evidence exists. The project is currently in pre-development; answers below do not claim an operational system.
+Use canonical status terms and say “verified” only for evidence that exists. The project is in early implementation; these answers do not claim an operational attendance system.
 
 ### What problem are you studying?
 
@@ -8,7 +8,7 @@ We are investigating whether a low-cost local biometric attendance demonstrator 
 
 ### What is built today?
 
-The repository contains plans, a configured PlatformIO toolchain-check sketch, environment setup and a static dashboard architecture decision. Product enrollment, matching loop, API, database schema migrations, dashboard, and offline sync are not implemented yet. Add only verified work here after testing.
+The repository contains plans, a PlatformIO toolchain-check sketch that compiles for `esp32dev`, environment setup, and a static dashboard architecture decision. SQLite schema v1 migrations and migration/constraint tests are implemented. Product enrollment, matching loop, API, dashboard, and offline sync are not implemented. Add only verified work here after testing.
 
 ### Why fingerprint rather than RFID or face recognition?
 
@@ -28,7 +28,7 @@ The selected rule suppresses another accepted scan for the same student within 6
 
 ### Is the system secure/ready for schools?
 
-No. It is a pre-development science-fair prototype. Planned HTTP is not encrypted end-to-end, authorization is not implemented, sensor spoof resistance is unknown, and retention/compliance are unresolved. Demonstrations use synthetic records and consented adult testers only.
+No. It is an early-stage science-fair prototype. Planned HTTP is not encrypted end-to-end, application authorization is not implemented, sensor spoof resistance is unknown, and retention/compliance are unresolved. Demonstrations use synthetic records and consented adult testers only.
 
 ### What results have you measured?
 

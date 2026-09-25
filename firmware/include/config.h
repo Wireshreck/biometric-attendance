@@ -13,7 +13,7 @@
 #include "local_config.h"
 #endif
 
-// Provisional UART2 GPIO-matrix routing for AS608; verify exact board/module.
+// Provisional ESP32 UART GPIO-matrix routing for AS608; verify exact board/module.
 // Never rely on wire colors. GPIO16/17 may be occupied by PSRAM on some modules.
 #define PIN_AS608_RX    16  // Connects to the sensor TX signal after voltage check
 #define PIN_AS608_TX    17  // Connects to the sensor RX signal after compatibility check

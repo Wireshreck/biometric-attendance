@@ -16,19 +16,23 @@ sequenceDiagram
     ESP->>RTC: Read configured local time
     RTC-->>ESP: Date/time; firmware applies configured timezone offset
     ESP->>ESP: Create persistent event UUID
-    ESP-->>User: Show generic success prompt and local feedback
     alt API reachable
       ESP->>API: POST event with same UUID on retries
+      API->>DB: Transaction: idempotency, slot resolve, 60-second check, insert outcome
+      DB-->>API: RECORDED or DUPLICATE_SUPPRESSED
+      API-->>ESP: Stored outcome
+      ESP-->>User: Generic confirmed outcome; no identity shown
     else Offline
       ESP->>Queue: Persist event before acknowledging queued state
+      ESP-->>User: Show "Saved offline" only after durable write
       Note over ESP,Queue: On reconnect, replay oldest first; remove only after accepted server response
       ESP->>API: Replay event with original capture time and UUID
+      API->>DB: Transaction: idempotency, slot resolve, 60-second check, insert outcome
+      DB-->>API: RECORDED or DUPLICATE_SUPPRESSED
+      API-->>ESP: Stored outcome; firmware may now remove queued event
     end
-    API->>DB: Transaction: idempotency check, slot resolve, 60-second check, insert outcome
-    DB-->>API: RECORDED or DUPLICATE_SUPPRESSED
-    API-->>ESP: Stored outcome
-    UI->>API: Poll attendance/report endpoints
-    API-->>UI: Accepted events; daily presence counts distinct students
+    API-->>UI: Authenticated SSE committed event
+    UI->>API: REST fetch attendance/report data
   else No match
     Sensor-->>ESP: No-match result
     ESP-->>User: Generic failure prompt; do not reveal another student's identity

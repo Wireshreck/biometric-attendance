@@ -1,6 +1,6 @@
 # ESP32 Firmware
 
-**Status:** `src/main.cpp` is a compile/toolchain validation sketch. Attendance, enrollment, RTC, OLED, networking, LittleFS queue, authentication, retries, and watchdog behavior are not implemented.
+**Status:** VERIFIED — `src/main.cpp` compiles for `esp32dev` with pinned dependencies (`pio run -d firmware`, 2026-09-25). This verifies compilation only; flashing/board behavior NEEDS HARDWARE. Attendance, enrollment, RTC, OLED, networking, LittleFS queue, authentication, retries, and watchdog behavior are PLANNED.
 
 ## Build target and dependencies
 

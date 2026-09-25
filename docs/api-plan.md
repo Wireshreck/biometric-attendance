@@ -1,6 +1,6 @@
 # MVP HTTP API Contract
 
-**Status:** Planned; no API routes exist in the repository.  
+**Status:** PLANNED — no API routes exist in the repository.
 **Base path:** `/api/v1`; JSON over the isolated local demo network.  
 **Frontend transport:** `fetch()` for commands/queries plus authenticated Server-Sent Events for live updates.  
 **Canonical data model:** [database design](database-plan.md); [requirements](requirements-traceability.md).

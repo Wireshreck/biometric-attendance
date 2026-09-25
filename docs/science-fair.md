@@ -1,6 +1,6 @@
 # Science Fair Project Plan
 
-**Event target:** 2026-10-09. **Project state:** pre-development; demonstration claims must be updated only from test evidence.
+**Event target:** 2026-10-09. **Project state:** early implementation; SQLite schema v1 exists, but no attendance product or measured demo results are claimed. Update claims only from test evidence.
 
 ## Question and motivation
 

@@ -1,6 +1,8 @@
 # Development Environment Setup (Windows / PowerShell)
 
-**Observed host:** Windows 10 Pro x64; Python 3.13.15; Git 2.55.0; PlatformIO Core 6.2.0; GitHub CLI 2.101.0; Node.js is installed but not needed. GitHub CLI is unauthenticated. See the dated [environment audit](environment-audit.md); verify versions locally because host state changes.
+**Observed host snapshot:** Windows 10 Pro x64; Python 3.13.15; Git 2.55.0; PlatformIO Core 6.2.0; GitHub CLI 2.101.0; Node.js is installed but not needed. GitHub CLI was unauthenticated in the 2026-09-24 snapshot; `gh auth status` reported authenticated on 2026-09-25. See the dated [environment audit](environment-audit.md); verify versions locally because host state changes.
+
+`pio run -d firmware` compiled the configured `esp32dev` toolchain sketch on 2026-09-25. This did not flash or validate a physical board.
 
 ## Clean setup order
 

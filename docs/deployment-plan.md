@@ -1,6 +1,6 @@
 # Local Demo Deployment Plan
 
-**Status:** Future runbook; the backend app/dashboard/attendance firmware do not exist yet. Do not attempt to follow this as a working demo recipe until implementation gates pass. Development setup: [environment](environment.md).
+**Status:** PLANNED — the backend app/dashboard/attendance firmware do not exist yet. Do not attempt to follow this as a working demo recipe until implementation gates pass. Development setup: [environment](environment.md).
 
 ## Target topology
 

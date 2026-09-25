@@ -1,6 +1,6 @@
 # Requirements Traceability
 
-**Status:** Baseline mapping of the pre-development SRS. Requirements are planned; none of the product behaviors below are implemented or verified. Source: [requirements.md](requirements.md).
+**Status:** IMPLEMENTED — traceability map for the baseline SRS. Product behavior statuses in the matrix remain PLANNED unless updated with evidence. Source: [requirements.md](requirements.md).
 
 Priority: **P0** required for the MVP; **P1** quality target; **P2** deferred/optional. A named test is a planned verification, not evidence of a passing test.
 
@@ -26,7 +26,7 @@ Priority: **P0** required for the MVP; **P1** quality target; **P2** deferred/op
 
 ## Coverage gaps and notes
 
-- No test suite or tests directory currently exists. Every TC above is a plan and must be implemented with its component.
+- Database migration/schema tests now exist in `backend/tests/test_database.py`; they verify schema setup and constraints only. The remaining TC cases are plans and no product API, firmware, UI, or integration suite exists.
 - FR-01 says “authorized” but the MVP authorization procedure is local physical access to the USB serial console; this is a prototype control, not production admin authentication.
 - FR-02 and NFR-01 are measurable targets, not measured results. Accuracy/FAR/FRR has no acceptance threshold in the SRS; collect honest results and do not claim a performance guarantee.
 - FR-04 now has one consistent interpretation in the database plan: scans are suppressed only within the 60-second interval; a later same-day scan is recordable. Daily presence counts distinct students with an accepted event.

@@ -2,7 +2,7 @@
 
 **Project:** Biometric Attendance (school attendance demonstrator)  
 **Target event:** 2026-10-09  
-**Current phase:** Foundation/planning; application and physical hardware validation are not implemented/confirmed.
+**Current phase:** Early implementation; SQLite schema v1 is verified. API/application code and physical hardware validation remain unimplemented/unconfirmed.
 
 ## Objective
 
@@ -27,9 +27,9 @@ Production school deployment, cloud synchronization, real student/biometric data
 
 | Phase | Work | Dependency / exit evidence |
 | --- | --- | --- |
-| F0 Foundation | Requirements traceability, architecture, BOM, setup, security boundaries, Git baseline | Documentation consistency; actual commit waits for author identity |
+| F0 Foundation | Requirements traceability, architecture, BOM, setup, security boundaries, Git baseline | Baseline commit `9bb5801`; continue with focused commits and evidence |
 | H1 Procurement/bench | Confirm purchases and exact variants; safe power/I2C/UART/RTC bring-up | Parts received; measured hardware gates pass |
-| D1 Data/backend | SQLite migrations, temporary fixture tests, config/auth/health, students/enrollment state | DB tests and API contract tests pass |
+| D1 Data/backend | Extend schema v1 with query/transaction services, then config/auth/health and student enrollment state | Current schema/constraint tests pass; remaining DB/API contract tests are pending |
 | F1 Firmware local | Sensor enrollment/search/delete, RTC, generic feedback and errors | Physical sensor test evidence; no identity/image leak |
 | D2 Attendance API | Device heartbeat, event UUID, transaction, 60s suppression, reports and SSE | API/idempotency/timezone tests pass |
 | F2 Offline firmware | LittleFS durable queue, overflow behavior and reconnect replay | Power-loss/outage/replay tests pass |

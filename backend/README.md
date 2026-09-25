@@ -1,29 +1,29 @@
 # Backend Service Plan
 
-**Status:** Environment and dependency metadata are present; the backend application is **not implemented**. There is no `app/main.py`, router, schema migration, or application test suite yet. The commands below install/verify dependencies; the server command is future-facing until the entry point exists.
+**Status:** IMPLEMENTED / VERIFIED — SQLite schema v1 and transactional migration/connection setup in `app/database.py` and `migrations/`; six migration/constraint tests pass. There is no `app/main.py`, router, authentication, or API behavior. `test_env.py` is an environment smoke check.
 
 ## Selected runtime
 
 Python 3.13 on Windows, FastAPI, Uvicorn, Pydantic, aiosqlite, SQLite WAL. Vanilla frontend is served by FastAPI. AI is optional and deferred. Dependency manifests: `pyproject.toml`, `requirements.txt`, `requirements-dev.txt`.
 
-## Planned module layout
+## Current and planned module layout
 
 ```text
 backend/
   app/
-    main.py                 # lifespan, health, static mount
+    database.py             # implemented SQLite connections, pragmas, migrations
+    main.py                 # planned lifespan, health, static mount
     config.py               # environment settings, fail-fast validation
-    db.py                   # aiosqlite connections, pragmas, transaction helpers
     auth.py                 # admin and per-device auth dependencies
     schemas.py              # Pydantic request/response models
     routers/                # students, attendance, reports, devices, SSE
     services/               # enrollment state, idempotency/60s duplicate policy
-    migrations/             # ordered SQL, PRAGMA user_version
+    migrations/             # implemented schema v1; add ordered follow-up SQL
   data/                     # runtime database (ignored by Git)
-  tests/                    # pytest; temporary SQLite and synthetic fixtures
+  tests/                    # migration/constraint tests; API tests planned
 ```
 
-This is a proposed organization; files do not exist yet. Keep business rules in services/transactions, parameterize SQL, validate inputs at the boundary, and avoid a second ORM/framework for the small local workload.
+Keep business rules in services/transactions, parameterize SQL, validate inputs at the boundary, and avoid a second ORM/framework for the small local workload.
 
 ## Setup and current verification
 
@@ -33,9 +33,10 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements-dev.txt
 python test_env.py
+python -m pytest tests
 ```
 
-This only verifies the development environment, not backend routes. Configuration template: `.env.example`; copy to `.env` and provide local synthetic-demo credentials. `.env` is ignored. The future app should fail fast when credentials are empty outside explicit development mode.
+`test_env.py` verifies environment dependencies only. The pytest suite currently verifies DB migrations/constraints; no routes exist yet. Configuration template: `.env.example`; `.env` is ignored. The future app should fail fast when credentials are empty outside explicit development mode.
 
 After `app/main.py` and routes exist, intended launch is `uvicorn app.main:app --host 127.0.0.1 --port 8000`. For an ESP32 on an isolated demo network, bind to the laptop's LAN interface or `0.0.0.0` only as needed, apply host firewall rules, and use synthetic data because the MVP HTTP transport is unencrypted.
 

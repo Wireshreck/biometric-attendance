@@ -1,6 +1,6 @@
 # Hardware Selection and Verification
 
-**Status:** Parts researched; no physical module revisions or bench results confirmed. See the [BOM](bill-of-materials.md), [shopping checklist](purchase-checklist.md), [provisional wiring](wiring.md), [pinout](../hardware/pinout.md), and [bring-up gates](../hardware/test-plan.md).
+**Status:** NEEDS HARDWARE — parts researched; no physical module revisions or bench results confirmed. See the [BOM](bill-of-materials.md), [shopping checklist](purchase-checklist.md), [provisional wiring](wiring.md), [pinout](../hardware/pinout.md), and [bring-up gates](../hardware/test-plan.md).
 
 ## Selected MVP hardware
 

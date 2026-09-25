@@ -1,6 +1,7 @@
 erDiagram
-  STUDENTS ||--o{ ATTENDANCE_EVENTS : generates
+  DEVICES ||--o{ STUDENTS : enrollment_device
   DEVICES ||--o{ ATTENDANCE_EVENTS : submits
+  STUDENTS o|--o{ ATTENDANCE_EVENTS : resolved_student
 
   STUDENTS {
     INTEGER id PK
@@ -9,22 +10,29 @@ erDiagram
     TEXT first_name
     TEXT last_name
     TEXT grade_class
-    INTEGER fingerprint_slot_id UK
+    INTEGER enrollment_device_id FK
+    INTEGER fingerprint_slot_id "unique with enrollment_device_id; nullable until enrollment"
     TEXT status
     TEXT created_at_utc
+    TEXT updated_at_utc
   }
   DEVICES {
     INTEGER id PK
     TEXT device_uuid UK
+    TEXT device_name
+    TEXT location_name
     TEXT token_hash
     TEXT status
     TEXT last_seen_at_utc
+    INTEGER sensor_capacity
+    TEXT created_at_utc
   }
   ATTENDANCE_EVENTS {
-    TEXT event_uuid PK
-    INTEGER student_id FK
+    INTEGER id PK "stable ordered SSE cursor"
+    TEXT event_uuid UK
+    INTEGER student_id FK "nullable after erasure"
     INTEGER device_id FK
-    INTEGER fingerprint_slot_id
+    INTEGER fingerprint_slot_id "nullable after erasure"
     TEXT captured_at_utc
     TEXT received_at_utc
     TEXT sync_status

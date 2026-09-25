@@ -89,7 +89,7 @@ Desktop.ini
 ehthumbs.db
 
 # ─── Obsidian internal workspace state ────────────────────────────────────────
-# Root .obsidian is editor configuration, not the vault; retain locally, do not version it.
+# The repository root is the Obsidian vault. Keep this machine-specific UI/workspace config local.
 /.obsidian/
 # Keep any actual nested vault notes/canvas tracked; ignore only its window layout.
 obsidian/**/.obsidian/workspace.json

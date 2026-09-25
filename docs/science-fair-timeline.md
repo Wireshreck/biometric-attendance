@@ -1,6 +1,6 @@
 # Science Fair Timeline and Gates
 
-**Target event:** 2026-10-09. **Status:** high risk. As of 2026-09-24 the application is unimplemented and hardware order/delivery is not confirmed. Dates below are planning gates, not predictions or completed milestones. Replan after procurement status is known; do not silently compress safety/verification.
+**Target event:** 2026-10-09. **Status:** high risk. As of 2026-09-25 the application is largely unimplemented (SQLite schema v1 now exists) and hardware order/delivery is not confirmed. Dates below are planning gates, not predictions or completed milestones. Replan after procurement status is known; do not silently compress safety/verification.
 
 | Window / target | Work and dependency | Exit evidence / fallback |
 | --- | --- | --- |
@@ -16,7 +16,7 @@
 
 ## Critical path and decision gates
 
-- **Gate A — procurement (Sep 25 target):** If hardware is not in hand by Sep 28, switch to mock/software demonstration and stop promising physical recognition results.
+- **Gate A — procurement (Sep 25 target):** Procurement status is currently unknown. If hardware is not in hand by Sep 28, switch to mock/software demonstration and stop promising physical recognition results.
 - **Gate B — safe hardware (before sensor connection):** Exact module supply and UART logic levels, I2C pull-ups and RTC battery circuit are confirmed; otherwise no powered connection.
 - **Gate C — vertical slice (Oct 4 target):** If enrollment→scan→API→database→dashboard cannot be repeated, demonstrate component evidence only; do not present a “working end-to-end system.”
 - **Gate D — freeze (Oct 6 target):** Prioritize bugs, backup/restore, and explanation over optional features. AI is deferred.

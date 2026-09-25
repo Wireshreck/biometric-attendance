@@ -1,6 +1,6 @@
 # Dependency Inventory
 
-Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. Product code is not implemented; current imports/build references are environment/toolchain checks.
+Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. Backend routes and firmware attendance behavior are not implemented. SQLite schema setup exists in `backend/app/database.py`; its tests use temporary synthetic databases.
 
 | Name | Pinned version/range | Used for | Required? | Install/verification | License note |
 | --- | --- | --- | --- | --- | --- |

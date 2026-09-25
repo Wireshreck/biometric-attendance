@@ -1,9 +1,15 @@
+---
+type: project-navigation
+status: PLANNED
+updated: 2026-09-25
+---
+
 # 09 - API Plan
 
 [[00 - Project Overview|⬅️ Back to Hub]] | [[08 - Database Plan|⬅️ Database]] | [[10 - AI Plan|Next: AI ➡️]]
 
-**Status:** Planned; endpoints are not implemented. Canonical contract: [API plan](../../docs/api-plan.md).
+**Status:** PLANNED — endpoints are not implemented. Canonical contract: [API plan](../../docs/api-plan.md).
 
-The proposed FastAPI interface covers student administration, attendance queries, statistics, and device event ingestion. Device ingestion is intended to authenticate with a device token and validate slot IDs and timestamps. Implement authentication, authorization for administrative routes, input limits, idempotency/replay handling, and secure transport as part of the API rather than treating the draft contract as production-ready.
+The documented FastAPI interface covers student/device administration, enrollment/cleanup, attendance ingest/query, reports, CSV, and SSE. The API is not implemented. The schema migration exists, but device/admin authentication, validation, idempotency, and transport controls do not. The local HTTP design is only for synthetic data on an isolated network.
 
 Related: [Backend plan](07 - Backend Plan.md), [database plan](08 - Database Plan.md).

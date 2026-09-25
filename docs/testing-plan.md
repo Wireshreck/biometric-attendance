@@ -1,6 +1,6 @@
 # Test and Acceptance Plan
 
-**Status:** Planned. No application test suite, hardware results, recognition accuracy, performance measurements, or reliability results are present. Traceability is in [requirements-traceability.md](requirements-traceability.md); bench sequence is [hardware/test-plan.md](../hardware/test-plan.md).
+**Status:** IMPLEMENTED — database migration/constraint tests. PLANNED — API, UI, firmware, integration, and hardware testing. No recognition accuracy, performance measurements, or reliability results are present. Traceability is in [requirements-traceability.md](requirements-traceability.md); bench sequence is [hardware/test-plan.md](../hardware/test-plan.md).
 
 | Test ID | Level | Setup/action | Acceptance evidence |
 | --- | --- | --- | --- |

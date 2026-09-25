@@ -1,6 +1,6 @@
 # Optional Local Read-Only Reporting Assistant
 
-**Status:** Deferred; no AI code, model, or client dependency is present. The attendance MVP must be complete and useful with this component absent.
+**Status:** DEFERRED — no AI code, model, or client dependency is present. The attendance MVP must be complete and useful with this component absent.
 
 ## Allowed boundary
 

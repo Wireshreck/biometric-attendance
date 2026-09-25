@@ -9,7 +9,7 @@
 | HW-03 | RTC battery safety | Inspect exact DS3231 board charging circuit and datasheet before inserting cell | Battery type matches board; primary CR2032 is never connected to a charging circuit |
 | HW-04 | I2C | Power OLED/RTC at 3V3; scan bus at 100 kHz on GPIO21/22 | Expected addresses respond; bus high never exceeds 3.3V; record pull-up resistance/board details |
 | HW-05 | LED and buzzer | Test one output at a time with current limit/resistors | Correct state/polarity; buzzer has suitable transistor driver; no ESP32 pin overcurrent |
-| HW-06 | AS608 UART | Confirm exact VCC and TX/RX level from module evidence; common ground; UART2 GPIO16/17 at documented baud | Sensor handshake succeeds repeatedly; TX high <=3.3V; record supply current and firmware/baud |
+| HW-06 | AS608 UART | Confirm exact VCC and TX/RX level from module evidence; common ground; use selected GPIO-matrix UART pins only after confirming module/board compatibility and baud | Sensor handshake succeeds repeatedly; TX high <=3.3V; record supply current, pin mapping and baud |
 | HW-07 | Combined load | Enable display, RTC, sensor, buzzer, Wi-Fi; observe serial and rail | No brownout, reset, excessive rail drop, or warm connector; log peak current if instrument available |
 | HW-08 | RTC persistence | Set test time with explicit timezone convention, remove USB for 10 minutes, restore | Clock advances and retains time; compare measured drift; no network required |
 | HW-09 | Fingerprint operation | Enroll/delete synthetic test finger using consented tester | Repeated enroll, identify, delete/re-enroll works; record exact capacity and failures; do not claim FAR/FRR from this check |

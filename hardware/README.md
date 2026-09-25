@@ -7,7 +7,7 @@ This directory contains wiring diagrams, pinout mappings, component datasheets, 
 ## Directory Contents
 
 * **`pinout.md`**: Provisional ESP32-WROOM-32 DevKit pin assignments and electrical constraints; not bench-verified.
-* **`test-plan.md`**: Step-by-step physical bench testing procedure for verifying individual components upon hardware delivery on September 28, 2026.
+* **`test-plan.md`**: Step-by-step physical bench testing procedure; the Sep 28, 2026 arrival date is a planning target, not confirmed delivery.
 
 ---
 

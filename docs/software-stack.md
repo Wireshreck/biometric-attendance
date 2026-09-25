@@ -1,15 +1,15 @@
 # Software Stack
 
-**Status:** Selected tooling; application implementation is pending. Exact dependency sources are [PlatformIO config](../firmware/platformio.ini), [Python pyproject](../backend/pyproject.toml), and [requirements files](../backend/requirements.txt). See [dependency inventory](dependencies.md).
+**Status:** PLANNED — stack selected; application implementation is pending. Exact dependency sources are [PlatformIO config](../firmware/platformio.ini), [Python pyproject](../backend/pyproject.toml), and [requirements files](../backend/requirements.txt). See [dependency inventory](dependencies.md).
 
 | Layer | Selected technology | Current state |
 | --- | --- | --- |
-| Firmware | PlatformIO, `espressif32@6.5.0`, Arduino on ESP32-WROOM-32-class board | Toolchain-check sketch only; libraries pinned in config |
+| Firmware | PlatformIO, `espressif32@6.5.0`, Arduino on ESP32-WROOM-32-class board | Toolchain-check sketch compiles for `esp32dev`; no upload or physical test; libraries pinned in config |
 | Sensor/display/RTC | Adafruit fingerprint, SSD1306/GFX, RTClib | Dependency declarations only; no product firmware |
 | Offline storage | ESP32 LittleFS | Build setting only; queue unimplemented |
 | Device transport | Local HTTP JSON, per-device bearer credential | Planned; no TLS; synthetic demo data only |
-| Backend | Python 3.13, FastAPI, Uvicorn, Pydantic, aiosqlite | Venv/metadata/environment smoke script; no app |
-| Database | Standard SQLite in Python, WAL | Schema is planned only |
+| Backend | Python 3.13, FastAPI, Uvicorn, Pydantic, aiosqlite | Environment smoke check and SQLite migrations/tests; no FastAPI app/routes |
+| Database | Standard SQLite in Python, WAL | Schema v1 migration and connection helper implemented; six migration/constraint tests pass; attendance processing remains planned |
 | UI | Static semantic HTML/CSS/ES modules | No UI files or Node tooling |
 | Live updates | Authenticated Server-Sent Events + REST `fetch()` | API/UI plan only; meets stated update target if verified |
 | Optional reporting assistant | Local LLM via allowlisted read-only API tools | Deferred; core does not depend on it |

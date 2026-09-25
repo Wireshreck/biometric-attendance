@@ -1,6 +1,6 @@
 # Privacy and Security Design
 
-**Status:** Requirements and intended controls only; no production security controls have been implemented or independently audited. The MVP is for a synthetic-data science fair demonstration, not live school attendance.
+**Status:** PLANNED — intended controls only; no production security controls have been implemented or independently audited. The MVP is for a synthetic-data science fair demonstration, not live school attendance.
 
 ## Data boundaries
 

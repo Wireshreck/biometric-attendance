@@ -1,8 +1,14 @@
+---
+type: project-navigation
+status: PLANNED
+updated: 2026-09-25
+---
+
 # 15 - Science Fair Timeline
 
 [[00 - Project Overview|⬅️ Back to Hub]] | [[14 - Science Fair|⬅️ Exhibition]] | [[16 - Purchase Checklist|Next: Procurement ➡️]]
 
-**Status:** Baseline schedule from 2026-09-24; dates are targets, not evidence of completion. Canonical schedule: [Science-fair timeline](../../docs/science-fair-timeline.md).
+**Status:** PLANNED — dates are targets, not evidence of completion. Canonical schedule: [Science-fair timeline](../../docs/science-fair-timeline.md).
 
 | Target date | Gate |
 | --- | --- |

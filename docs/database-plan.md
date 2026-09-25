@@ -1,6 +1,6 @@
 # Database Design
 
-**Status:** Planned; no application schema or migrations exist yet.  
+**Status:** VERIFIED — schema v1 migration and connection setup are implemented in `backend/migrations/001_initial_schema.sql` and `backend/app/database.py`; six migration/constraint tests pass. Product data-access/attendance processing remains PLANNED.
 **Engine:** SQLite, one local writer, WAL for concurrent dashboard reads.  
 **File:** `backend/data/attendance.db` (generated at runtime; never commit it).
 
@@ -80,7 +80,7 @@ No `configuration` table is needed for the MVP. Operational configuration comes 
 
 ## Migrations, fixtures, recovery
 
-Use checked-in, ordered SQL migrations and `PRAGMA user_version`; migrations run transactionally at startup and fail closed on errors. Back up via SQLite's online backup API before migration. Test migration from an empty database and every supported prior schema version.
+Use checked-in, ordered SQL migrations and `PRAGMA user_version`; connection setup applies pending migrations transactionally and fails closed on errors or a future schema version. Back up via SQLite's online backup API before migration. Tests cover initial migration, constraints, foreign keys, rollback, and idempotent re-open; add migration-from-prior-version tests with each future schema change.
 
 Tests use temporary databases and synthetic fixture names/IDs only. Do not ship real student records as seeds. Back up the SQLite database with its backup API (not by copying only the main file while WAL is active), retain documented encrypted copies only when real sensitive records are permitted, and periodically restore into a separate temporary path and run `PRAGMA integrity_check`.
 

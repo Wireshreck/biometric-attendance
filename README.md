@@ -1,35 +1,36 @@
 # Biometric School Attendance System
 
-> **Open-source, local-first biometric attendance terminal for schools.**  
-> Built with ESP32 + AS608 fingerprint sensor + FastAPI + SQLite.  
+> **Open-source, local-first biometric attendance demonstrator for schools.**
+> Planned core: ESP32 + AS608 fingerprint sensor + FastAPI + SQLite.
 > Science Fair Exhibition: **9 October 2026**
 
 ---
 
-## 🚦 Project Status: `PRE-DEVELOPMENT`
+## Project Status: `IN PROGRESS`
 
 | Milestone | Status |
 | :--- | :---: |
-| Environment prepared | ✅ |
-| Local Git repository created | ✅ (uncommitted foundation; author identity not set) |
-| GitHub configured | ⬜ |
-| Hardware researched & BOM published | ✅ |
-| Hardware ordered | ? (not confirmed in project files) |
-| Hardware received | ? (not confirmed in project files) |
-| Firmware toolchain configuration | ✅ (actual build pending; dependency download did not complete during takeover validation) |
-| Backend environment ready (FastAPI + SQLite) | ✅ |
-| Obsidian notes 00–17 + task tracker/canvas | ✅ (planning index; implementation pending) |
-| Architecture documentation aligned | ✅ (implementation remains planned) |
-| Hardware bench tested | ⬜ |
-| MVP firmware implemented | ⬜ |
-| Backend + API implemented | ⬜ |
-| Dashboard implemented | ⬜ |
-| Integration complete | ⬜ |
-| Science-fair demo ready | ⬜ |
+| Python/backend environment smoke check | VERIFIED |
+| Git baseline and origin | VERIFIED (`main` at `9bb5801`, tracking `origin/main`) |
+| GitHub CLI authentication | VERIFIED locally (`gh auth status`; CI result not checked) |
+| Hardware selection and BOM | IMPLEMENTED (planning docs; procurement unconfirmed) |
+| Purchase/delivery confirmation | BLOCKED (owner status unknown) |
+| Firmware toolchain validation sketch | VERIFIED (compile only; flashing and hardware behavior NEEDS HARDWARE) |
+| Backend application/API | PLANNED |
+| Obsidian project workspace | VERIFIED (repo root is vault; guide/handoff/file-backed Canvas link to source files) |
+| Architecture documentation | VERIFIED (implementation remains planned) |
+| Hardware bench tests | NEEDS HARDWARE |
+| Attendance firmware | PLANNED; NEEDS HARDWARE for sensor validation |
+| Database schema v1 migration | VERIFIED (5 temporary-database migration/constraint tests passed) |
+| Dashboard | PLANNED |
+| End-to-end integration | PLANNED; NEEDS HARDWARE |
+| Science-fair demo | PLANNED |
 
 ---
 
 ## 🗓️ Science Fair Countdown
+
+Dates below are planning targets from the project timeline, not confirmed purchases, delivery commitments, or completed milestones.
 
 | Date | Deadline |
 | :--- | :--- |
@@ -93,7 +94,7 @@ biometric-attendance/
 ├── diagrams/            Mermaid diagrams
 ├── scripts/             Automation and backup scripts
 ├── presentation/        Demo script, judge Q&A, outline
-├── obsidian/            Obsidian knowledge base vault
+├── obsidian/            Project navigation notes and Canvas (open repository root as vault)
 └── .github/             Issue templates, CI workflows
 ```
 
@@ -120,6 +121,8 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 ---
 
 ## 📖 Documentation Index
+
+Open the repository root as the Obsidian vault. Start with the [project overview](obsidian/Attendance%20System/00%20-%20Project%20Overview.md), [AI development guide](obsidian/Attendance%20System/AI%20Development%20Guide.md), and [AI handoff](obsidian/Attendance%20System/AI%20Project%20Handoff.md). The numbered vault notes are navigation/status pages; subsystem design details remain authoritative in the linked files below.
 
 | Document | Description |
 | :--- | :--- |
@@ -148,8 +151,8 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 | AS608 Optical Fingerprint Sensor | ₹799 |
 | SSD1306 0.96" I2C OLED | ₹163 (listing, ex GST) |
 | DS3231 High Precision RTC | ₹189 |
-| Active Buzzer, LEDs, Resistors | ₹130 |
-| Breadboard + Jumper Wires + USB Cable | ₹414 |
+| Active Buzzer, LEDs, Resistors | ₹105 |
+| Breadboard + Jumper Wires + USB Cable | ₹344 |
 | **Planning estimate incl. tax/shipping reserve** | **~₹2,399 (verify current cart; not a quote)** |
 
 ---

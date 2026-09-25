@@ -4,7 +4,7 @@
 **Project:** Biometric School Attendance System (`biometric-attendance`)  
 **Auditor:** Automated Project Initialization Agent  
 
-> Historical environment snapshot. During the 2026-09-24 takeover, local Git was initialized on `main`; no commit or remote exists because an actual author identity and GitHub destination are not configured. PlatformIO dependency download did not complete during current validation, so this snapshot's firmware compile statement is not fresh evidence.
+> Historical machine snapshot. Current Git/GitHub state is in [GitHub setup](github-setup.md); the repository root is now the Obsidian vault, while `obsidian/Attendance System/` is its project workspace. The pinned `esp32dev` validation sketch compiled with `pio run -d firmware` on 2026-09-25; this is compile evidence only, not a flash or hardware test.
 
 ---
 
@@ -39,12 +39,12 @@
 
 ---
 
-### MISSING (Action Required or Pending Auth)
+### MISSING AT SNAPSHOT DATE (2026-09-24; re-check current state)
 
 | Component | Status | Required Action / Remedy |
 | :--- | :--- | :--- |
-| **GitHub Authentication** | `gh auth status` returned unauthenticated | User must authenticate via `gh auth login` when ready. Detailed instructions provided in `docs/github-setup.md`. |
-| **Git User Identity** | Global `user.name` and `user.email` not set | Repo-local or global config must be initialized before commits. Setup script provided. |
+| **GitHub Authentication** | `gh auth status` returned unauthenticated at snapshot time | Rechecked 2026-09-25; authenticated as `Wireshreck`. Current instructions in `docs/github-setup.md`. |
+| **Git User Identity** | Global `user.name` and `user.email` not set at snapshot time | Rechecked 2026-09-25; configured identity and baseline commit are recorded in `docs/github-setup.md`. |
 | **Physical ESP32 Board** | No USB-UART bridge detected on COM ports | Hardware pending procurement (Science Fair arrives ~Sept 28, 2026). Upload marked as **PENDING HARDWARE**. |
 
 ---
@@ -87,4 +87,4 @@ Description: Communications Port (Standard motherboard serial port)
 
 * **Obsidian Executable:** `C:\Users\user\AppData\Local\Programs\Obsidian\Obsidian.exe`
 * **Existing Vaults Registry:** Located in `C:\Users\user\AppData\Roaming\obsidian\obsidian.json`
-* **Isolated Project Vault:** Created exclusively under `biometric-attendance/obsidian/Attendance System/` to ensure **zero modification** of the user's unrelated personal vaults (`HINDI`, `HISTORY`, `Alccubierre drive vid`).
+* **Project Workspace:** Notes were originally created under `biometric-attendance/obsidian/Attendance System/`; current convention is to open the repository root as the vault, keeping the rest of the user's vaults separate.

@@ -1,15 +1,23 @@
-# 🏫 Biometric School Attendance System — Knowledge Base
+---
+type: project-navigation
+status: IN PROGRESS
+updated: 2026-09-25
+---
 
-Welcome to the central Obsidian knowledge hub for the **Autonomous Local-First Biometric School Attendance Platform**.
+# Biometric School Attendance System — Project Home
+
+Welcome to the project workspace for the **local-first Biometric School Attendance demonstrator**. Open the repository root as the Obsidian vault so this workspace can navigate the actual source, plans, configuration, and tests.
 
 > [!NOTE]
-> **Current Status:** `PRE-DEVELOPMENT`  
+> **Current Status:** `IN PROGRESS` — database foundation verified; backend/API and device/product implementation remain
 > **Exhibition Date:** 09 October 2026  
 > **Target Platform:** ESP32-WROOM-32 + AS608 + FastAPI + SQLite  
 
 ---
 
 ## 📌 Project Navigation Index
+
+- [[AI Development Guide|AI / contributor operating guide]] · [[AI Project Handoff|Current project handoff]] · [[Decision Log|Architecture decision log]] · [[Milestones|Milestone status]]
 
 * 📋 **Specifications & Goals:**
   * [[01 - Requirements|System Requirements (Functional & Non-Functional)]]
@@ -25,7 +33,7 @@ Welcome to the central Obsidian knowledge hub for the **Autonomous Local-First B
 
 * 💻 **Software & Engineering Plans:**
   * [[05 - Software Stack|Technology Stack Selection & Rationale]]
-  * [[06 - Firmware Plan|ESP32 Firmware Architecture & FreeRTOS]]
+  * [[06 - Firmware Plan|ESP32 Firmware Plan]]
   * [[07 - Backend Plan|FastAPI Backend & Service Architecture]]
   * [[08 - Database Plan|SQLite3 Relational Schema & WAL Mode]]
   * [[09 - API Plan|REST API Endpoint Specifications]]
@@ -44,18 +52,17 @@ Welcome to the central Obsidian knowledge hub for the **Autonomous Local-First B
 
 ---
 
-## 🚦 System Status Dashboard
+## System Status Dashboard
 
-- [x] Environment audit and dependencies documented (product not implemented)
-- [x] Firmware toolchain sketch previously compiled; recheck in current state
-- [x] Backend environment smoke check documented; not an API test
-- [x] Hardware requirements and estimated BOM documented (not all prices live-verified)
-- [x] Local Git initialized; no author, commit, or remote
-- [ ] Hardware purchase/delivery status confirmed
-- [ ] Hardware received and bench-tested
-- [ ] Standalone prototype working (Deadline: Oct 01)
-- [ ] First end-to-end working demo (Deadline: Oct 04)
-- [ ] Testing & code freeze (Deadline: Oct 06)
-- [ ] Science fair presentation (Event: Oct 09)
+| Area | Status | Evidence / remaining work |
+| --- | --- | --- |
+| Repository-root Obsidian workspace and AI handoff | VERIFIED | Guide, handoff, decision log, task tracker and file-backed Canvas |
+| Git baseline / GitHub remote / CLI auth | VERIFIED | `main`, baseline `9bb5801`, `origin/main`, local `gh auth status` |
+| Python environment and SQLite smoke check | VERIFIED | `backend/test_env.py` passed in `backend/.venv` |
+| SQLite schema v1 migration | VERIFIED | Six temporary-database migration/constraint tests passed |
+| Firmware toolchain sketch | VERIFIED | `pio run -d firmware` passed; compile only, no board flash or hardware test |
+| FastAPI, attendance firmware, dashboard | PLANNED | Product application layers not implemented |
+| Procurement / physical hardware | BLOCKED / NEEDS HARDWARE | Purchase status and exact module revisions are unknown |
+| Integrated science-fair demo | PLANNED | Requires application work and hardware evidence |
 
-> Dates remain target dates. Hardware order/arrival is not confirmed, and all product features are still planned. Use [[TODO|the authoritative task tracker]] for next work and [the canonical documentation](../../docs/project-plan.md) for project scope.
+> Dates remain targets. Hardware order/arrival is unconfirmed. Product features are planned unless their implementation and evidence are explicitly recorded. Use [[TODO|the authoritative task tracker]], [[Milestones]], and the [canonical project plan](../../docs/project-plan.md).

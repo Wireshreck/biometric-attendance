@@ -28,7 +28,7 @@ jobs:
           pio run
 
   validate-backend:
-    name: Backend Environment Smoke Check
+    name: Backend Smoke Check and Database Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -49,3 +49,8 @@ jobs:
         run: |
           cd backend
           python test_env.py
+
+      - name: Run database migration and constraint tests
+        run: |
+          cd backend
+          python -m pytest tests -q
