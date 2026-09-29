@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | Sep 24–25 | Confirm budget, seller/variant, place order if owner chooses; continue source/setup foundation | Receipt and delivery estimate, exact part revisions. If delayed, prepare software-only/mock demo. |
 | Sep 25–28 | Extend API with report/query, CSV/SSE and device lifecycle routes; start dashboard work if API contract tests pass; confirm procurement in parallel | API-03 tests and a working software-only trace; if hardware is delayed, prepare a clearly labeled software/mock demonstration. |
-| Sep 28–29 (conditional on delivery) | Inspect components; power, I2C, outputs, AS608 UART checks | Completed hardware gates with measured values; stop on voltage uncertainty or overheating. |
+| Sep 28–29 (conditional on delivery) | Inspect components; power, I2C, outputs, R703 UART checks (identify module labels/pinout first; HARDWARE VERIFICATION REQUIRED) | Completed hardware gates with measured values; stop on voltage uncertainty or overheating. |
 | Sep 29–Oct 1 (conditional) | Enroll/match synthetic adult tester; RTC and generic local feedback | Repeated physical success, no-match and error evidence. If sensor fails, present only verified components and limitation. |
 | Oct 1–3 | Offline queue/replay and terminal event client; complete student workflow against API | Unit/API tests plus queue restart/replay evidence; no silent loss. |
 | Oct 3–4 | Dashboard views, SSE and end-to-end join | At least one complete synthetic enrollment→scan→DB→UI trace. If not, show only verified layers. |

@@ -6,7 +6,7 @@
 
 ## Objective
 
-Explore a local attendance pipeline with ESP32 + AS608 fingerprint matching, offline event buffering, a laptop-hosted FastAPI/SQLite service, and a vanilla-JS dashboard. The science-fair MVP must use synthetic data and consenting adult testers. It is an educational prototype, not authorized for live institutional attendance.
+Explore a local attendance pipeline with ESP32 + R703 fingerprint matching, offline event buffering, a laptop-hosted FastAPI/SQLite service, and a vanilla-JS dashboard. The science-fair MVP must use synthetic data and consenting adult testers. It is an educational prototype, not authorized for live institutional attendance.
 
 ## MVP scope
 

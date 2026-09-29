@@ -21,7 +21,7 @@ if ($authStatus -notmatch "Logged in to") {
 # Define Milestones with Due Dates (Science Fair: 2026-10-09)
 $milestones = @(
     @{ Title = "M0 - Preparation"; Due = "2026-09-24T23:59:59Z"; Desc = "Project bootstrap, environment audit, BOM, wiring, and architectural documentation." },
-    @{ Title = "M1 - Hardware Bring-up"; Due = "2026-09-28T23:59:59Z"; Desc = "Bench validation of ESP32, AS608, SSD1306 OLED, DS3231 RTC, and audio-visual indicators." },
+    @{ Title = "M1 - Hardware Bring-up"; Due = "2026-09-28T23:59:59Z"; Desc = "Bench validation of ESP32, R703 fingerprint module (verify unit specs first), SSD1306 OLED, DS3231 RTC, and audio-visual indicators." },
     @{ Title = "M2 - Fingerprint Enrollment"; Due = "2026-09-29T23:59:59Z"; Desc = "Implement and validate consented sensor enrollment, bounded capture flow, and slot mapping. Template internals are sensor-managed and unverified." },
     @{ Title = "M3 - Fingerprint Recognition"; Due = "2026-09-30T23:59:59Z"; Desc = "Implement sensor match-result handling and local feedback; do not claim confidence metrics unless exposed and validated." },
     @{ Title = "M4 - Attendance Engine"; Due = "2026-10-01T23:59:59Z"; Desc = "Hardware DS3231 RTC timestamping, duplicate scan suppression, and local LittleFS offline buffering." },

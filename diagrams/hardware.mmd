@@ -1,6 +1,6 @@
 flowchart LR
   USB[USB 5V data/power] --> ESP[ESP32-WROOM-32 DevKit]
-  ESP -->|UART RX GPIO16 provisional; verify module and voltage| Sensor[AS608 UART]
+  ESP -->|UART RX GPIO16 provisional; R703 pinout/voltage UNVERIFIED| Sensor[R703 UART]
   ESP -->|UART TX GPIO17 provisional; verify module| Sensor
   ESP -.->|Confirm sensor supply and UART logic levels; shift if needed| Sensor
   ESP -->|GPIO21 SDA / GPIO22 SCL| Bus[I2C shared bus]

@@ -1,7 +1,7 @@
 ---
 type: decision-log
 status: IN PROGRESS
-updated: 2026-09-25
+updated: 2026-09-29
 ---
 
 # Architecture Decision Log
@@ -11,7 +11,7 @@ Records below preserve rationale and decision state. They do not prove every beh
 | ID | Decision / status | Reason and tradeoff | Evidence / revisit trigger |
 | --- | --- | --- | --- |
 | ADR-001 | Use ESP32-WROOM-32-class terminal — **PROVISIONAL** | Low-cost Wi-Fi MCU with UART/I2C and an established PlatformIO target; clone/module pins and power vary. | `docs/hardware.md`, `docs/wiring.md`; revisit after exact board is identified. |
-| ADR-002 | Select AS608 fingerprint module — **PROVISIONAL** | Candidate optical UART module for edge matching and local template slots; exact capacity, logic levels, liveness, and template properties are unverified. | `docs/bill-of-materials.md`; revisit against exact datasheet/unit or if safe interface cannot be established. |
+| ADR-002 | Select AS608 fingerprint module — **SUPERSEDED by ADR-012 (2026-09-29)** | Historical: candidate optical UART module for edge matching and local template slots; exact capacity, logic levels, liveness, and template properties were unverified. The physically acquired module is an R703 instead. | `docs/bill-of-materials.md`; superseded — see ADR-012. |
 | ADR-003 | Local-first, one-host prototype — **PLANNED** | Avoid cloud dependence and keep demo operation understandable; limits prototype access to a local network and requires explicit firewall handling. | `docs/architecture.md`; revisit only if requirements change. |
 | ADR-004 | Keep matching/template operations on sensor; host receives slot result only — **PROVISIONAL** | Minimize host/network biometric data; the project cannot claim the exact sensor firmware enforces this until commands and behavior are verified. | `docs/privacy-security.md`; revisit after module protocol inspection and packet/log review. |
 | ADR-005 | FastAPI + SQLite for a single local service — **DECIDED; IMPLEMENTED (API/DB subset)** | Existing Python environment and modest single-host write load suit a simple relational store; SQLite is not treated as a multi-writer server. | API/DB slice exists in `backend/app/`; dashboard, reports and full service remain incomplete. Revisit if measured workload exceeds the single-host model. |
@@ -21,6 +21,7 @@ Records below preserve rationale and decision state. They do not prove every beh
 | ADR-009 | Stable UUID and bounded LittleFS replay queue — **PLANNED** | Durable idempotency key is needed for offline retry without duplicate inserts; queue overflow must fail visibly, never discard silently. | `docs/architecture.md`, `firmware/README.md`; validate through power-cut/retry tests. |
 | ADR-010 | Device bearer token + admin HTTP Basic for synthetic isolated demo only — **DECIDED; IMPLEMENTED (API subset)** | Simple MVP separation of device ingestion from admin operations; HTTP exposes credentials on the LAN and is not suitable for real personal data. | Limited API checks exist in `backend/app/auth.py`; no independent audit, TLS, stronger identity or production suitability. |
 | ADR-011 | Defer optional AI; if added, read-only aggregate reports only — **DEFERRED** | Core attendance must not depend on AI; limits exposure and prevents generated output from changing attendance records. | `docs/ai-plan.md`; reconsider after tested core MVP and privacy review. |
+| ADR-012 | Fingerprint hardware is the acquired **R703** UART module, replacing the planned AS608 — **DECIDED; HARDWARE VERIFICATION REQUIRED** | The owner physically acquired an R703; the migration retires active AS608 instructions. No authoritative R703 datasheet was located as of 2026-09-29 (searched manufacturer/retailer catalogs and datasheet mirrors): supply voltage, logic levels, pin order, default baud, protocol family, capacity and timeout behavior are all UNVERIFIED. Protocol is provisionally assumed compatible with the common Grow/HF UART command family used by the pinned Adafruit Fingerprint library; this must be proven at the first bench handshake. | Supersedes ADR-002. Unit is in hand (owner-reported 2026-09-29). Verified facts to be recorded in `docs/hardware.md`, `docs/bill-of-materials.md`, and `hardware/test-plan.md` HW-06 after first bench inspection. Revisit if the first handshake fails, which would mean a different protocol/driver is needed. |
 
 ## Change procedure
 

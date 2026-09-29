@@ -14,7 +14,7 @@ This directory contains wiring diagrams, pinout mappings, component datasheets, 
 ## Hardware Architecture Quick Reference
 
 * **Main Controller:** ESP32-WROOM-32 DevKit V1 (3.3V Logic)
-* **Optical Fingerprint Sensor:** AS608 via configurable ESP32 UART (GPIO 16/17 provisional; verify exact module and board)
+* **Fingerprint Sensor:** R703 UART module (physically acquired 2026-09-29; specs/pinout UNVERIFIED — HARDWARE VERIFICATION REQUIRED) via configurable ESP32 UART (GPIO 16/17 provisional; verify exact module and board)
 * **Real-Time Clock:** DS3231 via Hardware I2C (GPIO 21/22, Address `0x68`)
 * **Display:** SSD1306 0.96" 128×64 OLED via Hardware I2C (GPIO 21/22, Address `0x3C`)
 * **Audio Indicator:** 5V Active Buzzer with onboard transistor driver (GPIO 23)

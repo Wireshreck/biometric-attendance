@@ -28,7 +28,7 @@ Every device event carries a persistent `event_uuid`. A replay of that UUID retu
 | `status` | TEXT CHECK in `PENDING_ENROLLMENT`, `ACTIVE`, `INACTIVE` | Enrollment/administrative state |
 | `created_at_utc`, `updated_at_utc` | TEXT NOT NULL, RFC3339 UTC | Audit timestamps |
 
-Only `ACTIVE` students are resolved for attendance. Add `UNIQUE(enrollment_device_id, fingerprint_slot_id)`; SQLite permits multiple NULL pending slots. Attendance slot resolution is by `(device_id, fingerprint_slot_id)`. Capacity is reported from the exact sensor at bring-up; do not assume every AS608 unit has 300 slots. MVP supports one physical terminal; multi-terminal attendance enrollment requires explicit per-device assignment and is not implied by the `devices` table.
+Only `ACTIVE` students are resolved for attendance. Add `UNIQUE(enrollment_device_id, fingerprint_slot_id)`; SQLite permits multiple NULL pending slots. Attendance slot resolution is by `(device_id, fingerprint_slot_id)`. Capacity is reported from the exact sensor at bring-up; do not assume any slot count for the unverified R703. MVP supports one physical terminal; multi-terminal attendance enrollment requires explicit per-device assignment and is not implied by the `devices` table.
 
 ### `devices`
 

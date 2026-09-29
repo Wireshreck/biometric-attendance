@@ -17,9 +17,10 @@
 #include <Adafruit_Fingerprint.h>
 #include <ArduinoJson.h>
 
-// GPIO Pin Definitions (as specified in docs/wiring.md)
-#define PIN_AS608_RX 16
-#define PIN_AS608_TX 17
+// GPIO Pin Definitions (provisional; as documented in docs/wiring.md)
+// R703 pinout/voltage are UNVERIFIED — HARDWARE VERIFICATION REQUIRED.
+#define PIN_R703_RX 16
+#define PIN_R703_TX 17
 #define PIN_I2C_SDA   21
 #define PIN_I2C_SCL   22
 #define PIN_LED_GREEN 18

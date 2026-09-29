@@ -1,7 +1,7 @@
 # Biometric School Attendance System
 
 > **Open-source, local-first biometric attendance demonstrator for schools.**
-> Planned core: ESP32 + AS608 fingerprint sensor + FastAPI + SQLite.
+> Planned core: ESP32 + R703 fingerprint module + FastAPI + SQLite.
 > Science Fair Exhibition: **9 October 2026**
 
 ---
@@ -50,7 +50,7 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 ```
 ┌─────────────────────────────────┐
 │     Edge Terminal (ESP32)       │
-│  AS608 ─ UART ─ ESP32 ─ OLED   │
+│  R703 ─ UART ─ ESP32 ─ OLED    │
 │              │                  │
 │           DS3231 RTC            │
 │    Green/Red LED  Buzzer        │
@@ -149,7 +149,7 @@ Open the repository root as the Obsidian vault. Start with the [project overview
 | Component | Est. Price |
 | :--- | :---: |
 | ESP32-WROOM-32 DevKit V1 | ₹349 |
-| AS608 Optical Fingerprint Sensor | ₹799 |
+| R703 Fingerprint Module (acquired; specs unverified) | record from receipt |
 | SSD1306 0.96" I2C OLED | ₹163 (listing, ex GST) |
 | DS3231 High Precision RTC | ₹189 |
 | Active Buzzer, LEDs, Resistors | ₹105 |

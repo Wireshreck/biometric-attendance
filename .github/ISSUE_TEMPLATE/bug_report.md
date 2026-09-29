@@ -12,7 +12,7 @@ Brief summary of the unexpected behavior.
 ## Subsystem
 - [ ] Hardware / Wiring
 - [ ] ESP32 Firmware
-- [ ] AS608 Fingerprint Scanner
+- [ ] R703 Fingerprint Module
 - [ ] Backend API / SQLite
 - [ ] Web Dashboard UI
 - [ ] Networking / Wi-Fi

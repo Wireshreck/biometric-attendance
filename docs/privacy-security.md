@@ -4,7 +4,7 @@
 
 ## Data boundaries
 
-- Fingerprint capture, matching, and template storage are intended to remain inside the AS608 module. Firmware should send only a matched integer slot ID and event metadata. The host API/database must never request, accept, log, export, or back up raw images or template bytes.
+- Fingerprint capture, matching, and template storage are intended to remain inside the sensor module (the acquired R703; originally planned as AS608). Firmware should send only a matched integer slot ID and event metadata. The host API/database must never request, accept, log, export, or back up raw images or template bytes.
 - This is an application design constraint, not a verified guarantee about every sensor revision or its proprietary template format. Do not claim templates are mathematically irreversible or impossible to reconstruct. Confirm the exact module documentation and firmware behavior; physical access to the sensor may expose or erase on-module templates.
 - A slot ID is pseudonymous, not anonymous: linked to a student's identity and attendance, it is sensitive personal data. Attendance records, roll numbers, names, device tokens, and backups require protection.
 - Collect only the identity fields needed for the demo. Use synthetic attendees. No real student or biometric data in tests, screenshots, issue trackers, logs, or presentation materials.
@@ -25,7 +25,7 @@ The 365-day period in earlier planning was not institutionally approved and must
 
 ## Known prototype limitations
 
-- AS608 liveness/spoof resistance is unknown for the exact unit; assume spoofing may be possible. Measure only with safe, consented test artifacts and do not infer production FAR/FRR from a small demo.
+- R703 liveness/spoof resistance is unknown for the exact unit; assume spoofing may be possible. Measure only with safe, consented test artifacts and do not infer production FAR/FRR from a small demo.
 - HTTP over a shared/local LAN is not encrypted end-to-end; bearer tokens can be replayed by an observer. The planned MVP is not suitable for real student data.
 - One shared administrator credential does not provide robust identity, role-based access, recovery, or non-repudiation.
 - Laptop filesystem and SQLite database are not encrypted by the application. Physical host access exposes data.

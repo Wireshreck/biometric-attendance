@@ -7,7 +7,7 @@ Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, 
 | PlatformIO Core | Host tool; audit recorded 6.2.0 | Resolve/build/upload firmware | Required for firmware dev | `python -m pip install platformio`; `pio --version`, `pio run` | PlatformIO Core license applies; inspect upstream terms before redistribution |
 | `espressif32` platform | 6.5.0 | ESP32 board/framework/toolchain | Required firmware | PlatformIO `pio run` | Platform/package component terms; review upstream metadata |
 | Arduino framework | Selected by PlatformIO platform | Firmware API | Required firmware | Bundled/resolved by PlatformIO | Upstream framework license |
-| Adafruit Fingerprint Sensor Library | 2.1.3 | AS608 UART/enrollment/match commands | Planned required firmware | `pio run`, then physical sensor test | Adafruit library license; preserve notices if redistributing |
+| Adafruit Fingerprint Sensor Library | 2.1.3 | UART fingerprint enroll/match commands (common Grow/HF-series protocol family); R703 compatibility UNVERIFIED — must be proven at first handshake | Planned required firmware | `pio run`, then physical sensor test | Adafruit library license; preserve notices if redistributing |
 | Adafruit SSD1306 | 2.5.9 | OLED driver | Planned required firmware | `pio run` and display bench test | Adafruit library license |
 | Adafruit GFX | 1.11.9 | OLED graphics dependency | Planned required firmware | Resolved as direct dependency; `pio run` | Adafruit library license |
 | RTClib | 2.1.3 | DS3231 access | Planned required firmware | `pio run` and RTC bench test | Adafruit library license |

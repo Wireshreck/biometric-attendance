@@ -1,7 +1,7 @@
 ---
 type: project-guide
 status: VERIFIED
-updated: 2026-09-25
+updated: 2026-09-29
 ---
 
 # AI Development Guide
@@ -10,7 +10,7 @@ This file is the operating guide for AI agents and human contributors. **Open th
 
 ## Project overview
 
-The project is a local-first science-fair attendance demonstrator planned around an ESP32 + AS608 sensor, local FastAPI service, SQLite, and a browser dashboard. SQLite schema v1 and a tested FastAPI subset exist (health, admin student lifecycle, device enrollment assignment/completion, attendance ingest). Remaining reports/CSV/SSE/device lifecycle, firmware, dashboard, and physical integration are incomplete. Use synthetic identities and consenting adult testers for any future demo. The optional local AI reporting layer is deferred and must remain read-only and unnecessary for core operation.
+The project is a local-first science-fair attendance demonstrator planned around an ESP32 + fingerprint sensor, local FastAPI service, SQLite, and a browser dashboard. **Hardware note (2026-09-29):** the original plan named an AS608; the physically acquired module is an **R703** UART fingerprint module whose electrical specifications and pinout are UNVERIFIED — HARDWARE VERIFICATION REQUIRED (see [[Decision Log]] ADR-012). SQLite schema v1 and a tested FastAPI subset exist (health, admin student lifecycle, device enrollment assignment/completion, attendance ingest). Remaining reports/CSV/SSE/device lifecycle, firmware, dashboard, and physical integration are incomplete. Use synthetic identities and consenting adult testers for any future demo. The optional local AI reporting layer is deferred and must remain read-only and unnecessary for core operation.
 
 ## Repository map
 
@@ -87,7 +87,7 @@ An existing plan or note is not evidence that its product feature is implemented
 
 - Inspect actual source before saying functionality exists. Never infer implementation from diagrams or plans.
 - Keep docs synchronized with behavior and distinguish planned, implemented, and verified scope.
-- Do not invent sensor behavior, template properties, voltage tolerance, purchases, measurements, test outcomes, or security guarantees.
+- Do not invent sensor behavior, template properties, voltage tolerance, purchases, measurements, test outcomes, or security guarantees. The R703's specifications are unverified; do not wire or power it from assumptions, and do not claim its library/protocol compatibility until a bench handshake succeeds.
 - Protect credentials, local config, student identity, attendance data, and biometric data. Use synthetic data. Never add secrets to examples or Git.
 - Do not casually move/delete existing files, duplicate specifications, change architecture, or add dependencies/frameworks without a concrete need.
 - Do not send biometric images/templates to cloud services. The planned prototype HTTP transport is unencrypted and is restricted to synthetic demo data on an isolated network.

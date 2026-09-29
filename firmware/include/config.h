@@ -13,11 +13,13 @@
 #include "local_config.h"
 #endif
 
-// Provisional ESP32 UART GPIO-matrix routing for AS608; verify exact board/module.
-// Never rely on wire colors. GPIO16/17 may be occupied by PSRAM on some modules.
-#define PIN_AS608_RX    16  // Connects to the sensor TX signal after voltage check
-#define PIN_AS608_TX    17  // Connects to the sensor RX signal after compatibility check
-#define AS608_BAUD_RATE 57600
+// Provisional ESP32 UART GPIO-matrix routing for the R703 fingerprint module.
+// NEVER rely on wire colors: R703 pin labels, supply, and UART logic level are
+// UNVERIFIED — HARDWARE VERIFICATION REQUIRED before connecting or powering it.
+// GPIO16/17 may be occupied by PSRAM on some modules.
+#define PIN_R703_RX    16  // Connects to the sensor TX signal after pinout + voltage verification
+#define PIN_R703_TX    17  // Connects to the sensor RX signal after level-compatibility verification
+#define R703_BAUD_RATE 57600  // Provisional first attempt (common for this class); confirm at first handshake
 
 // I2C Bus - SSD1306 OLED & DS3231 RTC
 #define PIN_I2C_SDA     21

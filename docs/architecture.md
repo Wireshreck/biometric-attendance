@@ -4,13 +4,13 @@
 
 ## What and why
 
-A low-cost, local-network school attendance demonstrator pairs an ESP32 terminal with an AS608 fingerprint module and a laptop-hosted FastAPI/SQLite service. It aims to explore edge-side biometric matching, durable offline event delivery, and simple local reporting. Use synthetic identities at the fair. The prototype is not suitable for operational school attendance.
+A low-cost, local-network school attendance demonstrator pairs an ESP32 terminal with an R703 UART fingerprint module and a laptop-hosted FastAPI/SQLite service. It aims to explore edge-side biometric matching, durable offline event delivery, and simple local reporting. Use synthetic identities at the fair. The prototype is not suitable for operational school attendance.
 
 ## Components and status
 
 | Component | Intended responsibility | Actual repository state |
 | --- | --- | --- |
-| ESP32-WROOM-32 + AS608 | Capture/match locally; expose slot result only; RTC and display feedback | PlatformIO toolchain-check sketch and pin config only; no attendance firmware |
+| ESP32-WROOM-32 + R703 | Capture/match locally; expose slot result only; RTC and display feedback | PlatformIO toolchain-check sketch and pin config only; no attendance firmware; R703 electrical specs UNVERIFIED |
 | LittleFS queue | Persist event UUID and capture metadata offline; replay in order | Filesystem configured; queue not implemented |
 | FastAPI | Device auth, enrollment status, event processing, reports, static files | `backend/app/main.py` implements health, admin student lifecycle, device enrollment assignment/completion, and attendance ingest; reports/SSE/CSV/static frontend and remaining device operations are absent |
 | SQLite WAL | Student/device metadata, event outcomes, audit | Schema v1 migration and connection helper exist; no runtime DB is committed and attendance processing is not implemented |

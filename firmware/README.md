@@ -33,7 +33,7 @@ Copy `include/local_config.example.h` to `include/local_config.h`; the latter is
 
 ## Implementation order
 
-1. Bench-test power, AS608 UART voltage/handshake, I2C, and indicators separately.
+1. Bench-test power, R703 UART voltage/handshake (identify its pin labels and supply/logic levels from the unit first — HARDWARE VERIFICATION REQUIRED), I2C, and indicators separately.
 2. Add PlatformIO test environments/sketches for sensor handshake, I2C, and indicators (none currently exist).
 3. Implement sensor enrollment/search/delete and explicit error states; measure timings.
 4. Add RTC timezone policy and generic screen prompts.

@@ -104,3 +104,6 @@ backups/
 *.tmp
 *.temp
 scratch/
+
+# ─── Local assistant workspace metadata ───────────────────────────────────────
+.freebuff/

@@ -1,7 +1,7 @@
 ---
 type: project-navigation
 status: IN PROGRESS
-updated: 2026-09-25
+updated: 2026-09-29
 ---
 
 # Biometric School Attendance System — Project Home
@@ -11,7 +11,7 @@ Welcome to the project workspace for the **local-first Biometric School Attendan
 > [!NOTE]
 > **Current Status:** `IN PROGRESS` — database and software-tested API vertical slice verified; reports, dashboard, firmware and physical integration remain
 > **Exhibition Date:** 09 October 2026  
-> **Target Platform:** ESP32-WROOM-32 + AS608 + FastAPI + SQLite  
+> **Target Platform:** ESP32-WROOM-32 + R703 + FastAPI + SQLite  
 
 ---
 
@@ -64,7 +64,7 @@ Welcome to the project workspace for the **local-first Biometric School Attendan
 | Firmware toolchain sketch | VERIFIED | `pio run -d firmware` passed; compile only, no board flash or hardware test |
 | FastAPI vertical slice | VERIFIED (software tests) | Health, admin student lifecycle, enrollment assignment/completion, attendance ingestion; remaining routes tracked in [[TODO]] |
 | Attendance firmware and dashboard | PLANNED | No sensor integration, browser UI or full event pipeline |
-| Procurement / physical hardware | BLOCKED / NEEDS HARDWARE | Purchase status and exact module revisions are unknown |
+| Procurement / physical hardware | BLOCKED / NEEDS HARDWARE | Fingerprint module in hand (R703, specs UNVERIFIED — HARDWARE VERIFICATION REQUIRED); other purchases and exact module revisions are unknown |
 | Integrated science-fair demo | PLANNED | Requires application work and hardware evidence |
 
 > Dates remain targets. Hardware order/arrival is unconfirmed. Product features are planned unless their implementation and evidence are explicitly recorded. Use [[TODO|the authoritative task tracker]], [[Milestones]], and the [canonical project plan](../../docs/project-plan.md).

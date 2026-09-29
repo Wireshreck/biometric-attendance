@@ -1,7 +1,7 @@
 ---
 type: build-manual
 status: IN PROGRESS
-updated: 2026-09-25
+updated: 2026-09-29
 ---
 
 # 18 - Complete Build Guide
@@ -11,7 +11,7 @@ This is the canonical human build procedure. **It is not yet a verified physical
 ## 00. Prerequisites
 
 - Windows 10/11 or a current supported developer OS; Python 3.11+ (the checked environment used Python 3.13), Git, PowerShell, PlatformIO Core, and a browser.
-- For the physical build: exact ESP32 board/module, fingerprint module, OLED, DS3231 breakout and correct battery, LEDs/resistors, buzzer/driver, USB supply/cable, breadboard and jumpers. Procurement/delivery and revisions are **UNKNOWN**; see [[16 - Purchase Checklist]] and `docs/purchase-checklist.md`.
+- For the physical build: exact ESP32 board/module, fingerprint module (**R703 — in hand, acquired 2026-09-29; its specifications and pinout are UNVERIFIED: HARDWARE VERIFICATION REQUIRED**), OLED, DS3231 breakout and correct battery, LEDs/resistors, buzzer/driver, USB supply/cable, breadboard and jumpers. Other procurement/delivery and revisions are **UNKNOWN**; see [[16 - Purchase Checklist]] and `docs/purchase-checklist.md`.
 - Read `docs/wiring.md`, `hardware/pinout.md`, and `hardware/test-plan.md`. Their assignments are provisional, not authority to connect power.
 
 ## 01–03. Inventory, identification, and electrical safety
@@ -20,7 +20,7 @@ Record manufacturer/markings/revision, pin labels, supply range, interface logic
 
 ## 04–11. Breadboard, controller, peripherals, and power
 
-The current signal proposal in `docs/wiring.md` is: AS608 UART on GPIO16/17; shared OLED/RTC I2C on GPIO21/22; green/red LEDs on GPIO18/19 through series resistors; active buzzer module input on GPIO23 through a driver. These assignments are **PROVISIONAL / NEEDS HARDWARE**; GPIO16/17 may conflict with PSRAM on some boards. Do not copy this table into firmware or wire it until exact hardware is checked and `hardware/pinout.md` is updated from bench evidence.
+The current signal proposal in `docs/wiring.md` is: R703 UART on GPIO16/17; shared OLED/RTC I2C on GPIO21/22; green/red LEDs on GPIO18/19 through series resistors; active buzzer module input on GPIO23 through a driver. These assignments are **PROVISIONAL / NEEDS HARDWARE**; GPIO16/17 may conflict with PSRAM on some boards, and the R703 pinout/voltage are unverified. Do not copy this table into firmware or wire it until exact hardware is checked and `hardware/pinout.md` is updated from bench evidence.
 
 There is no verified total-current budget or final power topology. Do not power an unknown sensor/buzzer from an ESP32 GPIO. Confirm each supply range, signal high level, pull-up rail, resistor/driver, polarity, common-ground need, board regulator capacity, and peak Wi-Fi load using exact datasheets and measurements. Only then create a one-component-at-a-time wiring record in `docs/wiring.md`; keep the laptop USB supply within board/module limits. The exact final breadboard positions and power connections are **UNKNOWN** until those checks are recorded.
 
@@ -31,7 +31,7 @@ Use `hardware/test-plan.md` as the evidence record. For each test: keep other pe
 | Component | Safe first check | Pass evidence | Failure/recovery |
 | --- | --- | --- | --- |
 | ESP32 | USB only; identify serial port and exact board marking | Stable serial enumeration and successful upload of a known minimal sketch | Try known data cable/port and documented driver; stop if board heats or supply collapses |
-| AS608 | Exact VCC/logic datasheet, then separately powered UART with common ground and measured levels | Sensor responds to documented protocol/baud; exact capacity and commands recorded | Disconnect, recheck pin labels/baud/logic level; no enrollment/matching claims without a controlled test |
+| R703 | Identify printed pin labels/supply marking first (HARDWARE VERIFICATION REQUIRED), then separately powered UART with common ground and measured levels | Sensor responds to documented protocol/baud; exact capacity and commands recorded; record the actual protocol family | Disconnect, recheck pin labels/baud/logic level; no enrollment/matching claims without a controlled test |
 | OLED | Verify supply and pull-up rail first; scan I2C at 100 kHz | Address and test pattern agree with exact module documentation | Power off; inspect SDA/SCL swap/address/pull-ups; do not raise bus to 5 V |
 | DS3231 | Verify breakout charge circuit and correct battery type before fitting cell | I2C responds; set/read time and power-cycle persistence logged | Check address, bus voltage and battery circuit; remove incompatible cell immediately |
 | LEDs | Identify polarity; use series resistor calculated from verified LED/rail values | Each LED lights only in commanded test with measured safe current | Power off; check polarity/resistor/GPIO mapping |
@@ -74,7 +74,7 @@ LittleFS persistence, chronological retry, firmware-generated UUIDs, RTC timesta
 | Symptom | Possible cause | Diagnostic | Recovery |
 | --- | --- | --- | --- |
 | ESP32 absent/upload fails | Cable, USB driver, port, board mismatch | Check Device Manager, cable data capability, exact board and PlatformIO output | Try known data cable/port and documented driver; do not change board target blindly |
-| AS608 absent/UART errors | Wrong pin labels, baud, logic voltage, power or module variant | Recheck exact datasheet and measure idle TX level; use serial diagnostics once implemented | Disconnect; correct verified wiring/config; no 5 V signal to ESP32 GPIO |
+| R703 absent/UART errors | Wrong pin labels, baud, logic voltage, power, module variant, or a protocol the configured library does not speak | Recheck the unit's labels/vendor documentation and measure idle TX level; use serial diagnostics once implemented | Disconnect; correct verified wiring/config; no 5 V signal to ESP32 GPIO |
 | OLED blank / I2C scan empty | Wrong address, SDA/SCL, pull-up rail, supply | Power-off continuity and rail check, then 100 kHz scan | Correct only from module labels/docs; ensure bus pull-ups do not exceed 3.3 V |
 | RTC time wrong / lost | Invalid set time, backup cell/charge mismatch, bus fault | Read back after set and power cycle; inspect breakout circuit | Correct time and documented battery configuration; never fit an unverified cell |
 | LED/buzzer silent or hot | Polarity, resistor/driver, GPIO or module mismatch | Disconnect load; verify exact module and current path | Recalculate/provide driver from verified specs; never drive load directly if current is unknown |

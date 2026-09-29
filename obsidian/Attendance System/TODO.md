@@ -1,7 +1,7 @@
 ---
 type: task-tracker
 status: IN PROGRESS
-updated: 2026-09-25
+updated: 2026-09-29
 ---
 
 # Authoritative Project Task Tracker
@@ -25,7 +25,8 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 | API-02 | Implement authenticated attendance ingest with idempotency, timestamp checks and 60-second policy | Backend/API | P0 | VERIFIED (software tests) | API-01 | API tests cover replay, 60/61-second boundary, invalid timestamp/auth/slot; concurrency and firmware queue replay remain unverified |
 | API-03 | Implement daily/range reports, CSV-safe export, attendance query, SSE, device heartbeat/status and cleanup/deletion routes | Backend/API | P0 | PLANNED | API-01/API-02 | Contract tests for timezone/date bounds, CSV formula escaping, SSE cursor and lifecycle safety |
 | BUILD-01 | Complete the human build procedure using identified parts, verified electrical specifications, bench evidence, and tested software/integration steps | Documentation/Hardware | P0 | IN PROGRESS | HW-01/HW-02; firmware/UI/integration implementation | Build guide and checklists match actual variants, measurements, tested procedures, and demo recovery evidence |
-| HW-01 | Confirm purchase/order/delivery and exact board/sensor/module revisions | Procurement | P0 | BLOCKED | Owner confirmation | Record actual variant, seller, paid total, receipt/order and expected/actual arrival |
+| HW-00 | Identify acquired R703: photograph, record pin labels/supply markings, locate vendor documentation, verify supply/logic levels before wiring | Hardware | P0 | NEEDS HARDWARE (unit in hand, 2026-09-29) | Physical unit (in hand); owner may supply receipt/docs | Recorded photos/labels/vendor docs in `docs/hardware.md`; see [[Decision Log]] ADR-012 and [[AI Project Handoff]] |
+| HW-01 | Confirm purchase/order/delivery and exact board/sensor/module revisions (R703 fingerprint module: acquired 2026-09-29; remainder unconfirmed) | Procurement | P0 | BLOCKED | Owner confirmation | Record actual variant, seller, paid total, receipt/order and expected/actual arrival |
 | HW-02 | Bench-test safe power, I2C, outputs, sensor UART, RTC and combined load | Hardware | P0 | NEEDS HARDWARE | HW-01, exact parts in hand | Record board IDs, meter/logic evidence and pass/fail in `hardware/test-plan.md` |
 | FW-00 | Compile toolchain validation sketch for pinned `esp32dev` target | Firmware | P0 | VERIFIED | — | `pio run -d firmware` passed 2026-09-25; compile only |
 | FW-01 | Add diagnostic environments and pass peripheral/board checks | Firmware | P0 | NEEDS HARDWARE | HW-02 | I2C/UART/output/RTC tests with physical measurements in `hardware/test-plan.md` |
@@ -40,7 +41,7 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 
 ## Current blockers and limitations
 
-- Hardware purchase/arrival and exact revisions remain unconfirmed; no electrical or biometric bench result exists.
+- Hardware purchase/arrival and exact revisions remain unconfirmed; no electrical or biometric bench result exists. The acquired fingerprint module is an R703 (2026-09-29) whose specs are UNVERIFIED — HARDWARE VERIFICATION REQUIRED (HW-00); active AS608 instructions have been migrated out of the documentation.
 - Firmware sketch compile passes. Flashing, sensor/RTC/display behavior, and electrical validation require physical hardware.
 - The implemented FastAPI slice covers health, student lifecycle, enrollment completion, and attendance ingestion. Reports/CSV/SSE/device operations, attendance firmware, frontend source, and end-to-end product suite are still absent. API/database tests do not verify physical enrollment or attendance behavior.
 - Prototype transport is planned local HTTP and is unencrypted; synthetic data only, isolated demo LAN only. No production/school deployment.

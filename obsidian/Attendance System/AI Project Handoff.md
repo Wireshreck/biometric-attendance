@@ -1,7 +1,7 @@
 ---
 type: project-handoff
 status: IN PROGRESS
-updated: 2026-09-25
+updated: 2026-09-29
 ---
 
 # AI Project Handoff
@@ -10,7 +10,9 @@ updated: 2026-09-25
 
 Biometric School Attendance System: a science-fair local attendance demonstrator. The **repository root is the Obsidian vault**; open `C:\Users\user\projects\fair\biometric-attendance` in Obsidian. The root `.obsidian/` is local UI/workspace state and is ignored. Start at [[00 - Project Overview]], use [[Architecture.canvas]] to navigate actual repo files, and follow [[AI Development Guide]] before changing code.
 
-## Current verified repository state (2026-09-25)
+## Current verified repository state (2026-09-29)
+
+- **R703 migration (2026-09-29):** the owner physically acquired an **R703** UART fingerprint module, replacing the originally planned AS608 (see [[Decision Log]] ADR-012). All active documentation, firmware config, wiring, BOM, and diagrams now target the R703. No authoritative R703 datasheet was located as of 2026-09-29: supply voltage, logic levels, pin order, default baud, protocol family, capacity, and timeouts are **UNVERIFIED — HARDWARE VERIFICATION REQUIRED**. Do not wire or power the module from assumptions. Remaining AS608 mentions are historical (decision log/BOM history only).
 
 - Git: API milestone commits are `42c0849` (vertical slice) and `a7aa14e` (full-precision duplicate boundary and concurrent WAL startup retry) on existing `main`; baseline and prior history are preserved. `origin` remains configured. Run `git status --short --branch`, `git log --oneline --decorate -5`, and `git rev-list --left-right --count origin/main...HEAD` for current synchronization; never reset or rewrite shared history. Check the latest GitHub Actions run directly for CI status.
 - Firmware: only a toolchain-check sketch and configuration; `pio run -d firmware` compiled successfully on 2026-09-25. No board flash or physical test, sensor enrollment, attendance loop, RTC integration, display behavior, networking, authentication, or offline queue.
@@ -29,7 +31,8 @@ See [[Decision Log]] for decision rationale and status. Key constraints: synthet
 
 ## Current blockers and next work
 
-1. **API-03:** implement report/query, CSV-safe export, SSE, device management/heartbeat and cleanup/delete operations according to `docs/api-plan.md`.
+1. **R703 bench identification (new top blocker, HARDWARE VERIFICATION REQUIRED):** photograph the module, record printed pin labels and supply markings, locate vendor documentation, then run the safe bring-up gates in `hardware/test-plan.md` (HW-06) before any wiring; prove or refute Adafruit-library compatibility at the first handshake.
+2. **API-03:** implement report/query, CSV-safe export, SSE, device management/heartbeat and cleanup/delete operations according to `docs/api-plan.md`.
 2. **HW-01:** purchase/delivery and exact module revisions need owner confirmation; do not infer from dates or provisional BOMs.
 3. **Hardware-dependent work:** electrical checks, pinout, sensor, RTC and display tests require exact parts and safe bench measurements.
 4. Continue with frontend/API and firmware integration after API-03, following [[TODO]] and `docs/project-plan.md`.
