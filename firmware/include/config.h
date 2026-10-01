@@ -13,13 +13,20 @@
 #include "local_config.h"
 #endif
 
-// Provisional ESP32 UART GPIO-matrix routing for the R703 fingerprint module.
-// NEVER rely on wire colors: R703 pin labels, supply, and UART logic level are
-// UNVERIFIED — HARDWARE VERIFICATION REQUIRED before connecting or powering it.
-// GPIO16/17 may be occupied by PSRAM on some modules.
-#define PIN_R703_RX    16  // Connects to the sensor TX signal after pinout + voltage verification
-#define PIN_R703_TX    17  // Connects to the sensor RX signal after level-compatibility verification
-#define R703_BAUD_RATE 57600  // Provisional first attempt (common for this class); confirm at first handshake
+// Provisional ESP32 UART GPIO-matrix routing for the R307S optical fingerprint module.
+// Observed harness wire order: 1: Red, 2: Black, 3: Yellow, 4: Green, 5: Blue, 6: White.
+// DO NOT ASSUME WIRE COLORS PROVE THE PINOUT.
+// Pin labels, supply voltage (5V vs 3.3V), and UART logic level are
+// UNVERIFIED — HARDWARE VERIFICATION REQUIRED before connecting or powering the R307S.
+// Refer to docs/r307s-integration-plan.md for the authoritative 10-phase integration sequence.
+#define PIN_R307S_RX    32  // Connects to R307S TXD after level verification (<= 3.3V)
+#define PIN_R307S_TX    33  // Connects to R307S RXD after logic verification
+#define R307S_BAUD_RATE 57600  // Provisional default factory baud rate (confirm at handshake)
+
+// Backward-compatibility aliases for existing code
+#define PIN_R703_RX     PIN_R307S_RX
+#define PIN_R703_TX     PIN_R307S_TX
+#define R703_BAUD_RATE  R307S_BAUD_RATE
 
 // I2C Bus - SSD1306 OLED & DS3231 RTC
 #define PIN_I2C_SDA     21

@@ -9,16 +9,16 @@ updated: 2026-09-29
 Welcome to the project workspace for the **local-first Biometric School Attendance demonstrator**. Open the repository root as the Obsidian vault so this workspace can navigate the actual source, plans, configuration, and tests.
 
 > [!NOTE]
-> **Current Status:** `IN PROGRESS` — database and software-tested API vertical slice verified; reports, dashboard, firmware and physical integration remain
+> **Current Status:** `IN PROGRESS` — ESP32 bring-up verified on COM3; R307S integration plan prepared; sensor NOT yet connected or powered; backend API vertical slice software-verified; dashboard and hardware integration pending
 > **Exhibition Date:** 09 October 2026  
-> **Target Platform:** ESP32-WROOM-32 + R703 + FastAPI + SQLite  
+> **Target Platform:** ESP32-WROOM-32 + R307S + FastAPI + SQLite  
 
 ---
 
 ## 📌 Project Navigation Index
 
 - [[AI Development Guide|AI / contributor operating guide]] · [[AI Project Handoff|Current project handoff]] · [[Decision Log|Architecture decision log]] · [[Milestones|Milestone status]]
-- [[18 - Complete Build Guide|Human build guide (in progress; hardware stop gates are explicit)]]
+- [R307S Integration Plan](../../docs/r307s-integration-plan.md) · [[18 - Complete Build Guide|Human build guide]]
 
 * 📋 **Specifications & Goals:**
   * [[01 - Requirements|System Requirements (Functional & Non-Functional)]]
@@ -61,10 +61,10 @@ Welcome to the project workspace for the **local-first Biometric School Attendan
 | Git baseline / GitHub remote / CLI auth | VERIFIED | Preserved baseline and configured `origin/main`; see current hash/state in [[AI Project Handoff]] |
 | Python environment and SQLite smoke check | VERIFIED | `backend/test_env.py` passed in `backend/.venv` |
 | SQLite schema v1 migration | VERIFIED | Six temporary-database migration/constraint tests passed |
-| Firmware toolchain sketch | VERIFIED | `pio run -d firmware` passed; compile only, no board flash or hardware test |
+| Firmware toolchain & serial test | VERIFIED (Phase 0 PASSED) | ESP32 serial communication confirmed on COM3 at 115200 baud; firmware compiles cleanly |
 | FastAPI vertical slice | VERIFIED (software tests) | Health, admin student lifecycle, enrollment assignment/completion, attendance ingestion; remaining routes tracked in [[TODO]] |
-| Attendance firmware and dashboard | PLANNED | No sensor integration, browser UI or full event pipeline |
-| Procurement / physical hardware | BLOCKED / NEEDS HARDWARE | Fingerprint module in hand (R703, specs UNVERIFIED — HARDWARE VERIFICATION REQUIRED); other purchases and exact module revisions are unknown |
+| Attendance firmware and dashboard | PLANNED | R307S integration plan prepared; sensor driver, browser UI and full event pipeline pending |
+| Procurement / physical hardware | IN PROGRESS / BLOCKED ON BENCH | R307S fingerprint sensor in hand with 6-wire harness (Red, Black, Yellow, Green, Blue, White); pinout & electrical ratings UNVERIFIED — HARDWARE VERIFICATION REQUIRED; sensor NOT yet connected |
 | Integrated science-fair demo | PLANNED | Requires application work and hardware evidence |
 
 > Dates remain targets. Hardware order/arrival is unconfirmed. Product features are planned unless their implementation and evidence are explicitly recorded. Use [[TODO|the authoritative task tracker]], [[Milestones]], and the [canonical project plan](../../docs/project-plan.md).

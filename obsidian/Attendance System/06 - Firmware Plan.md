@@ -1,19 +1,22 @@
 ---
 type: project-navigation
-status: PLANNED
-updated: 2026-09-29
+status: IN PROGRESS (Phase 0 PASSED)
+updated: 2026-10-01
 ---
 
 # 06 - Firmware Plan
 
 [[00 - Project Overview|⬅️ Hub]] | [[05 - Software Stack|Stack ⬅️]] | [[07 - Backend Plan|Backend ➡️]]
 
-**Status:** VERIFIED — toolchain-check sketch compiles for `esp32dev`; no board flash/physical test. Enrollment, identification, RTC, OLED, network, authentication, LittleFS queue, recovery, and watchdog behavior are PLANNED.
+**Status:**
+- **ESP32 Baseline Toolchain & Serial (Phase 0):** **VERIFIED (PASSED)**. Firmware compiles, uploads to COM3, and communicates at 115200 baud.
+- **R307S Fingerprint Integration (Phases 1–9):** **PREPARATION READY**. Sensor is physically acquired with 6-wire harness (Red, Black, Yellow, Green, Blue, White), but NOT yet connected or powered.
+- **Hardware Abstraction Layer:** Defined in `firmware/include/fingerprint_sensor.h` (Phases 4–9 driver API stub).
+- **Provisional UART Routing:** GPIO 16 (RX2) and GPIO 17 (TX2). Bounded timeouts ($\le 1000\text{ms}$).
 
-Current GPIO16/17 UART values are provisional GPIO-matrix routing, not a UART2 pin requirement. The fingerprint module is the acquired R703 (specs/pinout UNVERIFIED — HARDWARE VERIFICATION REQUIRED; see [[Decision Log]] ADR-012). Board and sensor validation still needs exact hardware.
+Implement bounded sensor/UI operations first, then RTC validation, device-authenticated event submission, and a crash-safe LittleFS queue with stable event UUIDs. Keep enrollment/deactivation local via USB serial.
 
-Implement bounded sensor/UI operations first, then RTC validation, device-authenticated event submission, and a crash-safe LittleFS queue with stable event UUIDs. Keep enrollment/deactivation local via USB serial. Do not assume two-core tasking until profiling requires it.
-
+- [R307S Integration Plan](../../docs/r307s-integration-plan.md)
 - [Firmware implementation sequence](../../firmware/README.md)
 - [Electrical-safe wiring](../../docs/wiring.md)
 - [Hardware gates](../../hardware/test-plan.md)
