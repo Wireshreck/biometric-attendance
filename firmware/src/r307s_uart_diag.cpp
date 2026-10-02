@@ -545,9 +545,10 @@ bool r307s_uart_diag_run()
         Serial.println("  Combined with the line-state probe above:");
         Serial.println("   - FLOATING line  -> no live sensor output on this wire (power path,");
         Serial.println("                      dead module, broken wire, or wire is not TXD).");
-        Serial.println("   - DRIVEN HIGH    -> module powered and its TXD idles high, but it");
-        Serial.println("                      ignores the probe: changed device address,");
-        Serial.println("                      hung controller, or baud outside the ladder.");
+        Serial.println("   - DRIVEN HIGH    -> this wire is actively held high under the probe;");
+        Serial.println("                      that alone does NOT prove module power, identity,");
+        Serial.println("                      correct pin mapping, or sensor health.");
+        Serial.println("                      Possible causes include RXD path/address/boot fault.");
         Serial.println("  0 bytes CANNOT be produced by unconnected pins 5/6 (touch circuit");
         Serial.println("  only, ~5 uA) per the R307/R307S family datasheet.");
     }

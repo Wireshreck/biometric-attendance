@@ -1,44 +1,44 @@
 # ESP32 Firmware
 
-**Status:** VERIFIED — `src/main.cpp` compiles for `esp32dev` with pinned dependencies (`pio run -d firmware`, 2026-09-25). This verifies compilation only; flashing/board behavior NEEDS HARDWARE. Attendance, enrollment, RTC, OLED, networking, LittleFS queue, authentication, retries, and watchdog behavior are PLANNED.
+**Status:** Production software now includes R307S matching and two-capture enrollment, a DS3231 timestamp gate, OLED, indicators, explicit serial enrollment, authenticated attendance POST, and a bounded persistent offline journal/replay. It compiles; no full physical workflow was tested. The R307S currently has no reported UART response, so operational attendance is still blocked by sensor/electrical verification. See [production behavior](../docs/production-firmware.md), [test matrix](../docs/hardware-test-plan.md), and [final pin map](../docs/final-pin-map.md).
 
-## Build target and dependencies
+## Build and run
 
-PlatformIO Core, `espressif32@6.5.0`, board `esp32dev`, Arduino framework, ESP32-WROOM-32-class DevKit. Libraries and exact versions are pinned in `platformio.ini`. `littlefs` is selected as the future offline storage filesystem; setting it does not implement a queue.
-
-```powershell
-cd C:\Users\user\projects\fair\biometric-attendance\firmware
-pio run
-```
-
-Upload/serial commands require a physical board and are not verified here:
+From the repository root:
 
 ```powershell
-pio run -t upload
-pio device monitor -b 115200
+pio run -d firmware -e production
+pio run -d firmware -e esp32_core
+pio run -d firmware -e r307s
+pio run -d firmware -e production -t upload --upload-port COM3
+pio run -d firmware -t uploadfs --upload-port COM3
 ```
 
-## Local configuration and secrets
+The complete environment names and purpose are listed in [component tests](../docs/component-tests.md) and [integration tests](../docs/integration-tests.md). Upload one selected image with:
 
-Copy `include/local_config.example.h` to `include/local_config.h`; the latter is ignored by Git. Set demo SSID/password and server host locally. The defaults are empty. Do not commit real credentials. Keep demonstration data synthetic; the planned local HTTP transport is not encrypted end-to-end.
+```powershell
+pio run -d firmware -e <environment> -t upload --upload-port COM3
+pio device monitor -d firmware --port COM3 --baud 115200
+```
 
-## Intended task/state design
+The port can change after reconnect; check the available ports rather than assuming COM3. `esp32dev` remains as a compatibility name for the production environment. The default environment is `production`.
 
-- Sensor/UI task: bounded UART operations, sensor timeout recovery, generic user messages, RTC validation, non-blocking feedback state machine.
-- Network/storage worker: persistent event UUIDs, bounded LittleFS queue with integrity/framing, retry with backoff, chronological replay, remove an event only after server acknowledges its stored idempotent result.
-- Never block sensor feedback while waiting for network. Queue full/write failure must show an error and never claim an event is safely queued.
-- Use framework watchdog defaults and short bounded tasks; do not disable watchdogs or feed them from a stuck loop.
-- Do not log fingerprint images/templates, names, passwords, tokens, or full attendance payloads.
-- Enrollment/deactivation requires local USB serial access. Allocate slot via API, capture two impressions, confirm sensor write before marking student active. Verify template deletion before slot reuse.
+Every image uses a source filter that selects one entry point. Test source lives in `src/test_modes/` so PlatformIO can include each entry under its configured `src` directory. Diagnostics print `[PASS]`, `[FAIL]`, `[NOT EXECUTED]`, and a `RESULT`; a compile result is not a physical hardware result.
 
-## Implementation order
+`uploadfs` initializes the LittleFS partition for first use and replaces its contents. Only use it on a new/known-empty device before any events are stored; it erases the offline queue. Routine firmware uploads do not need `uploadfs`. The production firmware mounts with formatting disabled so a mount failure cannot silently erase queued data.
 
-1. Bench-test power, R703 UART voltage/handshake (identify its pin labels and supply/logic levels from the unit first — HARDWARE VERIFICATION REQUIRED), I2C, and indicators separately.
-2. Add PlatformIO test environments/sketches for sensor handshake, I2C, and indicators (none currently exist).
-3. Implement sensor enrollment/search/delete and explicit error states; measure timings.
-4. Add RTC timezone policy and generic screen prompts.
-5. Add Wi-Fi device authentication and event API client.
-6. Add crash-safe LittleFS queue, event UUID, overflow behavior, and reconnect replay.
-7. Run hardware/failure gates in [hardware test plan](../hardware/test-plan.md) and [software test plan](../docs/testing-plan.md).
+## Current R307S state
 
-Pinout and electrical assumptions are provisional; follow [wiring safety plan](../docs/wiring.md).
+The owner reports R307S UART2 wiring to GPIO32/33 and 0-byte diagnostic responses. The diagnostic is preserved and read-only. Current VIN and sensor TX voltages are **UNVERIFIED — REQUIRES MULTIMETER**. The firmware reports `SENSOR NOT FOUND` and retries; do not interpret that message as a confirmed dead module. GPIO16/17 is obsolete wiring guidance for this setup.
+
+## Local configuration
+
+Copy `include/local_config.example.h` to the ignored `include/local_config.h` only when testing a local isolated demo network. Leave credentials blank for offline tests. The HTTP test performs GET `/health` only. Never put Wi-Fi passwords or device tokens in tracked files or logs.
+
+## Production behavior and limits
+
+The serial console accepts `HELP`, `STATUS`, `SETTIME YYYY-MM-DD HH:MM:SS`, and `ENROLL <pending-student-uuid>`. `SETTIME` sets local wall time (+05:30) only when explicitly entered; compare with a trusted clock. `ENROLL` requires USB/local serial access, Wi-Fi, device credentials, a backend pending student, and a working sensor. Never enroll during ordinary scans.
+
+`local_config.h` needs demo SSID/password, backend host/port, provisioned device UUID, and token. Backend provisioning must use a verified sensor capacity; current sensor health is unverified. HTTP bearer credentials are unencrypted on the isolated LAN, so use synthetic data on a private test network and never expose this service to the public internet. The client only acknowledges an event after API success (including server duplicate suppression); failed events remain in the LittleFS queue. The queue is bounded and fails closed when full/corrupt. It stores slot ID, UUID and timestamp only, not images/templates or student names.
+
+The runtime is compile-verified, but these still need physical verification: R307S enrollment/matching, actual sensor capacity, OLED/RTC modules and time, buzzer/LED current, durable queue across actual resets, Wi-Fi, local API request/response, offline replay, and full end-to-end behavior. See [complete beginner assembly](../docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md), [breadboard placement](../docs/complete-breadboard-layout.md), and [production firmware](../docs/production-firmware.md).

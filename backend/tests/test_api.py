@@ -89,6 +89,9 @@ def test_device_enrollment_attendance_idempotency_and_duplicate_window(client: T
     completed = client.post(path + "/complete", headers=headers, json={"result": "SUCCESS", "fingerprint_slot_id": 1})
     assert completed.status_code == 200
     assert completed.json()["status"] == "ACTIVE"
+    retried_completion = client.post(path + "/complete", headers=headers, json={"result": "SUCCESS", "fingerprint_slot_id": 1})
+    assert retried_completion.status_code == 200
+    assert retried_completion.json() == {"student_uuid": student["student_uuid"], "status": "ACTIVE"}
 
     captured_base = datetime.now(UTC) - timedelta(seconds=120)
 

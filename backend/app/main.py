@@ -221,6 +221,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if row is None:
             await connection.rollback()
             raise HTTPException(404, {"code": "not_found", "message": "Enrollment assignment was not found"})
+        if row["status"] == "ACTIVE" and row["fingerprint_slot_id"] == body.fingerprint_slot_id:
+            # Make device retries safe if power fails after the server commit but
+            # before the terminal clears its durable local completion intent.
+            await connection.rollback()
+            return {"student_uuid": str(student_uuid), "status": "ACTIVE"}
         if row["status"] != "PENDING_ENROLLMENT" or row["fingerprint_slot_id"] != body.fingerprint_slot_id:
             await connection.rollback()
             raise HTTPException(409, {"code": "invalid_enrollment", "message": "Enrollment state or slot does not match"})
