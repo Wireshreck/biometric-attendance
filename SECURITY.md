@@ -1,3 +1,12 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - security
+  - policy
+  - biometrics
+---
 # Security Policy
 
 ## Project status and scope

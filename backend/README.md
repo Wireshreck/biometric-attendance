@@ -1,3 +1,11 @@
+---
+type: reference
+area: backend
+status: active
+tags:
+  - backend
+  - reference
+---
 # Backend Service Plan
 
 **Status:** IN PROGRESS — schema/migrations plus a tested FastAPI vertical slice are implemented: health, admin student list/create/read/deactivate, device-scoped enrollment assignment/completion, and authenticated attendance ingestion with UUID idempotency and the 60-second duplicate rule. Reports, device management/heartbeat, cleanup/deletion, CSV, SSE, static dashboard, and firmware integration are not implemented.

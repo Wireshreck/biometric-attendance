@@ -1,3 +1,11 @@
+---
+type: reference
+area: project
+status: active
+tags:
+  - architecture
+  - project
+---
 # System Architecture
 
 **Status:** IN PROGRESS — backend API vertical slice is tested and firmware event/enrollment/queue workflows are implemented but need physical verification. Source diagrams: [architecture](../diagrams/architecture.mmd), [data flow](../diagrams/data-flow.mmd), [attendance](../diagrams/attendance-flow.mmd), [enrollment](../diagrams/enrollment-flow.mmd), [offline sync](../diagrams/offline-sync.mmd), [hardware](../diagrams/hardware.mmd), [database](../diagrams/database.mmd).

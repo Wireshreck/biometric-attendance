@@ -1,3 +1,11 @@
+---
+type: hardware
+area: hardware
+status: active
+tags:
+  - hardware
+  - procurement
+---
 # Hardware Shopping Checklist
 
 **Order/delivery state:** Not confirmed in project records. **Budget target:** core terminal under ₹3,000; carry-forward planning envelope ~₹2,429 before any conditional RTC battery adjustment. Prices are estimates, not quotes. Three current pre-GST listings were checked 2026-09-24; verify stock, GST, shipping, and local alternatives before paying. See [detailed BOM](bill-of-materials.md) and [wiring safety notes](wiring.md).

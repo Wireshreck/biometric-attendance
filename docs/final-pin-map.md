@@ -1,3 +1,12 @@
+---
+type: hardware
+area: hardware
+status: unverified
+tags:
+  - hardware
+  - pinout
+  - canonical
+---
 # Final firmware pin map (current hardware)
 
 **Status:** GPIO assignments are selected and firmware-configured; external electrical interfaces are not fully verified. R307S power and UART voltage are **UNVERIFIED — REQUIRES MULTIMETER**. Exact board/module revisions have not been independently identified.

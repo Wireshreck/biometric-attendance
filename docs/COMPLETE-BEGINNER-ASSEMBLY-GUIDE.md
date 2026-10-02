@@ -1,3 +1,12 @@
+---
+type: setup
+area: hardware
+status: unverified
+tags:
+  - setup
+  - assembly
+  - beginner
+---
 # Complete beginner assembly guide
 
 **Status:** Instructions for the current prototype. Hardware module variants and R307S supply/signal levels remain unverified. Do not power a connection whose labels or voltage are uncertain.

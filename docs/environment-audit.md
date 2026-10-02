@@ -1,3 +1,12 @@
+---
+type: reference
+area: documentation
+status: deprecated
+tags:
+  - reference
+  - environment
+  - historical
+---
 # Development Environment Audit
 
 **Audit Date:** 2026-09-24
@@ -5,6 +14,9 @@
 **Auditor:** Automated Project Initialization Agent
 
 > Historical machine snapshot. Current Git/GitHub state is in [GitHub setup](github-setup.md). The project vault is under `obsidian/`; the root `.obsidian/` folder is separate local app configuration. The pinned `esp32dev` validation sketch compiled with `pio run -d firmware` on 2026-09-25; this is compile evidence only, not a flash or hardware test.
+
+> [!NOTE]
+> **Historical document.** This audit records the repository as it stood on the date above. It is kept for provenance and is deliberately **not** updated as the project moves on. For the current structure see [[docs/VAULT-AUDIT.md]] and [[00 - Vault Hub]]; for the current task state see [[10 - Workshop/TODO]].
 
 ---
 
@@ -87,4 +99,4 @@ Description: Communications Port (Standard motherboard serial port)
 
 * **Obsidian Executable:** `C:\Users\user\AppData\Local\Programs\Obsidian\Obsidian.exe`
 * **Existing Vaults Registry:** Located in `C:\Users\user\AppData\Roaming\obsidian\obsidian.json`
-* **Project Workspace:** Notes are stored under `biometric-attendance/obsidian/Attendance System/`; open `obsidian/` as this project's vault and keep root `.obsidian/` identified as separate local app configuration.
+* **Project Workspace (as of this snapshot):** Notes were stored under `biometric-attendance/obsidian/Attendance System/`. *Superseded — the repository root is now the vault; see `00 - Vault Hub.md` and `docs/VAULT-AUDIT.md`.*

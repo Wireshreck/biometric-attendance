@@ -1,3 +1,12 @@
+---
+type: reference
+area: research
+status: planned
+tags:
+  - r307s
+  - usb
+  - unverified
+---
 # R307S USB Test Path (Pads on the Module)
 
 **Document:** `docs/r307s-usb-test.md`

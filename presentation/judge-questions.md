@@ -1,3 +1,11 @@
+---
+type: science-fair
+area: science-fair
+status: planned
+tags:
+  - science-fair
+  - judges
+---
 # Anticipated Judge Questions (Evidence-Led Draft)
 
 Use canonical status terms and say “verified” only for evidence that exists. The project is in early implementation; these answers do not claim an operational attendance system.

@@ -1,3 +1,11 @@
+---
+type: science-fair
+area: science-fair
+status: planned
+tags:
+  - science-fair
+  - timeline
+---
 # Science Fair Timeline and Gates
 
 **Target event:** 2026-10-09. **Status:** high risk (updated 2026-10-02). Firmware test environments and attendance/enrollment/queue/API source are implemented; backend vertical slice is tested. The R307S has no valid owner-reported UART response and component/device integration has no physical pass evidence. Dashboard and remaining reports/API routes are incomplete. Dates below are planning gates, not predictions or completed milestones; do not compress safety/verification.

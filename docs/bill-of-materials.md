@@ -1,3 +1,11 @@
+---
+type: hardware
+area: hardware
+status: active
+tags:
+  - hardware
+  - procurement
+---
 # Bill of Materials (BOM) & Hardware Specifications
 
 **Project:** Biometric School Attendance System

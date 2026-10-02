@@ -1,8 +1,20 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - audit
+  - firmware
+  - history
+---
 # Firmware and Hardware Takeover Audit
 
 **Audit date:** 2026-10-02
 **Scope:** Existing repository, firmware, R307S investigation, hardware assumptions, backend contract, tests, Git state, and project handoff notes.
 **Change policy:** This report was written only after the read-only inspection phase. It records repository evidence separately from the owner’s current bench report.
+
+> [!NOTE]
+> **Historical document.** This audit records the repository as it stood on the date above. It is kept for provenance and is deliberately **not** updated as the project moves on. For the current structure see [[docs/VAULT-AUDIT.md]] and [[00 - Vault Hub]]; for the current task state see [[10 - Workshop/TODO]].
 
 ## Executive status
 

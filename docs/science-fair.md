@@ -1,3 +1,11 @@
+---
+type: science-fair
+area: science-fair
+status: planned
+tags:
+  - science-fair
+  - planning
+---
 # Science Fair Project Plan
 
 **Event target:** 2026-10-09. **Project state:** early implementation; SQLite schema v1 exists, but no attendance product or measured demo results are claimed. Update claims only from test evidence.

@@ -1,3 +1,12 @@
+---
+type: reference
+area: workshop
+status: active
+tags:
+  - r307s
+  - handoff
+  - unverified
+---
 # R307S Debugging Handoff
 
 **Updated:** 2026-10-02

@@ -1,3 +1,11 @@
+---
+type: firmware
+area: firmware
+status: active
+tags:
+  - firmware
+  - architecture
+---
 # Production firmware behavior
 
 **Status:** Runtime workflows are IMPLEMENTED and production image is BUILD-VERIFIED. Physical component, network, crash-recovery, enrollment, and attendance integration are NEEDS HARDWARE / NEEDS TESTING. A compile is not proof of working hardware.

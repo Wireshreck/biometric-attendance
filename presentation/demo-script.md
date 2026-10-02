@@ -1,3 +1,11 @@
+---
+type: science-fair
+area: science-fair
+status: planned
+tags:
+  - science-fair
+  - demo
+---
 # Demonstration Script (Conditional Draft)
 
 **Do not present planned steps as working features.** Use real hardware only after its bring-up gates and end-to-end tests pass. Otherwise use the labeled fallback in each stage.

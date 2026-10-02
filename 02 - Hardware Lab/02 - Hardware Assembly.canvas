@@ -1,0 +1,849 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 02 · HARDWARE ASSEMBLY — breadboard map\nLayout is a **RECOMMENDED placement method**, not a record of the physical board. No photo of the actual breadboard exists. Coordinates follow `docs/complete-breadboard-layout.md`.",
+      "x": -1180,
+      "y": -1150,
+      "width": 1000,
+      "height": 130,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "**Read first** — [[docs/complete-breadboard-layout.md]] · [[docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md]] · [[docs/power-and-safety.md]]\nUnplug USB before adding a wire. One subsystem at a time.",
+      "x": -1180,
+      "y": -980,
+      "width": 1000,
+      "height": 130,
+      "color": "#92400e"
+    },
+    {
+      "id": "g003",
+      "type": "group",
+      "label": "POWER RAILS  —  UNVERIFIED, never measured",
+      "x": -1180,
+      "y": -790,
+      "width": 1000,
+      "height": 200,
+      "color": "#92400e"
+    },
+    {
+      "id": "t004",
+      "type": "text",
+      "text": "**GND rail**\ncommon return",
+      "x": -1150,
+      "y": -720,
+      "width": 300,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "**3V3 rail**\n3.3 V logic only",
+      "x": -810,
+      "y": -720,
+      "width": 300,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "**VIN / 5 V USB**\never inject while on USB",
+      "x": -470,
+      "y": -720,
+      "width": 300,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "⚠ Do not bridge 3V3↔GND · never put 5 V on a GPIO or an I2C pull-up · CR2032 is RTC-backup only",
+      "x": -1150,
+      "y": -590,
+      "width": 660,
+      "height": 90,
+      "color": "#92400e"
+    },
+    {
+      "id": "g008",
+      "type": "group",
+      "label": "ESP32 ACROSS THE CENTRE TRENCH",
+      "x": -1180,
+      "y": -540,
+      "width": 1000,
+      "height": 420,
+      "color": "#15803d"
+    },
+    {
+      "id": "t009",
+      "type": "text",
+      "text": "**left header**\nA B C D **E** ‖ **F** G H I J",
+      "x": -1150,
+      "y": -470,
+      "width": 260,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "t010",
+      "type": "text",
+      "text": "**right header**\nUSB toward the top",
+      "x": -860,
+      "y": -470,
+      "width": 260,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "**P01–P15** are custom labels for the ESP32 pin rows, not printed breadboard numbers.\nDo not force a board that will not sit in E/F naturally — use a jumper harness instead.",
+      "x": -1150,
+      "y": -360,
+      "width": 660,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "Reserved: **GPIO1/3** USB serial · **GPIO25/26** loopback test only (jumper TX→RX, sensor detached)",
+      "x": -1150,
+      "y": -230,
+      "width": 660,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "g013",
+      "type": "group",
+      "label": "SIGNAL ROWS  —  every entry is a SOURCE → GPIO → DESTINATION claim",
+      "x": 60,
+      "y": -790,
+      "width": 1900,
+      "height": 640,
+      "color": "#15803d"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "### I2C BUS  —  P16–P20",
+      "x": 90,
+      "y": -720,
+      "width": 900,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**OLED SDA**\n→ GPIO21",
+      "x": 90,
+      "y": -610,
+      "width": 280,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**OLED SCL**\n→ GPIO22",
+      "x": 400,
+      "y": -610,
+      "width": 280,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "**DS3231 SDA**\n→ GPIO21 (shared)",
+      "x": 720,
+      "y": -610,
+      "width": 280,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t018",
+      "type": "text",
+      "text": "**DS3231 SCL**\n→ GPIO22 (shared)",
+      "x": 1030,
+      "y": -610,
+      "width": 280,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "**Pull-ups must stay in the 3.3 V domain.**\nAn I2C ACK proves a listener, not a voltage.",
+      "x": 1360,
+      "y": -610,
+      "width": 560,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "t020",
+      "type": "text",
+      "text": "**I2C BUS**  GPIO21 SDA / GPIO22 SCL  @ 100 kHz  —  shared by OLED and RTC",
+      "x": 90,
+      "y": -480,
+      "width": 700,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t021",
+      "type": "text",
+      "text": "### GPIO OUTPUTS  —  P21–P28",
+      "x": 90,
+      "y": -330,
+      "width": 900,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "t022",
+      "type": "text",
+      "text": "**GPIO18**\n→ green LED anode\n**via series resistor**",
+      "x": 90,
+      "y": -220,
+      "width": 280,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t023",
+      "type": "text",
+      "text": "**GPIO19**\n→ red LED anode\n**via series resistor**",
+      "x": 400,
+      "y": -220,
+      "width": 280,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "**GPIO23**\n→ buzzer IN\n**driver if current > GPIO**",
+      "x": 710,
+      "y": -220,
+      "width": 280,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "**GND rail**\nall LED cathodes\ncommon return",
+      "x": 1020,
+      "y": -220,
+      "width": 280,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "Never a bare LED across GPIO and ground.\nNever an unknown/high-current load on a GPIO.",
+      "x": 1330,
+      "y": -220,
+      "width": 590,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "### UART  —  existing owner-reported assembly, DO NOT REBUILD",
+      "x": 90,
+      "y": -80,
+      "width": 900,
+      "height": 90,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t028",
+      "type": "text",
+      "text": "**R307S TX (yellow)**\n→ **GPIO32 RX**\no valid response",
+      "x": 90,
+      "y": 30,
+      "width": 300,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t029",
+      "type": "text",
+      "text": "**R307S RX (green)**\n← **GPIO33 TX**\ndirection never independently tested",
+      "x": 420,
+      "y": 30,
+      "width": 300,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t030",
+      "type": "text",
+      "text": "**R307S pin1 (red)**\n→ **VIN**\nvoltage NOT measured",
+      "x": 750,
+      "y": 30,
+      "width": 300,
+      "height": 120,
+      "color": "#92400e"
+    },
+    {
+      "id": "t031",
+      "type": "text",
+      "text": "**R307S pin2 (black)**\n→ **GND**",
+      "x": 1080,
+      "y": 30,
+      "width": 300,
+      "height": 120,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "**pins 5/6**\nblue/white open",
+      "x": 1410,
+      "y": 30,
+      "width": 240,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "**TOUCH circuit**\nirrelevant to UART",
+      "x": 1690,
+      "y": 30,
+      "width": 230,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "g034",
+      "type": "group",
+      "label": "ESP32 ACROSS THE CENTRE TRENCH",
+      "x": -1180,
+      "y": -540,
+      "width": 1000,
+      "height": 420,
+      "color": "#15803d"
+    },
+    {
+      "id": "g035",
+      "type": "group",
+      "label": "ASSEMBLY ORDER  —  incremental, power off between steps",
+      "x": -1180,
+      "y": 200,
+      "width": 1000,
+      "height": 620,
+      "color": "#15803d"
+    },
+    {
+      "id": "t036",
+      "type": "text",
+      "text": "0 · unplug all power",
+      "x": -1150,
+      "y": 250,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t037",
+      "type": "text",
+      "text": "1 · place ESP32",
+      "x": -1150,
+      "y": 295,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t038",
+      "type": "text",
+      "text": "2 · place OLED",
+      "x": -1150,
+      "y": 340,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t039",
+      "type": "text",
+      "text": "3 · place RTC",
+      "x": -1150,
+      "y": 385,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t040",
+      "type": "text",
+      "text": "4 · LEDs + resistors",
+      "x": -1150,
+      "y": 430,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t041",
+      "type": "text",
+      "text": "5 · buzzer module",
+      "x": -1150,
+      "y": 475,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t042",
+      "type": "text",
+      "text": "6 · verified power + ground only",
+      "x": -1150,
+      "y": 520,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t043",
+      "type": "text",
+      "text": "7 · add I2C",
+      "x": -1150,
+      "y": 565,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t044",
+      "type": "text",
+      "text": "8 · add indicators",
+      "x": -1150,
+      "y": 610,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t045",
+      "type": "text",
+      "text": "9 · preserve the existing R307S UART",
+      "x": -1150,
+      "y": 655,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t046",
+      "type": "text",
+      "text": "10 · inspect everything",
+      "x": -1150,
+      "y": 700,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "t047",
+      "type": "text",
+      "text": "11–20 · run the component tests in order",
+      "x": -1150,
+      "y": 745,
+      "width": 940,
+      "height": 40,
+      "color": "#15803d"
+    },
+    {
+      "id": "g048",
+      "type": "group",
+      "label": "BEFORE YOU POWER UP",
+      "x": 0,
+      "y": 200,
+      "width": 960,
+      "height": 300,
+      "color": "#92400e"
+    },
+    {
+      "id": "t049",
+      "type": "text",
+      "text": "☐ no 3V3-to-GND bridge",
+      "x": 30,
+      "y": 250,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "t050",
+      "type": "text",
+      "text": "☐ no 5 V path to a GPIO",
+      "x": 30,
+      "y": 288,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "t051",
+      "type": "text",
+      "text": "☐ every LED has a series resistor",
+      "x": 30,
+      "y": 326,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "t052",
+      "type": "text",
+      "text": "☐ no reversed module polarity",
+      "x": 30,
+      "y": 364,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "t053",
+      "type": "text",
+      "text": "☐ RTC charging circuit identified before any CR2032",
+      "x": 30,
+      "y": 402,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "t054",
+      "type": "text",
+      "text": "☐ no exposed sensor leads",
+      "x": 30,
+      "y": 440,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "t055",
+      "type": "text",
+      "text": "☐ USB is the only supply",
+      "x": 30,
+      "y": 478,
+      "width": 900,
+      "height": 34,
+      "color": "#92400e"
+    },
+    {
+      "id": "g056",
+      "type": "group",
+      "label": "UNVERIFIED — the honest part",
+      "x": 1000,
+      "y": 200,
+      "width": 900,
+      "height": 300,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t057",
+      "type": "text",
+      "text": "**No photo of the real board exists.** P-row numbers, wire colours and physical\npositions are a *placement method*, not an observation.\n\nEverything electrical is **UNVERIFIED — REQUIRES MULTIMETER**:\nR307S rail, TX level, jumper state, OLED/RTC supply compatibility,\nLED resistor values, buzzer current, every ground path.",
+      "x": 1030,
+      "y": 250,
+      "width": 840,
+      "height": 230,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f058",
+      "type": "file",
+      "file": "docs/complete-breadboard-layout.md",
+      "x": -1180,
+      "y": 860,
+      "width": 460,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f059",
+      "type": "file",
+      "file": "docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md",
+      "x": -680,
+      "y": 860,
+      "width": 460,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f060",
+      "type": "file",
+      "file": "docs/power-and-safety.md",
+      "x": -180,
+      "y": 860,
+      "width": 460,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "f061",
+      "type": "file",
+      "file": "02 - Hardware Lab/02 - Hardware Lab.canvas",
+      "x": 320,
+      "y": 860,
+      "width": 460,
+      "height": 110,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f062",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": 820,
+      "y": 860,
+      "width": 460,
+      "height": 110,
+      "color": "#1d3557"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t020",
+      "toNode": "t015",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t020",
+      "toNode": "t016",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t020",
+      "toNode": "t017",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t020",
+      "toNode": "t018",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t020",
+      "toNode": "t019",
+      "color": "#92400e",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t004",
+      "toNode": "t022",
+      "color": "#15803d"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t004",
+      "toNode": "t023",
+      "color": "#15803d"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t004",
+      "toNode": "t024",
+      "color": "#15803d"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t006",
+      "toNode": "t028",
+      "color": "#92400e"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t006",
+      "toNode": "t029",
+      "color": "#92400e"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t006",
+      "toNode": "t030",
+      "color": "#92400e"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t006",
+      "toNode": "t031",
+      "color": "#92400e"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t032",
+      "toNode": "t033",
+      "color": "#525252"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "t004",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t002",
+      "toNode": "g034",
+      "color": "#15803d"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t036",
+      "toNode": "t037",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t037",
+      "toNode": "t038",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t038",
+      "toNode": "t039",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e019",
+      "fromNode": "t039",
+      "toNode": "t040",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e020",
+      "fromNode": "t040",
+      "toNode": "t041",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e021",
+      "fromNode": "t041",
+      "toNode": "t042",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e022",
+      "fromNode": "t042",
+      "toNode": "t043",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e023",
+      "fromNode": "t043",
+      "toNode": "t044",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e024",
+      "fromNode": "t044",
+      "toNode": "t045",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e025",
+      "fromNode": "t045",
+      "toNode": "t046",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e026",
+      "fromNode": "t046",
+      "toNode": "t047",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#15803d"
+    },
+    {
+      "id": "e027",
+      "fromNode": "t002",
+      "toNode": "f058",
+      "label": "CANONICAL LAYOUT",
+      "color": "#475569",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e028",
+      "fromNode": "t002",
+      "toNode": "f059",
+      "label": "ASSEMBLY STEPS",
+      "color": "#475569",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e029",
+      "fromNode": "t002",
+      "toNode": "f060",
+      "label": "SAFETY GATE",
+      "color": "#92400e",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e030",
+      "fromNode": "t002",
+      "toNode": "f061",
+      "label": "BACK TO HARDWARE LAB",
+      "color": "#c2410c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e031",
+      "fromNode": "t002",
+      "toNode": "f062",
+      "label": "FACILITY MAP",
+      "color": "#1d3557",
+      "toEnd": "arrow"
+    }
+  ]
+}

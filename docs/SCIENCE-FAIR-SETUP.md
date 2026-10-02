@@ -1,3 +1,12 @@
+---
+type: setup
+area: science-fair
+status: planned
+tags:
+  - setup
+  - science-fair
+  - logistics
+---
 # Science fair setup and transport
 
 **Status:** Planning checklist for a local demonstration. The device's complete physical workflow is not verified; keep the demonstration honest and use synthetic records only.

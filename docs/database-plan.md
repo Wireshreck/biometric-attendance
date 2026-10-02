@@ -1,3 +1,11 @@
+---
+type: reference
+area: backend
+status: active
+tags:
+  - backend
+  - database
+---
 # Database Design
 
 **Status:** VERIFIED — schema v1 migration and connection setup are implemented in `backend/migrations/001_initial_schema.sql` and `backend/app/database.py`; six migration/constraint tests pass. The API also implements and tests a limited transactional attendance-ingest path. Reports, data exports, lifecycle operations, and full integration remain PLANNED.

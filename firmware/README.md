@@ -1,3 +1,11 @@
+---
+type: reference
+area: firmware
+status: active
+tags:
+  - firmware
+  - reference
+---
 # ESP32 Firmware
 
 **Status:** Production software now includes R307S matching and two-capture enrollment, a DS3231 timestamp gate, OLED, indicators, explicit serial enrollment, authenticated attendance POST, and a bounded persistent offline journal/replay. It compiles; no full physical workflow was tested. The R307S currently has no reported UART response, so operational attendance is still blocked by sensor/electrical verification. See [production behavior](../docs/production-firmware.md), [test matrix](../docs/hardware-test-plan.md), and [final pin map](../docs/final-pin-map.md).

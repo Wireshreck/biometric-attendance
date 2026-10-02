@@ -1,3 +1,11 @@
+---
+type: hardware
+area: hardware
+status: unverified
+tags:
+  - hardware
+  - wiring
+---
 # Wiring and Current Bench Record
 
 **Status:** Current wiring below is owner-reported as physically assembled and UART-tested; electrical measurements remain incomplete. See the authoritative [final pin map](final-pin-map.md), [recommended breadboard layout](complete-breadboard-layout.md), and mandatory [power and safety](power-and-safety.md).

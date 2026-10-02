@@ -1,0 +1,134 @@
+{
+  "main": {
+    "id": "vault-hub-root",
+    "type": "split",
+    "children": [
+      {
+        "id": "vault-hub-tabs",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "vault-hub-leaf",
+            "type": "leaf",
+            "state": { "type": "file", "state": { "file": "00 - Vault Hub.md" }, "icon": "lucide-door-open", "title": "00 - Vault Hub" }
+          },
+          {
+            "id": "master-canvas-leaf",
+            "type": "leaf",
+            "state": { "type": "canvas", "state": { "file": "00 - Master Canvas.canvas" }, "icon": "lucide-map", "title": "00 - Master Canvas" }
+          },
+          {
+            "id": "workshop-leaf",
+            "type": "leaf",
+            "state": { "type": "file", "state": { "file": "10 - Workshop/Workshop.md" }, "icon": "lucide-hammer", "title": "10 - Workshop" }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "vault-left",
+    "type": "split",
+    "children": [
+      {
+        "id": "vault-left-tabs",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "file-explorer-leaf",
+            "type": "leaf",
+            "state": { "type": "file-explorer", "state": { "sortOrder": "alphabetical", "autoReveal": true, "showSearch": false, "searchQuery": "" }, "icon": "lucide-folder-closed", "title": "Rooms" }
+          },
+          {
+            "id": "search-leaf",
+            "type": "leaf",
+            "state": { "type": "search", "state": { "query": "", "matchingCase": false, "explainSearch": false, "collapseAll": false, "extraContext": false, "sortOrder": "alphabetical" }, "icon": "lucide-search", "title": "Search" }
+          },
+          {
+            "id": "bookmarks-leaf",
+            "type": "leaf",
+            "state": { "type": "bookmarks", "state": { "showSearch": false, "searchQuery": "" }, "icon": "lucide-bookmark", "title": "Bookmarks" }
+          },
+          {
+            "id": "graph-leaf",
+            "type": "leaf",
+            "state": { "type": "graph", "state": { "viewMode": "local", "sort": "alphabetical" }, "icon": "lucide-git-fork", "title": "Graph" }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "vault-right",
+    "type": "split",
+    "children": [
+      {
+        "id": "vault-right-tabs",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "backlink-leaf",
+            "type": "leaf",
+            "state": { "type": "backlink", "state": { "collapseAll": false, "extraContext": false, "sortOrder": "alphabetical", "showSearch": false, "searchQuery": "", "backlinkCollapsed": false, "unlinkedCollapsed": true }, "icon": "links-coming-in", "title": "Backlinks" }
+          },
+          {
+            "id": "outgoing-leaf",
+            "type": "leaf",
+            "state": { "type": "outgoing-link", "state": { "linksCollapsed": false, "unlinkedCollapsed": true }, "icon": "links-going-out", "title": "Outgoing links" }
+          },
+          {
+            "id": "tag-leaf",
+            "type": "leaf",
+            "state": { "type": "tag", "state": { "sortOrder": "frequency", "useHierarchy": true, "showSearch": false, "searchQuery": "" }, "icon": "lucide-tags", "title": "Tags" }
+          },
+          {
+            "id": "outline-leaf",
+            "type": "leaf",
+            "state": { "type": "outline", "state": { "followCursor": false, "showSearch": false, "searchQuery": "" }, "icon": "lucide-list", "title": "Outline" }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "right-ribbon": { "hiddenItems": {} },
+  "active": "vault-hub-leaf",
+  "lastOpenFiles": [
+    "00 - Vault Hub.md",
+    "00 - Master Canvas.canvas",
+    "01 - Project HQ/Project HQ.md",
+    "02 - Hardware Lab/Hardware Lab.md",
+    "02 - Hardware Lab/02 - Hardware Assembly.canvas",
+    "03 - Firmware Lab/Firmware Lab.md",
+    "04 - Backend Server Room/Backend Server Room.md",
+    "05 - Testing Lab/Testing Lab.md",
+    "06 - Research Archive/Research Archive.md",
+    "07 - Science Fair/Science Fair.md",
+    "08 - Documentation Library/Documentation Library.md",
+    "09 - Decision Room/Decision Room.md",
+    "10 - Workshop/Workshop.md",
+    "10 - Workshop/TODO.md",
+    "09 - Decision Room/Decision Log.md",
+    "docs/VAULT-AUDIT.md",
+    "docs/final-pin-map.md",
+    "docs/power-and-safety.md",
+    "docs/production-firmware.md",
+    "docs/r307s-test-matrix.md"
+  ]
+}

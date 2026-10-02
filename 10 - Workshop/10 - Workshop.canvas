@@ -1,0 +1,810 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 10 · WORKSHOP — the bench where work happens",
+      "x": -1150,
+      "y": -1250,
+      "width": 1150,
+      "height": 110,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## WORKSHOP\n**24 tracked tasks · 1 real blocker**\n[[10 - Workshop/Workshop]] · [[TODO]] · [[Milestones]]\n[[10 - Workshop/AI Project Handoff]]",
+      "x": -1150,
+      "y": -1090,
+      "width": 700,
+      "height": 160,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t003",
+      "type": "text",
+      "text": "### 🔴 BLOCKED — R307S fingerprint sensor · **UNVERIFIED**\n**Assembled** per owner report: red→`VIN`, black→`GND`, yellow→`GPIO32` (sensor TX), green→`GPIO33` (sensor RX); blue/white open.\n**Result:** 0 bytes at all 12 documented baud rates, normal *and* software-swapped routing. 0 unsolicited transitions in 1.5 s.\n**Line state:** GPIO32 reads as actively **driven high** under both internal pull-down and pull-up — consistent with a live TXD, but *not* a calibrated voltage and *not* proof of supply.\n**Blocked on:** a multimeter. `ReadSysPara` and `TemplateCount` were gated on any valid ACK, so they were **never executed**.\n**Leading unmeasured suspect:** the 3.3 V solder jumper. 5 V into a shorted jumper kills the module silently.",
+      "x": -1150,
+      "y": -870,
+      "width": 2300,
+      "height": 330,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g004",
+      "type": "group",
+      "label": "UNBLOCK CHAIN",
+      "x": -1150,
+      "y": -510,
+      "width": 2300,
+      "height": 330,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "**HW-00**\nmeasure rail, TX level, ground continuity, jumper",
+      "x": -1120,
+      "y": -430,
+      "width": 430,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "**HW-01**\nuart1/uart2 loopback with the sensor detached",
+      "x": -665,
+      "y": -430,
+      "width": 430,
+      "height": 120,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "**HW-10**\nUSB pad path — only once pad order is identified",
+      "x": -210,
+      "y": -430,
+      "width": 430,
+      "height": 120,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "**HW-05/06**\nReadSysPara / TemplateCount once any ACK arrives",
+      "x": 245,
+      "y": -430,
+      "width": 430,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "t009",
+      "type": "text",
+      "text": "**provision**\nresolve sensor capacity → then, only then, the backend device",
+      "x": 700,
+      "y": -430,
+      "width": 430,
+      "height": 120,
+      "color": "#15803d"
+    },
+    {
+      "id": "g010",
+      "type": "group",
+      "label": "DONE — closed by evidence",
+      "x": -1150,
+      "y": -150,
+      "width": 700,
+      "height": 568,
+      "color": "#15803d"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "**SQLite schema v1, migrations, constraints**\n6 temporary-DB tests",
+      "x": -1120,
+      "y": -110,
+      "width": 640,
+      "height": 72,
+      "color": "#15803d"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "**Backend vertical slice**\n10/10 pytest green",
+      "x": -1120,
+      "y": -32,
+      "width": 640,
+      "height": 72,
+      "color": "#15803d"
+    },
+    {
+      "id": "t013",
+      "type": "text",
+      "text": "**Firmware test infrastructure**\n27 environments compile and link",
+      "x": -1120,
+      "y": 46,
+      "width": 640,
+      "height": 72,
+      "color": "#15803d"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**Production runtime**\nBUILD PASS — RAM 13.3% Flash 66.0%",
+      "x": -1120,
+      "y": 124,
+      "width": 640,
+      "height": 72,
+      "color": "#15803d"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**R307S read-only diagnostic**\nbounded, no destructive command",
+      "x": -1120,
+      "y": 202,
+      "width": 640,
+      "height": 72,
+      "color": "#15803d"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**Beginner / software / fair documentation**\nwritten, honestly hedged",
+      "x": -1120,
+      "y": 280,
+      "width": 640,
+      "height": 72,
+      "color": "#15803d"
+    },
+    {
+      "id": "g017",
+      "type": "group",
+      "label": "IN PROGRESS",
+      "x": -400,
+      "y": -150,
+      "width": 700,
+      "height": 490,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t018",
+      "type": "text",
+      "text": "**FW-02 production driver, RTC gate, UX**\nimplemented, never run on a device",
+      "x": -370,
+      "y": -110,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "**FW-03 journal + replay**\nimplemented, power-loss behaviour unverified",
+      "x": -370,
+      "y": -32,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t020",
+      "type": "text",
+      "text": "**FW-04 bearer-authenticated API client**\nimplemented, never talked to a server",
+      "x": -370,
+      "y": 46,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t021",
+      "type": "text",
+      "text": "**BUILD-01 reproducible assembly guide**\nwritten, bench evidence missing",
+      "x": -370,
+      "y": 124,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t022",
+      "type": "text",
+      "text": "**HW-01 R307S diagnostic + loopback**\nenvironment exists, never flashed",
+      "x": -370,
+      "y": 202,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "g023",
+      "type": "group",
+      "label": "UNVERIFIED — unknown, not broken",
+      "x": 350,
+      "y": -150,
+      "width": 700,
+      "height": 880,
+      "color": "#92400e"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "**OLED**\nNOT EXECUTED",
+      "x": 380,
+      "y": -110,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "**DS3231**\nNOT EXECUTED",
+      "x": 380,
+      "y": -32,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "**Green LED**\nNOT EXECUTED",
+      "x": 380,
+      "y": 46,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "**Red LED**\nNOT EXECUTED",
+      "x": 380,
+      "y": 124,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t028",
+      "type": "text",
+      "text": "**Buzzer**\nNOT EXECUTED",
+      "x": 380,
+      "y": 202,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t029",
+      "type": "text",
+      "text": "**LittleFS reboot behaviour**\nNOT EXECUTED",
+      "x": 380,
+      "y": 280,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t030",
+      "type": "text",
+      "text": "**Wi-Fi reconnect**\nNOT EXECUTED",
+      "x": 380,
+      "y": 358,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t031",
+      "type": "text",
+      "text": "**HTTP sync**\nNEEDS INTEGRATION TEST",
+      "x": 380,
+      "y": 436,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "**Queue replay**\nNEEDS INTEGRATION TEST",
+      "x": 380,
+      "y": 514,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "**Full attendance flow**\nNEEDS HARDWARE",
+      "x": 380,
+      "y": 592,
+      "width": 640,
+      "height": 72,
+      "color": "#92400e"
+    },
+    {
+      "id": "g034",
+      "type": "group",
+      "label": "NEXT — in this order",
+      "x": 1100,
+      "y": -150,
+      "width": 700,
+      "height": 568,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t035",
+      "type": "text",
+      "text": "**1 · Identify the module**\nphotograph markings, connector, jumper",
+      "x": 1130,
+      "y": -110,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t036",
+      "type": "text",
+      "text": "**2 · Measure**\nground, VIN rail, TX idle high — record before changing anything",
+      "x": 1130,
+      "y": -32,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t037",
+      "type": "text",
+      "text": "**3 · Isolate the UART**\nloopback GPIO25→GPIO26, sensor detached",
+      "x": 1130,
+      "y": 46,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t038",
+      "type": "text",
+      "text": "**4 · Prove the cheap parts**\ni2c_scan, oled, rtc, green_led, red_led, buzzer",
+      "x": 1130,
+      "y": 124,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t039",
+      "type": "text",
+      "text": "**5 · Then network**\nstorage, wifi_diag, backend_http, isolated synthetic only",
+      "x": 1130,
+      "y": 202,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t040",
+      "type": "text",
+      "text": "**6 · Then production**\nenrollment → POST → outage → reboot → replay, exactly once",
+      "x": 1130,
+      "y": 280,
+      "width": 640,
+      "height": 72,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t041",
+      "type": "text",
+      "text": "## Stop writing code\nThe implementation is complete enough to be tested and not complete enough to be **trusted**. The gap is evidence, not functionality. More feature code now raises the cost of every future physical session and proves nothing.",
+      "x": -1150,
+      "y": 1180,
+      "width": 2300,
+      "height": 110,
+      "color": "#0891b2"
+    },
+    {
+      "id": "g042",
+      "type": "group",
+      "label": "DOCUMENTS",
+      "x": -1150,
+      "y": 1320,
+      "width": 2300,
+      "height": 260,
+      "color": "#475569"
+    },
+    {
+      "id": "f043",
+      "type": "file",
+      "file": "10 - Workshop/TODO.md",
+      "x": -1120,
+      "y": 1370,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f044",
+      "type": "file",
+      "file": "10 - Workshop/Milestones.md",
+      "x": -550,
+      "y": 1370,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f045",
+      "type": "file",
+      "file": "10 - Workshop/AI Project Handoff.md",
+      "x": 20,
+      "y": 1370,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f046",
+      "type": "file",
+      "file": "08 - Documentation Library/AI Development Guide.md",
+      "x": 590,
+      "y": 1370,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f047",
+      "type": "file",
+      "file": "docs/next-steps.md",
+      "x": -1120,
+      "y": 1470,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f048",
+      "type": "file",
+      "file": "docs/r307s-next-session.md",
+      "x": -550,
+      "y": 1470,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f049",
+      "type": "file",
+      "file": "docs/r307s-troubleshooting.md",
+      "x": 20,
+      "y": 1470,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f050",
+      "type": "file",
+      "file": "AI_CONTEXT.md",
+      "x": 590,
+      "y": 1470,
+      "width": 540,
+      "height": 85,
+      "color": "#475569"
+    },
+    {
+      "id": "f051",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": -1150,
+      "y": 1560,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f052",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": -610,
+      "y": 1560,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f053",
+      "type": "file",
+      "file": "05 - Testing Lab/05 - Testing Lab.canvas",
+      "x": -70,
+      "y": 1560,
+      "width": 500,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f054",
+      "type": "file",
+      "file": "02 - Hardware Lab/02 - Hardware Lab.canvas",
+      "x": 470,
+      "y": 1560,
+      "width": 500,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f055",
+      "type": "file",
+      "file": "09 - Decision Room/09 - Decision Room.canvas",
+      "x": 1010,
+      "y": 1560,
+      "width": 500,
+      "height": 100,
+      "color": "#b91c1c"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t002",
+      "toNode": "t003",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t005",
+      "toNode": "t006",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#0891b2",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t006",
+      "toNode": "t007",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#0891b2",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t007",
+      "toNode": "t008",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#0891b2",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t008",
+      "toNode": "t009",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#0891b2",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t003",
+      "toNode": "t005",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t002",
+      "toNode": "t011",
+      "color": "#15803d"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t002",
+      "toNode": "t012",
+      "color": "#15803d"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t002",
+      "toNode": "t013",
+      "color": "#15803d"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "t014",
+      "color": "#15803d"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "t015",
+      "color": "#15803d"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t002",
+      "toNode": "t016",
+      "color": "#15803d"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t002",
+      "toNode": "t018",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "t019",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t002",
+      "toNode": "t020",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t002",
+      "toNode": "t021",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t002",
+      "toNode": "t022",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t002",
+      "toNode": "t024",
+      "color": "#92400e"
+    },
+    {
+      "id": "e019",
+      "fromNode": "t002",
+      "toNode": "t025",
+      "color": "#92400e"
+    },
+    {
+      "id": "e020",
+      "fromNode": "t002",
+      "toNode": "t026",
+      "color": "#92400e"
+    },
+    {
+      "id": "e021",
+      "fromNode": "t002",
+      "toNode": "t027",
+      "color": "#92400e"
+    },
+    {
+      "id": "e022",
+      "fromNode": "t002",
+      "toNode": "t028",
+      "color": "#92400e"
+    },
+    {
+      "id": "e023",
+      "fromNode": "t002",
+      "toNode": "t029",
+      "color": "#92400e"
+    },
+    {
+      "id": "e024",
+      "fromNode": "t002",
+      "toNode": "t030",
+      "color": "#92400e"
+    },
+    {
+      "id": "e025",
+      "fromNode": "t002",
+      "toNode": "t031",
+      "color": "#92400e"
+    },
+    {
+      "id": "e026",
+      "fromNode": "t002",
+      "toNode": "t032",
+      "color": "#92400e"
+    },
+    {
+      "id": "e027",
+      "fromNode": "t002",
+      "toNode": "t033",
+      "color": "#92400e"
+    },
+    {
+      "id": "e028",
+      "fromNode": "t002",
+      "toNode": "t035",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e029",
+      "fromNode": "t002",
+      "toNode": "t036",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e030",
+      "fromNode": "t002",
+      "toNode": "t037",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e031",
+      "fromNode": "t002",
+      "toNode": "t038",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e032",
+      "fromNode": "t002",
+      "toNode": "t039",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e033",
+      "fromNode": "t002",
+      "toNode": "t040",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e034",
+      "fromNode": "t002",
+      "toNode": "t041",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e035",
+      "fromNode": "t002",
+      "toNode": "f051",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e036",
+      "fromNode": "t002",
+      "toNode": "f052",
+      "label": "HOME",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e037",
+      "fromNode": "t002",
+      "toNode": "f053",
+      "label": "→ Testing Lab",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e038",
+      "fromNode": "t002",
+      "toNode": "f054",
+      "label": "→ Hardware Lab",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e039",
+      "fromNode": "t002",
+      "toNode": "f055",
+      "label": "→ Decision Room",
+      "color": "#b91c1c"
+    }
+  ]
+}

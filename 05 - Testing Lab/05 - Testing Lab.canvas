@@ -1,0 +1,866 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 05 · TESTING LAB — evidence room",
+      "x": -1200,
+      "y": -1550,
+      "width": 1200,
+      "height": 120,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## **27 firmware environments build. 0 physical results are recorded. 10 backend tests pass.**\nThose two sentences are the whole point of this room.\n[[05 - Testing Lab/Testing Lab.md]]",
+      "x": -1200,
+      "y": -1380,
+      "width": 1200,
+      "height": 150,
+      "color": "#0f766e"
+    },
+    {
+      "id": "g003",
+      "type": "group",
+      "label": "THE FIVE KINDS OF “IT WORKS”  —  never blur these",
+      "x": -1200,
+      "y": -1150,
+      "width": 1200,
+      "height": 460,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t004",
+      "type": "text",
+      "text": "**BUILD PASS** — the image compiles and links  ·  NOT that any part exists",
+      "x": -1170,
+      "y": -1070,
+      "width": 1140,
+      "height": 84,
+      "color": "#15803d"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "**SOFTWARE PASS** — a function returns the expected result on synthetic input  ·  NOT that the hardware path is sound",
+      "x": -1170,
+      "y": -978,
+      "width": 1140,
+      "height": 84,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "**UNVERIFIED** — the firmware issued the command; nobody saw the effect  ·  NOT that the LED lit",
+      "x": -1170,
+      "y": -886,
+      "width": 1140,
+      "height": 84,
+      "color": "#92400e"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "**PASS** — a person ran it AND saw the expected physical result  ·  —",
+      "x": -1170,
+      "y": -794,
+      "width": 1140,
+      "height": 84,
+      "color": "#15803d"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "**BLOCKED** — a prerequisite prevents the test  ·  nothing at all",
+      "x": -1170,
+      "y": -702,
+      "width": 1140,
+      "height": 84,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g009",
+      "type": "group",
+      "label": "ENFORCED IN CODE",
+      "x": -1200,
+      "y": -660,
+      "width": 1200,
+      "height": 120,
+      "color": "#15803d"
+    },
+    {
+      "id": "f010",
+      "type": "file",
+      "file": "firmware/include/test_result.h",
+      "x": -1170,
+      "y": -600,
+      "width": 1140,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "`TestResult::finish()` cannot return **PASS** when checks were skipped or a test called `unverified()`. OLED, LED and buzzer tests *must* land in UNVERIFIED — GPIO code cannot sense its own effect.",
+      "x": -1170,
+      "y": -480,
+      "width": 1140,
+      "height": 100,
+      "color": "#92400e"
+    },
+    {
+      "id": "g012",
+      "type": "group",
+      "label": "COMPONENT ENVIRONMENTS  —  15 build, 0 executed",
+      "x": 0,
+      "y": -1550,
+      "width": 2300,
+      "height": 700,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t013",
+      "type": "text",
+      "text": "**`esp32_core`**\nchip · CPU · heap · flash · reset",
+      "x": 30,
+      "y": -1470,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**`uart1_loopback`**\nGPIO25 TX → GPIO26 RX jumper",
+      "x": 595,
+      "y": -1470,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**`uart2_loopback`**\nsame on UART2",
+      "x": 1160,
+      "y": -1470,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**`r307s`**\nread-only VerifyPassword/ReadSysPara/TemplateCount",
+      "x": 1725,
+      "y": -1470,
+      "width": 540,
+      "height": 118,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "**`i2c_scan`**\nsweeps addresses 1–126 on 21/22",
+      "x": 30,
+      "y": -1340,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t018",
+      "type": "text",
+      "text": "**`oled`**\ntext · pixel · line · clear · refresh",
+      "x": 595,
+      "y": -1340,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "**`rtc`**\nACK · advancing time · lostPower. **never writes the clock**",
+      "x": 1160,
+      "y": -1340,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t020",
+      "type": "text",
+      "text": "**`green_led`**\nGPIO18 off/on/blink",
+      "x": 1725,
+      "y": -1340,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t021",
+      "type": "text",
+      "text": "**`red_led`**\nGPIO19 off/on/blink",
+      "x": 30,
+      "y": -1210,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t022",
+      "type": "text",
+      "text": "**`buzzer`**\nGPIO23 two 80 ms beeps",
+      "x": 595,
+      "y": -1210,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t023",
+      "type": "text",
+      "text": "**`gpio_sanity`**\ninputs only · drives nothing · shorts nothing",
+      "x": 1160,
+      "y": -1210,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "**`wifi_diag`**\nscan without logging SSIDs",
+      "x": 1725,
+      "y": -1210,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "**`backend_http`**\nGET /health · **sends no attendance record**",
+      "x": 30,
+      "y": -1080,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "**`json`**\nsynthetic payload round-trip",
+      "x": 595,
+      "y": -1080,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "**`storage`**\nmount without formatting · CRC · cleanup",
+      "x": 1160,
+      "y": -1080,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t028",
+      "type": "text",
+      "text": "**`power_reset`**\nreset reason · boot time · **measures no voltage**",
+      "x": 1725,
+      "y": -1080,
+      "width": 540,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t029",
+      "type": "text",
+      "text": "Each environment is `build_src_filter = -<*> +<one file>`, so exactly one `setup()/loop()` compiles.",
+      "x": 30,
+      "y": -960,
+      "width": 2260,
+      "height": 90,
+      "color": "#0f766e"
+    },
+    {
+      "id": "g030",
+      "type": "group",
+      "label": "INTEGRATION ENVIRONMENTS  —  9 build, 0 executed · one file, `-D INTEGRATION_CASE=1..9`",
+      "x": 0,
+      "y": -820,
+      "width": 2300,
+      "height": 620,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t031",
+      "type": "text",
+      "text": "**INT-01** · `int_oled`\nESP32 + OLED",
+      "x": 30,
+      "y": -740,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "**INT-02** · `int_rtc`\nESP32 + RTC",
+      "x": 780,
+      "y": -740,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "**INT-03** · `int_outputs`\nESP32 + LEDs + buzzer",
+      "x": 1530,
+      "y": -740,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t034",
+      "type": "text",
+      "text": "**INT-04** · `int_r307s`\nESP32 + R307S read-only",
+      "x": 30,
+      "y": -610,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t035",
+      "type": "text",
+      "text": "**INT-05** · `int_r307s_oled`\nR307S + OLED",
+      "x": 780,
+      "y": -610,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t036",
+      "type": "text",
+      "text": "**INT-06** · `int_r307s_rtc`\nR307S + RTC",
+      "x": 1530,
+      "y": -610,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t037",
+      "type": "text",
+      "text": "**INT-07** · `int_wifi`\nESP32 + Wi-Fi",
+      "x": 30,
+      "y": -480,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t038",
+      "type": "text",
+      "text": "**INT-08** · `int_backend`\nESP32 + backend /health",
+      "x": 780,
+      "y": -480,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t039",
+      "type": "text",
+      "text": "**INT-09** · `int_full`\neverything except the attendance workflow",
+      "x": 1530,
+      "y": -480,
+      "width": 710,
+      "height": 118,
+      "color": "#525252"
+    },
+    {
+      "id": "t040",
+      "type": "text",
+      "text": "### INT-10 · `production` — the only test that would prove the product\nenrollment → live POST → outage → reboot → replay. **Never run.** The queue's crash/replay claims stay unverified until it is.",
+      "x": 30,
+      "y": -330,
+      "width": 2190,
+      "height": 130,
+      "color": "#0891b2"
+    },
+    {
+      "id": "g041",
+      "type": "group",
+      "label": "BACKEND  —  10 tests, PASSING",
+      "x": -1200,
+      "y": 200,
+      "width": 1200,
+      "height": 380,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f042",
+      "type": "file",
+      "file": "backend/tests/test_api.py",
+      "x": -1170,
+      "y": 260,
+      "width": 1140,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f043",
+      "type": "file",
+      "file": "backend/tests/test_database.py",
+      "x": -1170,
+      "y": 380,
+      "width": 1140,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t044",
+      "type": "text",
+      "text": "`cd backend && .venv/Scripts/python.exe -m pytest tests -q`  →  **10 passed** in 0.79 s",
+      "x": -1170,
+      "y": 500,
+      "width": 1140,
+      "height": 60,
+      "color": "#15803d"
+    },
+    {
+      "id": "t045",
+      "type": "text",
+      "text": "Synthetic fixtures in temporary SQLite databases. Covers the contract, the migration path, constraints, idempotency and the 60-second boundary.\n**A green backend suite says nothing about the wire between the ESP32 and the laptop.**",
+      "x": -1170,
+      "y": 620,
+      "width": 1140,
+      "height": 120,
+      "color": "#92400e"
+    },
+    {
+      "id": "g046",
+      "type": "group",
+      "label": "SENSOR EVIDENCE  —  the only physical results that exist anywhere in this project",
+      "x": 0,
+      "y": -80,
+      "width": 2300,
+      "height": 200,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t047",
+      "type": "text",
+      "text": "**HW-02 → HW-03 → HW-11 → HW-13**\n0 bytes @ 57600 · 0 bytes at all 12 documented bauds · 0 bytes with software-swapped routing · GPIO32 line reads **driven high**\n→ baud EXCLUDED · crossed wires EXCLUDED · the wire is not floating",
+      "x": 30,
+      "y": -10,
+      "width": 1090,
+      "height": 190,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t048",
+      "type": "text",
+      "text": "**NOT EXECUTED**\nHW-05 ReadSysPara · HW-06 TemplateCount — both gated on receiving any valid ACK\nHW-10 USB pad path — pads unverified, no equipment\n→ **capacity is therefore still unknown. Do not provision from 1000 or 300.**",
+      "x": 1170,
+      "y": -10,
+      "width": 1090,
+      "height": 190,
+      "color": "#525252"
+    },
+    {
+      "id": "g049",
+      "type": "group",
+      "label": "R307S EVIDENCE CHAIN  —  detail lives in the Research Archive",
+      "x": 0,
+      "y": 640,
+      "width": 2300,
+      "height": 320,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t050",
+      "type": "text",
+      "text": "**HW-01**\nwiring topology\n[WIRED, voltage unmeasured]",
+      "x": 30,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#92400e"
+    },
+    {
+      "id": "t051",
+      "type": "text",
+      "text": "**HW-02**\n@ 57600\n[TX 16 B → RX 0 B]",
+      "x": 285,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t052",
+      "type": "text",
+      "text": "**HW-03**\n12-baud ladder\n[0 bytes at every rate]",
+      "x": 540,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t053",
+      "type": "text",
+      "text": "**HW-04**\nVerifyPassword\n[0 bytes]",
+      "x": 795,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t054",
+      "type": "text",
+      "text": "**HW-05/06**\nReadSysPara / count\n[NOT EXECUTED — gated on an ACK]",
+      "x": 1050,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "t055",
+      "type": "text",
+      "text": "**HW-08**\nunsolicited data\n[0 transitions in 1.5 s]",
+      "x": 1305,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "t056",
+      "type": "text",
+      "text": "**HW-10**\nUSB pads\n[NOT EXECUTED — unverified order]",
+      "x": 1560,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "t057",
+      "type": "text",
+      "text": "**HW-11**\nswapped routing\n[0 bytes @ 57600 and 9600]",
+      "x": 1815,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t058",
+      "type": "text",
+      "text": "**HW-13**\nRX line-state\n[driven high, ~2822 mV estimate]",
+      "x": 2070,
+      "y": 690,
+      "width": 235,
+      "height": 120,
+      "color": "#92400e"
+    },
+    {
+      "id": "t059",
+      "type": "text",
+      "text": "**The 3.3 V solder jumper is the leading unmeasured suspect.** 5 V into a shorted jumper kills the module silently, and no software test can see it. `HW-00` (measure) is BLOCKED on the absence of a multimeter.",
+      "x": 30,
+      "y": 830,
+      "width": 2190,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g060",
+      "type": "group",
+      "label": "DOCUMENTS",
+      "x": -1200,
+      "y": 660,
+      "width": 1200,
+      "height": 320,
+      "color": "#475569"
+    },
+    {
+      "id": "f061",
+      "type": "file",
+      "file": "docs/hardware-test-plan.md",
+      "x": -1170,
+      "y": 700,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f062",
+      "type": "file",
+      "file": "hardware/test-plan.md",
+      "x": -780,
+      "y": 700,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f063",
+      "type": "file",
+      "file": "docs/component-tests.md",
+      "x": -390,
+      "y": 700,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f064",
+      "type": "file",
+      "file": "docs/integration-tests.md",
+      "x": -1170,
+      "y": 785,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f065",
+      "type": "file",
+      "file": "docs/testing-plan.md",
+      "x": -780,
+      "y": 785,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f066",
+      "type": "file",
+      "file": "docs/requirements-traceability.md",
+      "x": -390,
+      "y": 785,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f067",
+      "type": "file",
+      "file": "docs/r307s-test-matrix.md",
+      "x": -1170,
+      "y": 870,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f068",
+      "type": "file",
+      "file": "docs/failure-modes.md",
+      "x": -780,
+      "y": 870,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "f069",
+      "type": "file",
+      "file": "docs/next-steps.md",
+      "x": -390,
+      "y": 870,
+      "width": 370,
+      "height": 75,
+      "color": "#475569"
+    },
+    {
+      "id": "t070",
+      "type": "text",
+      "text": "**Procedure** and **evidence** are separate files on purpose. A plan edited after the fact is not evidence.",
+      "x": -1170,
+      "y": 930,
+      "width": 1140,
+      "height": 40,
+      "color": "#92400e"
+    },
+    {
+      "id": "f071",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": 2300,
+      "y": -1380,
+      "width": 400,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f072",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": 2300,
+      "y": -1250,
+      "width": 400,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f073",
+      "type": "file",
+      "file": "02 - Hardware Lab/02 - Hardware Lab.canvas",
+      "x": 2300,
+      "y": -1120,
+      "width": 400,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f074",
+      "type": "file",
+      "file": "03 - Firmware Lab/03 - Firmware Lab.canvas",
+      "x": 2300,
+      "y": -990,
+      "width": 400,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f075",
+      "type": "file",
+      "file": "04 - Backend Server Room/04 - Backend Server Room.canvas",
+      "x": 2300,
+      "y": -860,
+      "width": 400,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f076",
+      "type": "file",
+      "file": "06 - Research Archive/06 - Research Archive.canvas",
+      "x": 2300,
+      "y": -730,
+      "width": 400,
+      "height": 100,
+      "color": "#a16207"
+    },
+    {
+      "id": "f077",
+      "type": "file",
+      "file": "10 - Workshop/10 - Workshop.canvas",
+      "x": 2300,
+      "y": -600,
+      "width": 400,
+      "height": 100,
+      "color": "#0891b2"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t002",
+      "toNode": "t040",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t002",
+      "toNode": "t047",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t047",
+      "toNode": "t048",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#525252",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t002",
+      "toNode": "t059",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t002",
+      "toNode": "f071",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t002",
+      "toNode": "f072",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "HOME",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t002",
+      "toNode": "f073",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "← Hardware",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t002",
+      "toNode": "f074",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "← Firmware",
+      "color": "#15803d"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t002",
+      "toNode": "f075",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "← Backend",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "f076",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "→ Research",
+      "color": "#a16207"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "f077",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "→ Workshop",
+      "color": "#0891b2"
+    }
+  ]
+}

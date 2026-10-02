@@ -1,0 +1,13 @@
+{
+  "items": [
+    { "type": "file", "ctime": 1759000000000, "path": "00 - Vault Hub.md", "title": "00 · VAULT HUB — entrance" },
+    { "type": "file", "ctime": 1759000000001, "path": "00 - Master Canvas.canvas", "title": "00 · MASTER CANVAS — facility map" },
+    { "type": "file", "ctime": 1759000000002, "path": "10 - Workshop/Workshop.md", "title": "10 · WORKSHOP — current state" },
+    { "type": "file", "ctime": 1759000000003, "path": "10 - Workshop/TODO.md", "title": "TASK TRACKER" },
+    { "type": "file", "ctime": 1759000000004, "path": "09 - Decision Room/Decision Log.md", "title": "DECISION LOG" },
+    { "type": "file", "ctime": 1759000000005, "path": "08 - Documentation Library/Documentation Library.md", "title": "COLOUR + STATUS LEGEND" },
+    { "type": "file", "ctime": 1759000000006, "path": "docs/final-pin-map.md", "title": "PIN MAP (canonical)" },
+    { "type": "file", "ctime": 1759000000007, "path": "docs/power-and-safety.md", "title": "POWER + SAFETY GATE" },
+    { "type": "file", "ctime": 1759000000008, "path": "docs/VAULT-AUDIT.md", "title": "VAULT AUDIT (pre-restructure)" }
+  ]
+}

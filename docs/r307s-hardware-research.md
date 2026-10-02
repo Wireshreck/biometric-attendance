@@ -1,3 +1,12 @@
+---
+type: research
+area: research
+status: active
+tags:
+  - r307s
+  - research
+  - sources
+---
 # R307S Hardware Research
 
 **Document:** `docs/r307s-hardware-research.md`

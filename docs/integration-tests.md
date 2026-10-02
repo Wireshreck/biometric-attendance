@@ -1,3 +1,11 @@
+---
+type: test
+area: testing
+status: planned
+tags:
+  - testing
+  - integration
+---
 # Firmware Integration Tests
 
 **Status:** Integration diagnostic entry points and PlatformIO environments are implemented; physical execution is **NOT EXECUTED** here. The separate `production` image contains the attendance workflow, but a build is not evidence that attached devices work.

@@ -1,3 +1,11 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - operations
+  - backup
+---
 # Backup and Recovery Plan
 
 **Status:** IMPLEMENTED — helper creates an unencrypted content ZIP and a Git bundle from commits, including baseline `9bb5801`. NEEDS TESTING — restore has not been verified. Optional DB snapshot is restricted to synthetic demo data. Do not use it for real personal/biometric data.

@@ -1,3 +1,12 @@
+---
+type: reference
+area: backend
+status: active
+tags:
+  - backend
+  - api
+  - contract
+---
 # MVP HTTP API Contract
 
 **Status:** IN PROGRESS — see implementation matrix below. Contract items without an implemented route remain PLANNED.

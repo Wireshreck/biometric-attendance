@@ -1,3 +1,11 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - scripts
+  - operations
+---
 # Maintenance Scripts
 
 Scripts use paths relative to this checkout except where a destination is explicitly supplied. Review them before use.

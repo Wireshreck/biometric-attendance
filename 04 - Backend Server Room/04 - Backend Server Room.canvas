@@ -1,0 +1,656 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 04 · BACKEND SERVER ROOM — local service",
+      "x": -1000,
+      "y": -1350,
+      "width": 1000,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## BACKEND SERVER ROOM\n**VERIFIED (software)** — 10/10 pytest green\n**No physical terminal has ever talked to this.**\n[[04 - Backend Server Room/Backend Server Room.md]]",
+      "x": -1000,
+      "y": -1190,
+      "width": 560,
+      "height": 160,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "g003",
+      "type": "group",
+      "label": "THE PATH OF ONE EVENT",
+      "x": 0,
+      "y": -1350,
+      "width": 2100,
+      "height": 420,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t004",
+      "type": "text",
+      "text": "**ESP32**\nWrites LittleFS **first**",
+      "x": 30,
+      "y": -1270,
+      "width": 300,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "**Wi-Fi**\n2.4 GHz LAN",
+      "x": 370,
+      "y": -1270,
+      "width": 250,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "**POST /api/v1/attendance**\n`Bearer <device token>`",
+      "x": 660,
+      "y": -1270,
+      "width": 330,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "**BEGIN IMMEDIATE**\nserialised write transaction",
+      "x": 1030,
+      "y": -1270,
+      "width": 420,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "**COMMIT**\n201 RECORDED\n200 DUPLICATE_SUPPRESSED",
+      "x": 1490,
+      "y": -1270,
+      "width": 350,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t009",
+      "type": "text",
+      "text": "**SQLite**\nWAL",
+      "x": 1880,
+      "y": -1270,
+      "width": 200,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t010",
+      "type": "text",
+      "text": "**uuid seen?** → return stored outcome, no insert · **slot > capacity?** → 409 · **no ACTIVE student in slot?** → 409 · **accepted scan within 60 s?** → DUPLICATE_SUPPRESSED · else RECORDED",
+      "x": 660,
+      "y": -1120,
+      "width": 1330,
+      "height": 90,
+      "color": "#0f766e"
+    },
+    {
+      "id": "g011",
+      "type": "group",
+      "label": "IMPLEMENTED ROUTES  —  real code, real tests",
+      "x": -1000,
+      "y": -960,
+      "width": 1000,
+      "height": 900,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "**`GET /health`**\n`none` — opens + migrates the DB, returns schema_version; 503 if unavailable",
+      "x": -970,
+      "y": -880,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t013",
+      "type": "text",
+      "text": "**`GET /api/v1/students`**\n`Admin Basic` — filters, bounded pagination 1–100",
+      "x": -970,
+      "y": -765,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**`POST /api/v1/students`**\n`Admin Basic` — reserves the lowest free slot on the sole active device; audited",
+      "x": -970,
+      "y": -650,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**`GET /api/v1/students/{uuid}`**\n`Admin Basic` — one student; no token or template fields",
+      "x": -970,
+      "y": -535,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**`POST …/students/{uuid}/deactivate`**\n`Admin Basic` — blocks slot resolution; slot is **not** freed",
+      "x": -970,
+      "y": -420,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "**`GET …/devices/{uuid}/enrollment/{student}`**\n`Device Bearer` — reserved slot, pending students only",
+      "x": -970,
+      "y": -305,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t018",
+      "type": "text",
+      "text": "**`POST …/enrollment/{student}/complete`**\n`Device Bearer` — idempotent activation; exact retry is a no-op",
+      "x": -970,
+      "y": -190,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "**`POST /api/v1/attendance`**\n`Device Bearer` — idempotency + 60-second duplicate rule",
+      "x": -970,
+      "y": -75,
+      "width": 940,
+      "height": 105,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "g020",
+      "type": "group",
+      "label": "PLANNED — no code, no tests",
+      "x": 0,
+      "y": -900,
+      "width": 2100,
+      "height": 200,
+      "color": "#525252"
+    },
+    {
+      "id": "t021",
+      "type": "text",
+      "text": "device list · device detail · cleanup · heartbeat · attendance query · daily report · CSV export · SSE stream · static dashboard serving",
+      "x": 30,
+      "y": -830,
+      "width": 2040,
+      "height": 100,
+      "color": "#525252"
+    },
+    {
+      "id": "g022",
+      "type": "group",
+      "label": "DATABASE  —  schema v1",
+      "x": -1000,
+      "y": 0,
+      "width": 1000,
+      "height": 480,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t023",
+      "type": "text",
+      "text": "**`devices`**\n`device_uuid` · `token_hash` · `sensor_capacity`",
+      "x": -970,
+      "y": 50,
+      "width": 400,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "**`students`**\nidentity · `status` · `fingerprint_slot_id`",
+      "x": -540,
+      "y": 50,
+      "width": 400,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "**`attendance_events`**\n`event_uuid` UNIQUE → idempotency",
+      "x": -970,
+      "y": 200,
+      "width": 400,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "**`admin_audit_log`**\nactor · action · target",
+      "x": -540,
+      "y": 200,
+      "width": 400,
+      "height": 110,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "WAL · `synchronous=FULL` · `foreign_keys=ON` · `busy_timeout=5000`\nmigrations contiguous from `001`, version re-read **after** the write lock.\n**Slot references only — never a template or an image.**",
+      "x": -970,
+      "y": 340,
+      "width": 870,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "g028",
+      "type": "group",
+      "label": "AUTH, CONFIG, AND THE TRUST BOUNDARY",
+      "x": 0,
+      "y": 0,
+      "width": 2100,
+      "height": 480,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t029",
+      "type": "text",
+      "text": "**Admin** — HTTP Basic\n`hmac.compare_digest` against env credentials\n`ADMIN_PASSWORD` ≥ 16 chars, fail-fast at startup",
+      "x": 30,
+      "y": 60,
+      "width": 620,
+      "height": 130,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t030",
+      "type": "text",
+      "text": "**Device** — HTTP Bearer\nSHA-256 hash compared in `devices`\ntoken printed **once** by `provision_device`",
+      "x": 690,
+      "y": 60,
+      "width": 620,
+      "height": 130,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t031",
+      "type": "text",
+      "text": "**Error envelope**\n`{\"error\":{code,message,correlation_id}}`\nno SQL, no traceback, no secret, no biometric payload",
+      "x": 1350,
+      "y": 60,
+      "width": 720,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "`sensor_capacity` must be a **verified** number. The CLI refuses a non-positive value but cannot verify physics — do not invent a capacity to make provisioning succeed. R307S capacity is disputed: 1000 (datasheet) vs 300 (retail).",
+      "x": 30,
+      "y": 230,
+      "width": 2040,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "```\ncd backend\n.venv/Scripts/python.exe -m pytest tests -q            # 10 passed\n.venv/Scripts/python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000\n```",
+      "x": 30,
+      "y": 370,
+      "width": 2040,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "g034",
+      "type": "group",
+      "label": "SOURCE + DOCUMENTS",
+      "x": 0,
+      "y": 540,
+      "width": 2100,
+      "height": 300,
+      "color": "#475569"
+    },
+    {
+      "id": "f035",
+      "type": "file",
+      "file": "backend/app/main.py",
+      "x": 30,
+      "y": 590,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f036",
+      "type": "file",
+      "file": "backend/app/database.py",
+      "x": 440,
+      "y": 590,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f037",
+      "type": "file",
+      "file": "backend/app/schemas.py",
+      "x": 850,
+      "y": 590,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f038",
+      "type": "file",
+      "file": "backend/app/auth.py",
+      "x": 1260,
+      "y": 590,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f039",
+      "type": "file",
+      "file": "backend/app/config.py",
+      "x": 1670,
+      "y": 590,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f040",
+      "type": "file",
+      "file": "backend/app/dependencies.py",
+      "x": 30,
+      "y": 700,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f041",
+      "type": "file",
+      "file": "backend/app/provision_device.py",
+      "x": 440,
+      "y": 700,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f042",
+      "type": "file",
+      "file": "backend/migrations/001_initial_schema.sql",
+      "x": 850,
+      "y": 700,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f043",
+      "type": "file",
+      "file": "backend/tests/test_api.py",
+      "x": 1260,
+      "y": 700,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f044",
+      "type": "file",
+      "file": "backend/tests/test_database.py",
+      "x": 1670,
+      "y": 700,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f045",
+      "type": "file",
+      "file": "docs/api-plan.md",
+      "x": 30,
+      "y": 810,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f046",
+      "type": "file",
+      "file": "docs/database-plan.md",
+      "x": 440,
+      "y": 810,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f047",
+      "type": "file",
+      "file": "docs/privacy-security.md",
+      "x": 850,
+      "y": 810,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f048",
+      "type": "file",
+      "file": "diagrams/database.mmd",
+      "x": 1260,
+      "y": 810,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f049",
+      "type": "file",
+      "file": "diagrams/data-flow.mmd",
+      "x": 1670,
+      "y": 810,
+      "width": 390,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f050",
+      "type": "file",
+      "file": "03 - Firmware Lab/03 - Firmware Lab.canvas",
+      "x": 0,
+      "y": 540,
+      "width": 390,
+      "height": 95,
+      "color": "#15803d"
+    },
+    {
+      "id": "f051",
+      "type": "file",
+      "file": "05 - Testing Lab/05 - Testing Lab.canvas",
+      "x": 410,
+      "y": 540,
+      "width": 390,
+      "height": 95,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f052",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": 820,
+      "y": 540,
+      "width": 390,
+      "height": 95,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f053",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": 1230,
+      "y": 540,
+      "width": 390,
+      "height": 95,
+      "color": "#1d3557"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t004",
+      "toNode": "t005",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t005",
+      "toNode": "t006",
+      "color": "#92400e",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t006",
+      "toNode": "t007",
+      "color": "#6d28d9",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t007",
+      "toNode": "t008",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t008",
+      "toNode": "t009",
+      "color": "#6d28d9",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t002",
+      "toNode": "t004",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t023",
+      "toNode": "t024",
+      "label": "1:N",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t024",
+      "toNode": "t025",
+      "label": "1:N, nullable on erase",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t023",
+      "toNode": "t025",
+      "label": "1:N",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "t029",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "t030",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t002",
+      "toNode": "t031",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t002",
+      "toNode": "t032",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "t033",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t002",
+      "toNode": "f050",
+      "label": "← Firmware",
+      "color": "#15803d"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t002",
+      "toNode": "f051",
+      "label": "→ Testing",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t002",
+      "toNode": "f052",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t002",
+      "toNode": "f053",
+      "label": "HOME",
+      "color": "#1d3557"
+    }
+  ]
+}

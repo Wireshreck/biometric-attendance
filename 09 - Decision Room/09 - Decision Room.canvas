@@ -1,0 +1,720 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 09 · DECISION ROOM — reasons, alternatives, consequences",
+      "x": -1150,
+      "y": -1250,
+      "width": 1150,
+      "height": 110,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## History is extended, never rewritten\nA superseded decision keeps its row and gains a successor. Deleting an ADR destroys the only record of why a plausible alternative was rejected.\n[[09 - Decision Room/Decision Log.md]]",
+      "x": -1150,
+      "y": -1090,
+      "width": 1150,
+      "height": 150,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t003",
+      "type": "text",
+      "text": "```\nDECISION → REASON (and the trade-off accepted) → ALTERNATIVES\n          → RESULT & AFFECTED SYSTEMS\n             ↳ revisit trigger (what would change it)\n```\nThe **revisit trigger** is what makes an ADR useful. “We chose the best option” is not falsifiable.",
+      "x": 200,
+      "y": -1090,
+      "width": 1400,
+      "height": 150,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t004",
+      "type": "text",
+      "text": "**ADR-001** — ESP32-WROOM-32-class terminal\n`PROVISIONAL`\n↳ revisit after the exact board is identified",
+      "x": -1120,
+      "y": -880,
+      "width": 760,
+      "height": 130,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "**ADR-002** — AS608 fingerprint module\n`SUPERSEDED → 013`\n↳ historical procurement choice",
+      "x": -320,
+      "y": -880,
+      "width": 760,
+      "height": 130,
+      "color": "#525252"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "**ADR-003** — Local-first, one-host prototype\n`PLANNED`\n↳ revisit only if requirements change",
+      "x": 480,
+      "y": -880,
+      "width": 760,
+      "height": 130,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "**ADR-004** — Match on sensor; host gets slot only\n`PROVISIONAL`\n↳ revisit after protocol inspection",
+      "x": -1120,
+      "y": -735,
+      "width": 760,
+      "height": 130,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "**ADR-005** — FastAPI + SQLite, single local service\n`DECIDED · IMPLEMENTED`\n↳ revisit if workload exceeds single-host",
+      "x": -320,
+      "y": -735,
+      "width": 760,
+      "height": 130,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t009",
+      "type": "text",
+      "text": "**ADR-006** — WAL, ordered migrations, FK, synchronous=FULL\n`DECIDED · VERIFIED`\n↳ revisit only on measured evidence",
+      "x": 480,
+      "y": -735,
+      "width": 760,
+      "height": 130,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t010",
+      "type": "text",
+      "text": "**ADR-007** — Vanilla HTML/CSS/ES modules, same origin\n`PLANNED`\n↳ revisit if UI scope justifies tooling",
+      "x": -1120,
+      "y": -590,
+      "width": 760,
+      "height": 130,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "**ADR-008** — 60-second same-student suppression\n`DECIDED · VERIFIED`\n↳ change only by explicit requirement",
+      "x": -320,
+      "y": -590,
+      "width": 760,
+      "height": 130,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "**ADR-009** — Stable UUID + bounded LittleFS replay\n`IMPLEMENTED · NEEDS HARDWARE`\n↳ validate through reboot/power-cut tests",
+      "x": 480,
+      "y": -590,
+      "width": 760,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t013",
+      "type": "text",
+      "text": "**ADR-010** — Device bearer + admin Basic, demo only\n`DECIDED · IMPLEMENTED`\n↳ no TLS, no production suitability",
+      "x": -1120,
+      "y": -445,
+      "width": 760,
+      "height": 130,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**ADR-011** — Defer AI; read-only aggregates only\n`DEFERRED`\n↳ reconsider after tested MVP + privacy review",
+      "x": -320,
+      "y": -445,
+      "width": 760,
+      "height": 130,
+      "color": "#525252"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**ADR-012** — Migrate to provisional R703\n`SUPERSEDED → 013`\n↳ superseded by the R307S identification",
+      "x": 480,
+      "y": -445,
+      "width": 760,
+      "height": 130,
+      "color": "#525252"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**ADR-013** — Canonical sensor is R307S\n`DECIDED`\n↳ supersedes 002 and 012",
+      "x": -1120,
+      "y": -300,
+      "width": 760,
+      "height": 130,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "**ADR-014** — Record bench wiring; preserve GPIO32/33\n`IN PROGRESS · unverified`\n↳ do not infer sensor failure",
+      "x": -320,
+      "y": -300,
+      "width": 760,
+      "height": 130,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t018",
+      "type": "text",
+      "text": "**ADR-015** — Repository root becomes the Obsidian vault\n`DECIDED`\n↳ retire the nested `obsidian/` vault",
+      "x": 480,
+      "y": -300,
+      "width": 760,
+      "height": 130,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "**ADR-016** — `fingerprint_sensor.h` → deprecation notice\n`DECIDED`\n↳ revisit if a second sensor family appears",
+      "x": -1120,
+      "y": -155,
+      "width": 760,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t020",
+      "type": "text",
+      "text": "**ADR-017** — Physical tests gated on measurable prerequisites\n`DECIDED`\n↳ build pass is never test success",
+      "x": -320,
+      "y": -155,
+      "width": 760,
+      "height": 130,
+      "color": "#0f766e"
+    },
+    {
+      "id": "g021",
+      "type": "group",
+      "label": "DECISION FLOW  —  every row ends in something that can be run",
+      "x": -1150,
+      "y": -60,
+      "width": 3400,
+      "height": 460,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t022",
+      "type": "text",
+      "text": "**Research finding**\nnR307S family datasheet",
+      "x": -1120,
+      "y": 10,
+      "width": 480,
+      "height": 80,
+      "color": "#a16207"
+    },
+    {
+      "id": "t023",
+      "type": "text",
+      "text": "→ **ADR-013**",
+      "x": -600,
+      "y": 10,
+      "width": 520,
+      "height": 80,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "→ **implementation**\nnconfig.h 32/33",
+      "x": -40,
+      "y": 10,
+      "width": 700,
+      "height": 80,
+      "color": "#15803d"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "→ **test that would verify it**\nnr307s env, HW-02/03/04",
+      "x": 700,
+      "y": 10,
+      "width": 900,
+      "height": 80,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "**Capacity disagreement**\nn1000 vs 300",
+      "x": -1120,
+      "y": 98,
+      "width": 480,
+      "height": 80,
+      "color": "#a16207"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "→ **defer provisioning**",
+      "x": -600,
+      "y": 98,
+      "width": 520,
+      "height": 80,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t028",
+      "type": "text",
+      "text": "→ **implementation**\nnReadSysPara gate",
+      "x": -40,
+      "y": 98,
+      "width": 700,
+      "height": 80,
+      "color": "#15803d"
+    },
+    {
+      "id": "t029",
+      "type": "text",
+      "text": "→ **test that would verify it**\nnHW-05 — NOT EXECUTED",
+      "x": 700,
+      "y": 98,
+      "width": 900,
+      "height": 80,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t030",
+      "type": "text",
+      "text": "**FR-04 duplicate rule**\nn60-second window",
+      "x": -1120,
+      "y": 186,
+      "width": 480,
+      "height": 80,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t031",
+      "type": "text",
+      "text": "→ **ADR-008**",
+      "x": -600,
+      "y": 186,
+      "width": 520,
+      "height": 80,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "→ **implementation**\nnmain.py transaction",
+      "x": -40,
+      "y": 186,
+      "width": 700,
+      "height": 80,
+      "color": "#15803d"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "→ **test that would verify it**\nntest_api.py — PASS",
+      "x": 700,
+      "y": 186,
+      "width": 900,
+      "height": 80,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t034",
+      "type": "text",
+      "text": "**Offline requirement**\nnsurvive an outage",
+      "x": -1120,
+      "y": 274,
+      "width": 480,
+      "height": 80,
+      "color": "#15803d"
+    },
+    {
+      "id": "t035",
+      "type": "text",
+      "text": "→ **ADR-009**",
+      "x": -600,
+      "y": 274,
+      "width": 520,
+      "height": 80,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t036",
+      "type": "text",
+      "text": "→ **implementation**\nnattendance_store.cpp",
+      "x": -40,
+      "y": 274,
+      "width": 700,
+      "height": 80,
+      "color": "#15803d"
+    },
+    {
+      "id": "t037",
+      "type": "text",
+      "text": "→ **test that would verify it**\nnINT-10 — never run",
+      "x": 700,
+      "y": 274,
+      "width": 900,
+      "height": 80,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t038",
+      "type": "text",
+      "text": "**Privacy boundary**\nnno biometric off-sensor",
+      "x": -1120,
+      "y": 362,
+      "width": 480,
+      "height": 80,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t039",
+      "type": "text",
+      "text": "→ **ADR-004**",
+      "x": -600,
+      "y": 362,
+      "width": 520,
+      "height": 80,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t040",
+      "type": "text",
+      "text": "→ **implementation**\nnschemas.py slot only",
+      "x": -40,
+      "y": 362,
+      "width": 700,
+      "height": 80,
+      "color": "#15803d"
+    },
+    {
+      "id": "t041",
+      "type": "text",
+      "text": "→ **test that would verify it**\nntest_api.py — PASS",
+      "x": 700,
+      "y": 362,
+      "width": 900,
+      "height": 80,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t042",
+      "type": "text",
+      "text": "A decision whose verification is a vibe is not a decision.",
+      "x": -1120,
+      "y": 400,
+      "width": 3350,
+      "height": 60,
+      "color": "#92400e"
+    },
+    {
+      "id": "t043",
+      "type": "text",
+      "text": "**Change procedure** — 1) append a new ADR row  2) mark the old one `SUPERSEDED by ADR-NNN`, never delete it  3) update the canonical doc  4) update the affected task  5) update the canvas edge.",
+      "x": -1120,
+      "y": 470,
+      "width": 3350,
+      "height": 60,
+      "color": "#475569"
+    },
+    {
+      "id": "f044",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": -1150,
+      "y": 560,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f045",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": -610,
+      "y": 560,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f046",
+      "type": "file",
+      "file": "01 - Project HQ/01 - Project HQ.canvas",
+      "x": -70,
+      "y": 560,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f047",
+      "type": "file",
+      "file": "06 - Research Archive/06 - Research Archive.canvas",
+      "x": 470,
+      "y": 560,
+      "width": 500,
+      "height": 100,
+      "color": "#a16207"
+    },
+    {
+      "id": "f048",
+      "type": "file",
+      "file": "10 - Workshop/10 - Workshop.canvas",
+      "x": 1010,
+      "y": 560,
+      "width": 500,
+      "height": 100,
+      "color": "#0891b2"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t002",
+      "toNode": "t003",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t002",
+      "toNode": "t004",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t002",
+      "toNode": "t005",
+      "color": "#525252"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t002",
+      "toNode": "t006",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t002",
+      "toNode": "t007",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t002",
+      "toNode": "t008",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t002",
+      "toNode": "t009",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t002",
+      "toNode": "t010",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t002",
+      "toNode": "t011",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "t012",
+      "color": "#15803d"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "t013",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t002",
+      "toNode": "t014",
+      "color": "#525252"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t002",
+      "toNode": "t015",
+      "color": "#525252"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "t016",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t002",
+      "toNode": "t017",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t002",
+      "toNode": "t018",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t002",
+      "toNode": "t019",
+      "color": "#15803d"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t002",
+      "toNode": "t020",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e019",
+      "fromNode": "t022",
+      "toNode": "t023",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e020",
+      "fromNode": "t023",
+      "toNode": "t024",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e021",
+      "fromNode": "t024",
+      "toNode": "t025",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e022",
+      "fromNode": "t026",
+      "toNode": "t027",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e023",
+      "fromNode": "t027",
+      "toNode": "t028",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e024",
+      "fromNode": "t028",
+      "toNode": "t029",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e025",
+      "fromNode": "t030",
+      "toNode": "t031",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e026",
+      "fromNode": "t031",
+      "toNode": "t032",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e027",
+      "fromNode": "t032",
+      "toNode": "t033",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e028",
+      "fromNode": "t034",
+      "toNode": "t035",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e029",
+      "fromNode": "t035",
+      "toNode": "t036",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e030",
+      "fromNode": "t036",
+      "toNode": "t037",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e031",
+      "fromNode": "t038",
+      "toNode": "t039",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e032",
+      "fromNode": "t039",
+      "toNode": "t040",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e033",
+      "fromNode": "t040",
+      "toNode": "t041",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e034",
+      "fromNode": "t002",
+      "toNode": "f044",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e035",
+      "fromNode": "t002",
+      "toNode": "f045",
+      "label": "HOME",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e036",
+      "fromNode": "t002",
+      "toNode": "f046",
+      "label": "→ Project HQ",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e037",
+      "fromNode": "t002",
+      "toNode": "f047",
+      "label": "→ Research Archive",
+      "color": "#a16207"
+    },
+    {
+      "id": "e038",
+      "fromNode": "t002",
+      "toNode": "f048",
+      "label": "→ Workshop",
+      "color": "#0891b2"
+    }
+  ]
+}

@@ -1,0 +1,460 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 01 · PROJECT HQ — what this is, and what it must never do",
+      "x": -1000,
+      "y": -900,
+      "width": 900,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## MISSION\nA local-first biometric attendance demonstrator a school can actually build.\n**Match on the sensor. Send only metadata. Survive an outage.**",
+      "x": -620,
+      "y": -640,
+      "width": 520,
+      "height": 200,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f003",
+      "type": "file",
+      "file": "01 - Project HQ/Project HQ.md",
+      "x": -620,
+      "y": -400,
+      "width": 330,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "g004",
+      "type": "group",
+      "label": "FOUR NON-NEGOTIABLES",
+      "x": 120,
+      "y": -1000,
+      "width": 900,
+      "height": 520,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "**1 · Match on the sensor**\nOnly a slot number leaves the R307S. No image ever does.",
+      "x": 150,
+      "y": -930,
+      "width": 400,
+      "height": 150,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "**2 · No biometric in the database**\nEvents carry uuid, slot, time, sync status — nothing else.",
+      "x": 580,
+      "y": -930,
+      "width": 400,
+      "height": 150,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "**3 · Local isolated network only**\nNo cloud, no public exposure, no port forwarding.",
+      "x": 150,
+      "y": -750,
+      "width": 400,
+      "height": 150,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "**4 · Synthetic data, consenting adults**\nNot now, not at the fair, not in a demo.",
+      "x": 580,
+      "y": -750,
+      "width": 400,
+      "height": 150,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g009",
+      "type": "group",
+      "label": "SYSTEM SHAPE",
+      "x": 120,
+      "y": -400,
+      "width": 900,
+      "height": 480,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t010",
+      "type": "text",
+      "text": "**EDGE — ESP32**\nR307S · OLED · DS3231 · LEDs · buzzer · LittleFS journal",
+      "x": 150,
+      "y": -330,
+      "width": 400,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "**LOCAL HOST — Python**\nFastAPI → SQLite (WAL) · dashboard planned",
+      "x": 590,
+      "y": -330,
+      "width": 400,
+      "height": 130,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "**Wi-Fi 2.4 GHz · isolated LAN**\nHTTP · plaintext · demo only",
+      "x": 370,
+      "y": -140,
+      "width": 400,
+      "height": 100,
+      "color": "#92400e"
+    },
+    {
+      "id": "g013",
+      "type": "group",
+      "label": "SCOPE — BUILT vs PLANNED",
+      "x": -1100,
+      "y": 300,
+      "width": 900,
+      "height": 620,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**Firmware runtime** — BUILT — state machine, enrollment, journal, network client",
+      "x": -1070,
+      "y": 340,
+      "width": 840,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**Backend API** — BUILT — health, students, enrollment, attendance ingest",
+      "x": -1070,
+      "y": 450,
+      "width": 840,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**Database** — BUILT — schema v1, migrations, constraints, WAL",
+      "x": -1070,
+      "y": 560,
+      "width": 840,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "**Frontend** — NOT BUILT — `frontend/` is a design note",
+      "x": -1070,
+      "y": 670,
+      "width": 840,
+      "height": 100,
+      "color": "#525252"
+    },
+    {
+      "id": "t018",
+      "type": "text",
+      "text": "**AI assistant** — DEFERRED by decision — must stay read-only",
+      "x": -1070,
+      "y": 780,
+      "width": 840,
+      "height": 100,
+      "color": "#525252"
+    },
+    {
+      "id": "g019",
+      "type": "group",
+      "label": "CANONICAL DOCUMENTS",
+      "x": 120,
+      "y": 300,
+      "width": 900,
+      "height": 620,
+      "color": "#475569"
+    },
+    {
+      "id": "f020",
+      "type": "file",
+      "file": "docs/requirements.md",
+      "x": 150,
+      "y": 340,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f021",
+      "type": "file",
+      "file": "docs/architecture.md",
+      "x": 590,
+      "y": 340,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f022",
+      "type": "file",
+      "file": "docs/project-plan.md",
+      "x": 150,
+      "y": 490,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f023",
+      "type": "file",
+      "file": "docs/requirements-traceability.md",
+      "x": 590,
+      "y": 490,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f024",
+      "type": "file",
+      "file": "docs/privacy-security.md",
+      "x": 150,
+      "y": 640,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f025",
+      "type": "file",
+      "file": "docs/software-stack.md",
+      "x": 590,
+      "y": 640,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "f026",
+      "type": "file",
+      "file": "docs/VAULT-AUDIT.md",
+      "x": 150,
+      "y": 790,
+      "width": 330,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "**Legacy Architecture Canvas**\nSuperseded subsystem map, kept for history\n[[01 - Project HQ/Legacy Architecture Canvas.canvas]]",
+      "x": -620,
+      "y": 120,
+      "width": 520,
+      "height": 140,
+      "color": "#525252"
+    },
+    {
+      "id": "f028",
+      "type": "file",
+      "file": "01 - Project HQ/01 - Project HQ.canvas",
+      "x": -620,
+      "y": 300,
+      "width": 330,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f029",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": -620,
+      "y": 580,
+      "width": 330,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f030",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": -620,
+      "y": 720,
+      "width": 330,
+      "height": 110,
+      "color": "#1d3557"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t002",
+      "toNode": "f003",
+      "color": "#1d3557",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t002",
+      "toNode": "t005",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t002",
+      "toNode": "t006",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t002",
+      "toNode": "t007",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t002",
+      "toNode": "t008",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t010",
+      "toNode": "t012",
+      "label": "POST /api/v1/attendance",
+      "color": "#92400e",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t012",
+      "toNode": "t011",
+      "color": "#92400e",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t002",
+      "toNode": "t014",
+      "color": "#15803d"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t002",
+      "toNode": "t015",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "t016",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "t017",
+      "color": "#525252"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t002",
+      "toNode": "t018",
+      "color": "#525252"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t002",
+      "toNode": "f020",
+      "color": "#475569"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "f021",
+      "color": "#475569"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t002",
+      "toNode": "f022",
+      "color": "#475569"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t002",
+      "toNode": "f023",
+      "color": "#475569"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t002",
+      "toNode": "f024",
+      "color": "#475569"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t002",
+      "toNode": "f025",
+      "color": "#475569"
+    },
+    {
+      "id": "e019",
+      "fromNode": "t002",
+      "toNode": "f026",
+      "color": "#475569"
+    },
+    {
+      "id": "e020",
+      "fromNode": "t002",
+      "toNode": "t027",
+      "label": "history",
+      "color": "#525252",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e021",
+      "fromNode": "t002",
+      "toNode": "f028",
+      "label": "AREA CANVAS",
+      "color": "#1d3557",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e022",
+      "fromNode": "t002",
+      "toNode": "f029",
+      "label": "FACILITY MAP",
+      "color": "#1d3557",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e023",
+      "fromNode": "t002",
+      "toNode": "f030",
+      "label": "HOME",
+      "color": "#1d3557",
+      "toEnd": "arrow"
+    }
+  ]
+}

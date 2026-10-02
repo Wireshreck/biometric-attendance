@@ -1,3 +1,11 @@
+---
+type: project
+area: project
+status: active
+tags:
+  - project
+  - entry-point
+---
 # Biometric School Attendance System
 
 > **Open-source, local-first biometric attendance demonstrator for schools.**
@@ -19,7 +27,7 @@
 | Production firmware | IMPLEMENTED (matching/enrollment, RTC gate, journal, Wi-Fi/API); physical operation NEEDS HARDWARE |
 | Backend API vertical slice | VERIFIED (10 software tests; physical integration unverified) |
 | Remaining API (reports/CSV/SSE/device lifecycle) | PLANNED |
-| Obsidian project workspace | VERIFIED (project vault under `obsidian/`; root `.obsidian/` is separate; Canvas JSON and repository-relative file targets validate) |
+| Obsidian project workspace | VERIFIED (repository root is the vault; `00 - Vault Hub.md`, 10 area hubs and 12 canvases; see [00 - Vault Hub](00%20-%20Vault%20Hub.md)) |
 | Architecture documentation | VERIFIED (dashboard remains planned; firmware workflows are implemented) |
 | Hardware bench tests | NEEDS HARDWARE |
 | Attendance event recording | IMPLEMENTED in firmware/backend; end-to-end NEEDS HARDWARE |
@@ -98,7 +106,10 @@ biometric-attendance/
 ├── diagrams/            Mermaid diagrams
 ├── scripts/             Automation and backup scripts
 ├── presentation/        Demo script, judge Q&A, outline
-├── obsidian/            Obsidian vault and project navigation notes / Canvas
+├── 00 - Vault Hub.md    Vault entrance (repository root is the Obsidian vault)
+├── 00 - Master Canvas.canvas
+├── 01..10 - *Lab/        Area hubs + Canvases, plus migrated TODO / Milestones / Decision Log
+├── .obsidian/            Vault configuration (app, graph, workspace)
 └── .github/             Issue templates, CI workflows
 ```
 
@@ -124,7 +135,7 @@ try { & .\.venv\Scripts\python.exe -m pytest tests -q } finally { Pop-Location }
 
 ## 📖 Documentation Index
 
-Open `obsidian/` as the Obsidian vault. Root `.obsidian/` is separate, ignored local app configuration. Start with the [project overview](obsidian/Attendance%20System/00%20-%20Project%20Overview.md), [AI development guide](obsidian/Attendance%20System/AI%20Development%20Guide.md), and [AI handoff](obsidian/Attendance%20System/AI%20Project%20Handoff.md). The vault notes are navigation/status pages; subsystem design details remain authoritative in the repository source files.
+**Open the repository root as the Obsidian vault.** Start at [`00 - Vault Hub.md`](00%20-%20Vault%20Hub.md), then open [`00 - Master Canvas.canvas`](00%20-%20Master%20Canvas.canvas) for the facility map. The AI operating notes are the [development guide](08%20-%20Documentation%20Library/AI%20Development%20Guide.md) and the [handoff](10%20-%20Workshop/AI%20Project%20Handoff.md). Vault notes are navigation and status pages; every technical specification remains authoritative in `docs/`, `firmware/`, `backend/`, `hardware/` and `diagrams/`.
 
 | Document | Description |
 | :--- | :--- |

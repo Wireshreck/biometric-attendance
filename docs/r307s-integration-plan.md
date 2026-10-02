@@ -1,3 +1,12 @@
+---
+type: research
+area: hardware
+status: active
+tags:
+  - r307s
+  - hardware
+  - plan
+---
 # R307S Fingerprint Sensor Integration Plan
 
 **Document:** `docs/r307s-integration-plan.md`

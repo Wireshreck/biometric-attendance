@@ -1,3 +1,11 @@
+---
+type: test
+area: testing
+status: active
+tags:
+  - testing
+  - component-tests
+---
 # Component Test Builds
 
 **Status:** Implemented as independent PlatformIO source-filter environments. A build pass does not mean the physical component passed. Source entry points are under `firmware/src/test_modes/` because PlatformIO compiles selected files below its configured `src_dir`; each environment excludes all other entry points.

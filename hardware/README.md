@@ -1,3 +1,11 @@
+---
+type: reference
+area: hardware
+status: unverified
+tags:
+  - hardware
+  - reference
+---
 # Hardware Subsystem Documentation
 
 This directory contains wiring diagrams, pinout mappings, component datasheets, and physical bring-up testing plans for the Biometric School Attendance System terminal.

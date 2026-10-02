@@ -1,3 +1,11 @@
+---
+type: hardware
+area: hardware
+status: unverified
+tags:
+  - hardware
+  - pinout
+---
 # Hardware Pinout Reference
 
 The single authoritative ESP32 assignment table is [docs/final-pin-map.md](../docs/final-pin-map.md). Firmware constants are in `firmware/include/config.h`.

@@ -1,3 +1,11 @@
+---
+type: test
+area: testing
+status: active
+tags:
+  - testing
+  - strategy
+---
 # Test and Acceptance Plan
 
 **Status:** VERIFIED — database migration/constraint tests and the implemented API vertical slice (temporary DBs, synthetic identities). PLANNED — remaining API, UI, firmware, integration, and hardware testing. No recognition accuracy, performance measurements, or reliability results are present. Traceability is in [requirements-traceability.md](requirements-traceability.md); bench sequence is [hardware/test-plan.md](../hardware/test-plan.md). Latest local run: `python -m pytest tests -q` from `backend/`: 10 passed on 2026-09-25.

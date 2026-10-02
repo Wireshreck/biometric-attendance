@@ -1,3 +1,11 @@
+---
+type: firmware
+area: firmware
+status: active
+tags:
+  - firmware
+  - recovery
+---
 # Firmware failure behavior and recovery
 
 | Failure | Detection | Device behavior | Recovery / operator action | Evidence status |

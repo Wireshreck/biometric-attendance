@@ -1,3 +1,11 @@
+---
+type: reference
+area: research
+status: active
+tags:
+  - r307s
+  - troubleshooting
+---
 # R307S Troubleshooting Decision Tree
 
 **Document:** `docs/r307s-troubleshooting.md`

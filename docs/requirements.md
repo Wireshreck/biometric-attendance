@@ -1,8 +1,16 @@
+---
+type: reference
+area: project
+status: active
+tags:
+  - requirements
+  - project
+---
 # System Requirements Specification (SRS)
 
-**Project:** Biometric School Attendance System  
-**Version:** 1.0 (Pre-Development Baseline)  
-**Date:** 24 September 2026  
+**Project:** Biometric School Attendance System
+**Version:** 1.0 (Pre-Development Baseline)
+**Date:** 24 September 2026
 
 ---
 

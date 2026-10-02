@@ -1,3 +1,12 @@
+---
+type: test
+area: testing
+status: active
+tags:
+  - r307s
+  - testing
+  - evidence
+---
 # R307S Hardware Test Matrix
 
 **Document:** `docs/r307s-test-matrix.md`

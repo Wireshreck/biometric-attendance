@@ -1,3 +1,12 @@
+---
+type: reference
+area: documentation
+status: planned
+tags:
+  - reference
+  - ai
+  - deferred
+---
 # Optional Local Read-Only Reporting Assistant
 
 **Status:** DEFERRED — no AI code, model, or client dependency is present. The attendance MVP must be complete and useful with this component absent.

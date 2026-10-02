@@ -1,3 +1,11 @@
+---
+type: reference
+area: backend
+status: active
+tags:
+  - reference
+  - stack
+---
 # Software Stack
 
 **Status:** IN PROGRESS — selected stack with compile-only firmware validation, SQLite schema/migrations, and a partial FastAPI implementation. Exact dependency sources are [PlatformIO config](../firmware/platformio.ini), [Python pyproject](../backend/pyproject.toml), and [requirements files](../backend/requirements.txt). See [dependency inventory](dependencies.md).

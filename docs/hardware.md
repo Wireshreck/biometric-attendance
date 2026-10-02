@@ -1,3 +1,11 @@
+---
+type: hardware
+area: hardware
+status: unverified
+tags:
+  - hardware
+  - components
+---
 # Hardware Selection and Verification
 
 **Status:** NEEDS HARDWARE — the project owner identifies the acquired unit as R307S and reports it assembled to ESP32 VIN/GND/GPIO32/33. The UART diagnostic has reportedly returned zero bytes. Exact board pin functions, supply voltage/current, jumper state, and logic levels remain **UNVERIFIED — REQUIRES MULTIMETER / exact-board inspection**. See [R307S research](r307s-hardware-research.md), the [BOM](bill-of-materials.md), [wiring](wiring.md), [pin map](esp32-pin-map.md), and [bring-up gates](../hardware/test-plan.md).

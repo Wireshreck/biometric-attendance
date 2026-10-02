@@ -1,3 +1,12 @@
+---
+type: hardware
+area: hardware
+status: unverified
+tags:
+  - hardware
+  - breadboard
+  - assembly
+---
 # Recommended breadboard layout
 
 **Status:** RECOMMENDED LAYOUT, not a record of the user's exact breadboard. This workspace has no recoverable breadboard/ESP32 photo or board revision. Use the generic coordinates below as a placement method; do not treat illustrative row numbers as observed. Confirm that the actual ESP32 header spacing fits before powering.

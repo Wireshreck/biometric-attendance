@@ -1,3 +1,12 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - agent
+  - context
+  - entry-point
+---
 # AI Context — Biometric Attendance
 
 **Updated:** 2026-10-02
@@ -30,7 +39,7 @@
 
 ## Start here
 
-Read the [Obsidian AI guide](obsidian/Attendance%20System/AI%20Development%20Guide.md), [project handoff](obsidian/Attendance%20System/AI%20Project%20Handoff.md), [task tracker](obsidian/Attendance%20System/TODO.md), [production behavior](docs/production-firmware.md), and [hardware gates](docs/power-and-safety.md). Build with `pio run -d firmware -e production`; run backend tests from `backend/` using `.venv`. Use the isolated component tests before combining hardware.
+Open the repository root as the Obsidian vault and start at [00 - Vault Hub](00%20-%20Vault%20Hub.md). Then read the [AI development guide](08%20-%20Documentation%20Library/AI%20Development%20Guide.md), [project handoff](10%20-%20Workshop/AI%20Project%20Handoff.md), [task tracker](10%20-%20Workshop/TODO.md), [production behavior](docs/production-firmware.md), and [hardware gates](docs/power-and-safety.md). Build with `pio run -d firmware -e production`; run backend tests from `backend/` using `.venv`. Use the isolated component tests before combining hardware.
 
 ## Safety and privacy
 

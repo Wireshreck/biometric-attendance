@@ -1,0 +1,1420 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 08 · DOCUMENTATION LIBRARY — the shelf index",
+      "x": -1150,
+      "y": -1300,
+      "width": 1150,
+      "height": 110,
+      "color": "#475569"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## WHICH FILE DO I ACTUALLY READ?\n\n**One subject, one canonical document.** Vault notes *link*; they never restate a spec.\n[[08 - Documentation Library/Documentation Library.md]]",
+      "x": -1150,
+      "y": -1140,
+      "width": 700,
+      "height": 150,
+      "color": "#475569"
+    },
+    {
+      "id": "g003",
+      "type": "group",
+      "label": "PROJECT",
+      "x": 670,
+      "y": -1170,
+      "width": 1060,
+      "height": 480,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f004",
+      "type": "file",
+      "file": "docs/project-plan.md",
+      "x": 700,
+      "y": -1140,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f005",
+      "type": "file",
+      "file": "docs/requirements.md",
+      "x": 1043,
+      "y": -1140,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f006",
+      "type": "file",
+      "file": "docs/requirements-traceability.md",
+      "x": 1386,
+      "y": -1140,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f007",
+      "type": "file",
+      "file": "docs/architecture.md",
+      "x": 700,
+      "y": -1020,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f008",
+      "type": "file",
+      "file": "docs/software-stack.md",
+      "x": 1043,
+      "y": -1020,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f009",
+      "type": "file",
+      "file": "docs/dependencies.md",
+      "x": 1386,
+      "y": -1020,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f010",
+      "type": "file",
+      "file": "10 - Workshop/TODO.md",
+      "x": 700,
+      "y": -900,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f011",
+      "type": "file",
+      "file": "10 - Workshop/Milestones.md",
+      "x": 1043,
+      "y": -900,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f012",
+      "type": "file",
+      "file": "09 - Decision Room/Decision Log.md",
+      "x": 1386,
+      "y": -900,
+      "width": 323,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "g013",
+      "type": "group",
+      "label": "HARDWARE",
+      "x": 670,
+      "y": -590,
+      "width": 1060,
+      "height": 600,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f014",
+      "type": "file",
+      "file": "docs/final-pin-map.md",
+      "x": 700,
+      "y": -560,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f015",
+      "type": "file",
+      "file": "docs/esp32-pin-map.md",
+      "x": 1043,
+      "y": -560,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f016",
+      "type": "file",
+      "file": "docs/power-and-safety.md",
+      "x": 1386,
+      "y": -560,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f017",
+      "type": "file",
+      "file": "docs/wiring.md",
+      "x": 700,
+      "y": -440,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f018",
+      "type": "file",
+      "file": "docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md",
+      "x": 1043,
+      "y": -440,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f019",
+      "type": "file",
+      "file": "docs/complete-breadboard-layout.md",
+      "x": 1386,
+      "y": -440,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f020",
+      "type": "file",
+      "file": "docs/hardware.md",
+      "x": 700,
+      "y": -320,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f021",
+      "type": "file",
+      "file": "docs/bill-of-materials.md",
+      "x": 1043,
+      "y": -320,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f022",
+      "type": "file",
+      "file": "docs/purchase-checklist.md",
+      "x": 1386,
+      "y": -320,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f023",
+      "type": "file",
+      "file": "docs/r307s-integration-plan.md",
+      "x": 700,
+      "y": -200,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f024",
+      "type": "file",
+      "file": "hardware/test-plan.md",
+      "x": 1043,
+      "y": -200,
+      "width": 323,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "g025",
+      "type": "group",
+      "label": "FIRMWARE",
+      "x": 1570,
+      "y": -1170,
+      "width": 900,
+      "height": 360,
+      "color": "#15803d"
+    },
+    {
+      "id": "f026",
+      "type": "file",
+      "file": "docs/production-firmware.md",
+      "x": 1600,
+      "y": -1140,
+      "width": 200,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f027",
+      "type": "file",
+      "file": "docs/failure-modes.md",
+      "x": 1820,
+      "y": -1140,
+      "width": 200,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f028",
+      "type": "file",
+      "file": "firmware/include/config.h",
+      "x": 2040,
+      "y": -1140,
+      "width": 200,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f029",
+      "type": "file",
+      "file": "firmware/platformio.ini",
+      "x": 2260,
+      "y": -1140,
+      "width": 200,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f030",
+      "type": "file",
+      "file": "firmware/README.md",
+      "x": 1600,
+      "y": -1020,
+      "width": 200,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f031",
+      "type": "file",
+      "file": "firmware/include/test_result.h",
+      "x": 1820,
+      "y": -1020,
+      "width": 200,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "g032",
+      "type": "group",
+      "label": "BACKEND",
+      "x": 1570,
+      "y": -590,
+      "width": 1060,
+      "height": 480,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f033",
+      "type": "file",
+      "file": "docs/api-plan.md",
+      "x": 1600,
+      "y": -560,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f034",
+      "type": "file",
+      "file": "docs/database-plan.md",
+      "x": 1943,
+      "y": -560,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f035",
+      "type": "file",
+      "file": "backend/migrations/001_initial_schema.sql",
+      "x": 2286,
+      "y": -560,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f036",
+      "type": "file",
+      "file": "backend/README.md",
+      "x": 1600,
+      "y": -440,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f037",
+      "type": "file",
+      "file": "backend/app/main.py",
+      "x": 1943,
+      "y": -440,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f038",
+      "type": "file",
+      "file": "backend/app/schemas.py",
+      "x": 2286,
+      "y": -440,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f039",
+      "type": "file",
+      "file": "backend/app/auth.py",
+      "x": 1600,
+      "y": -320,
+      "width": 323,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "g040",
+      "type": "group",
+      "label": "TESTING",
+      "x": -1180,
+      "y": -590,
+      "width": 900,
+      "height": 360,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f041",
+      "type": "file",
+      "file": "docs/hardware-test-plan.md",
+      "x": -1150,
+      "y": -560,
+      "width": 200,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f042",
+      "type": "file",
+      "file": "hardware/test-plan.md",
+      "x": -930,
+      "y": -560,
+      "width": 200,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f043",
+      "type": "file",
+      "file": "docs/component-tests.md",
+      "x": -710,
+      "y": -560,
+      "width": 200,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f044",
+      "type": "file",
+      "file": "docs/integration-tests.md",
+      "x": -490,
+      "y": -560,
+      "width": 200,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f045",
+      "type": "file",
+      "file": "docs/testing-plan.md",
+      "x": -1150,
+      "y": -440,
+      "width": 200,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f046",
+      "type": "file",
+      "file": "docs/r307s-test-matrix.md",
+      "x": -930,
+      "y": -440,
+      "width": 200,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "g047",
+      "type": "group",
+      "label": "RESEARCH",
+      "x": 670,
+      "y": -10,
+      "width": 900,
+      "height": 240,
+      "color": "#a16207"
+    },
+    {
+      "id": "f048",
+      "type": "file",
+      "file": "docs/r307s-hardware-research.md",
+      "x": 700,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#a16207"
+    },
+    {
+      "id": "f049",
+      "type": "file",
+      "file": "docs/r307s-troubleshooting.md",
+      "x": 920,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#a16207"
+    },
+    {
+      "id": "f050",
+      "type": "file",
+      "file": "docs/r307s-usb-test.md",
+      "x": 1140,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#a16207"
+    },
+    {
+      "id": "f051",
+      "type": "file",
+      "file": "docs/r307s-next-session.md",
+      "x": 1360,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#a16207"
+    },
+    {
+      "id": "g052",
+      "type": "group",
+      "label": "SECURITY",
+      "x": 1570,
+      "y": -10,
+      "width": 900,
+      "height": 240,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f053",
+      "type": "file",
+      "file": "docs/privacy-security.md",
+      "x": 1600,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f054",
+      "type": "file",
+      "file": "SECURITY.md",
+      "x": 1820,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f055",
+      "type": "file",
+      "file": "docs/backup-strategy.md",
+      "x": 2040,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f056",
+      "type": "file",
+      "file": "docs/ai-plan.md",
+      "x": 2260,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g057",
+      "type": "group",
+      "label": "SCIENCE FAIR",
+      "x": -1180,
+      "y": -10,
+      "width": 900,
+      "height": 360,
+      "color": "#be185d"
+    },
+    {
+      "id": "f058",
+      "type": "file",
+      "file": "docs/science-fair.md",
+      "x": -1150,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "f059",
+      "type": "file",
+      "file": "docs/science-fair-timeline.md",
+      "x": -930,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "f060",
+      "type": "file",
+      "file": "docs/SCIENCE-FAIR-SETUP.md",
+      "x": -710,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "f061",
+      "type": "file",
+      "file": "presentation/outline.md",
+      "x": -490,
+      "y": 20,
+      "width": 200,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "f062",
+      "type": "file",
+      "file": "presentation/demo-script.md",
+      "x": -1150,
+      "y": 140,
+      "width": 200,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "f063",
+      "type": "file",
+      "file": "presentation/judge-questions.md",
+      "x": -930,
+      "y": 140,
+      "width": 200,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "g064",
+      "type": "group",
+      "label": "SETUP",
+      "x": 670,
+      "y": 370,
+      "width": 1060,
+      "height": 480,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f065",
+      "type": "file",
+      "file": "docs/COMPLETE-SOFTWARE-SETUP.md",
+      "x": 700,
+      "y": 400,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f066",
+      "type": "file",
+      "file": "docs/environment.md",
+      "x": 1043,
+      "y": 400,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f067",
+      "type": "file",
+      "file": "docs/installed-tools.md",
+      "x": 1386,
+      "y": 400,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f068",
+      "type": "file",
+      "file": "docs/environment-audit.md",
+      "x": 700,
+      "y": 520,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f069",
+      "type": "file",
+      "file": "docs/deployment-plan.md",
+      "x": 1043,
+      "y": 520,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f070",
+      "type": "file",
+      "file": "docs/github-setup.md",
+      "x": 1386,
+      "y": 520,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f071",
+      "type": "file",
+      "file": "scripts/README.md",
+      "x": 700,
+      "y": 640,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "f072",
+      "type": "file",
+      "file": "frontend/README.md",
+      "x": 1043,
+      "y": 640,
+      "width": 323,
+      "height": 100,
+      "color": "#0891b2"
+    },
+    {
+      "id": "g073",
+      "type": "group",
+      "label": "DECISIONS",
+      "x": 1570,
+      "y": 370,
+      "width": 900,
+      "height": 360,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f074",
+      "type": "file",
+      "file": "09 - Decision Room/Decision Log.md",
+      "x": 1600,
+      "y": 400,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f075",
+      "type": "file",
+      "file": "docs/VAULT-AUDIT.md",
+      "x": 1820,
+      "y": 400,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f076",
+      "type": "file",
+      "file": "docs/firmware-audit.md",
+      "x": 2040,
+      "y": 400,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f077",
+      "type": "file",
+      "file": "AI_CONTEXT.md",
+      "x": 2260,
+      "y": 400,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f078",
+      "type": "file",
+      "file": "README.md",
+      "x": 1600,
+      "y": 520,
+      "width": 200,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g079",
+      "type": "group",
+      "label": "COLOUR AND STATUS LEGEND  —  identical everywhere in this vault",
+      "x": -1150,
+      "y": 700,
+      "width": 2900,
+      "height": 500,
+      "color": "#475569"
+    },
+    {
+      "id": "t080",
+      "type": "text",
+      "text": "**PROJECT / HUB**\nvault entrance",
+      "x": -1120,
+      "y": 750,
+      "width": 550,
+      "height": 90,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t081",
+      "type": "text",
+      "text": "**HARDWARE**\nparts, benches, wiring",
+      "x": -550,
+      "y": 750,
+      "width": 550,
+      "height": 90,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t082",
+      "type": "text",
+      "text": "**FIRMWARE**\ndevice runtime",
+      "x": 20,
+      "y": 750,
+      "width": 550,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "t083",
+      "type": "text",
+      "text": "**BACKEND**\nAPI, database, server",
+      "x": 590,
+      "y": 750,
+      "width": 550,
+      "height": 90,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t084",
+      "type": "text",
+      "text": "**TESTING**\nenvironments and evidence",
+      "x": 1160,
+      "y": 750,
+      "width": 550,
+      "height": 90,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t085",
+      "type": "text",
+      "text": "**RESEARCH**\ninvestigation, sources",
+      "x": -1120,
+      "y": 850,
+      "width": 550,
+      "height": 90,
+      "color": "#a16207"
+    },
+    {
+      "id": "t086",
+      "type": "text",
+      "text": "**SCIENCE FAIR**\nexhibition, demo",
+      "x": -550,
+      "y": 850,
+      "width": 550,
+      "height": 90,
+      "color": "#be185d"
+    },
+    {
+      "id": "t087",
+      "type": "text",
+      "text": "**DOCUMENTATION**\ndocuments, diagrams",
+      "x": 20,
+      "y": 850,
+      "width": 550,
+      "height": 90,
+      "color": "#475569"
+    },
+    {
+      "id": "t088",
+      "type": "text",
+      "text": "**DECISIONS**\nADRs, trade-offs",
+      "x": 590,
+      "y": 850,
+      "width": 550,
+      "height": 90,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t089",
+      "type": "text",
+      "text": "**WORKSHOP / ACTIVE**\nin-progress work",
+      "x": 1160,
+      "y": 850,
+      "width": 550,
+      "height": 90,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t090",
+      "type": "text",
+      "text": "**VERIFIED**\nevidence exists and was observed",
+      "x": -1120,
+      "y": 950,
+      "width": 550,
+      "height": 90,
+      "color": "#15803d"
+    },
+    {
+      "id": "t091",
+      "type": "text",
+      "text": "**UNVERIFIED**\nmapped but unmeasured",
+      "x": -550,
+      "y": 950,
+      "width": 550,
+      "height": 90,
+      "color": "#92400e"
+    },
+    {
+      "id": "t092",
+      "type": "text",
+      "text": "**NOT EXECUTED**\nnever run on hardware",
+      "x": 20,
+      "y": 950,
+      "width": 550,
+      "height": 90,
+      "color": "#525252"
+    },
+    {
+      "id": "t093",
+      "type": "text",
+      "text": "**BLOCKED**\nprerequisite missing",
+      "x": 590,
+      "y": 950,
+      "width": 550,
+      "height": 90,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t094",
+      "type": "text",
+      "text": "**DEPRECATED**\nsuperseded, kept for history",
+      "x": 1160,
+      "y": 950,
+      "width": 550,
+      "height": 90,
+      "color": "#525252"
+    },
+    {
+      "id": "t095",
+      "type": "text",
+      "text": "**Text badges are authoritative.** Colour reinforces them and never carries meaning alone. Statuses are always written out so a colour-blind reader and a screen reader get the same answer.\n\n**No duplicate technical truth** · **no metadata on source files** · **status words mean evidence** · **never delete history**.",
+      "x": -1120,
+      "y": 1060,
+      "width": 2850,
+      "height": 110,
+      "color": "#92400e"
+    },
+    {
+      "id": "f096",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": -1150,
+      "y": 1240,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f097",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": -610,
+      "y": 1240,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f098",
+      "type": "file",
+      "file": "09 - Decision Room/09 - Decision Room.canvas",
+      "x": -70,
+      "y": 1240,
+      "width": 500,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "f099",
+      "type": "file",
+      "file": "10 - Workshop/10 - Workshop.canvas",
+      "x": 470,
+      "y": 1240,
+      "width": 500,
+      "height": 100,
+      "color": "#0891b2"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t002",
+      "toNode": "f004",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t002",
+      "toNode": "f005",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t002",
+      "toNode": "f006",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t002",
+      "toNode": "f007",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t002",
+      "toNode": "f008",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t002",
+      "toNode": "f009",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t002",
+      "toNode": "f010",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t002",
+      "toNode": "f011",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t002",
+      "toNode": "f012",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "f014",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "f015",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t002",
+      "toNode": "f016",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t002",
+      "toNode": "f017",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "f018",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t002",
+      "toNode": "f019",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t002",
+      "toNode": "f020",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t002",
+      "toNode": "f021",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t002",
+      "toNode": "f022",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e019",
+      "fromNode": "t002",
+      "toNode": "f023",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e020",
+      "fromNode": "t002",
+      "toNode": "f024",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e021",
+      "fromNode": "t002",
+      "toNode": "f026",
+      "color": "#15803d"
+    },
+    {
+      "id": "e022",
+      "fromNode": "t002",
+      "toNode": "f027",
+      "color": "#15803d"
+    },
+    {
+      "id": "e023",
+      "fromNode": "t002",
+      "toNode": "f028",
+      "color": "#15803d"
+    },
+    {
+      "id": "e024",
+      "fromNode": "t002",
+      "toNode": "f029",
+      "color": "#15803d"
+    },
+    {
+      "id": "e025",
+      "fromNode": "t002",
+      "toNode": "f030",
+      "color": "#15803d"
+    },
+    {
+      "id": "e026",
+      "fromNode": "t002",
+      "toNode": "f031",
+      "color": "#15803d"
+    },
+    {
+      "id": "e027",
+      "fromNode": "t002",
+      "toNode": "f033",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e028",
+      "fromNode": "t002",
+      "toNode": "f034",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e029",
+      "fromNode": "t002",
+      "toNode": "f035",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e030",
+      "fromNode": "t002",
+      "toNode": "f036",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e031",
+      "fromNode": "t002",
+      "toNode": "f037",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e032",
+      "fromNode": "t002",
+      "toNode": "f038",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e033",
+      "fromNode": "t002",
+      "toNode": "f039",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e034",
+      "fromNode": "t002",
+      "toNode": "f041",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e035",
+      "fromNode": "t002",
+      "toNode": "f042",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e036",
+      "fromNode": "t002",
+      "toNode": "f043",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e037",
+      "fromNode": "t002",
+      "toNode": "f044",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e038",
+      "fromNode": "t002",
+      "toNode": "f045",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e039",
+      "fromNode": "t002",
+      "toNode": "f046",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e040",
+      "fromNode": "t002",
+      "toNode": "f048",
+      "color": "#a16207"
+    },
+    {
+      "id": "e041",
+      "fromNode": "t002",
+      "toNode": "f049",
+      "color": "#a16207"
+    },
+    {
+      "id": "e042",
+      "fromNode": "t002",
+      "toNode": "f050",
+      "color": "#a16207"
+    },
+    {
+      "id": "e043",
+      "fromNode": "t002",
+      "toNode": "f051",
+      "color": "#a16207"
+    },
+    {
+      "id": "e044",
+      "fromNode": "t002",
+      "toNode": "f053",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e045",
+      "fromNode": "t002",
+      "toNode": "f054",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e046",
+      "fromNode": "t002",
+      "toNode": "f055",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e047",
+      "fromNode": "t002",
+      "toNode": "f056",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e048",
+      "fromNode": "t002",
+      "toNode": "f058",
+      "color": "#be185d"
+    },
+    {
+      "id": "e049",
+      "fromNode": "t002",
+      "toNode": "f059",
+      "color": "#be185d"
+    },
+    {
+      "id": "e050",
+      "fromNode": "t002",
+      "toNode": "f060",
+      "color": "#be185d"
+    },
+    {
+      "id": "e051",
+      "fromNode": "t002",
+      "toNode": "f061",
+      "color": "#be185d"
+    },
+    {
+      "id": "e052",
+      "fromNode": "t002",
+      "toNode": "f062",
+      "color": "#be185d"
+    },
+    {
+      "id": "e053",
+      "fromNode": "t002",
+      "toNode": "f063",
+      "color": "#be185d"
+    },
+    {
+      "id": "e054",
+      "fromNode": "t002",
+      "toNode": "f065",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e055",
+      "fromNode": "t002",
+      "toNode": "f066",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e056",
+      "fromNode": "t002",
+      "toNode": "f067",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e057",
+      "fromNode": "t002",
+      "toNode": "f068",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e058",
+      "fromNode": "t002",
+      "toNode": "f069",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e059",
+      "fromNode": "t002",
+      "toNode": "f070",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e060",
+      "fromNode": "t002",
+      "toNode": "f071",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e061",
+      "fromNode": "t002",
+      "toNode": "f072",
+      "color": "#0891b2"
+    },
+    {
+      "id": "e062",
+      "fromNode": "t002",
+      "toNode": "f074",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e063",
+      "fromNode": "t002",
+      "toNode": "f075",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e064",
+      "fromNode": "t002",
+      "toNode": "f076",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e065",
+      "fromNode": "t002",
+      "toNode": "f077",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e066",
+      "fromNode": "t002",
+      "toNode": "f078",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e067",
+      "fromNode": "t002",
+      "toNode": "f096",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e068",
+      "fromNode": "t002",
+      "toNode": "f097",
+      "label": "HOME",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e069",
+      "fromNode": "t002",
+      "toNode": "f098",
+      "label": "→ Decision Room",
+      "color": "#b91c1c"
+    },
+    {
+      "id": "e070",
+      "fromNode": "t002",
+      "toNode": "f099",
+      "label": "→ Workshop",
+      "color": "#0891b2"
+    }
+  ]
+}

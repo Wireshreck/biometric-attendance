@@ -1,3 +1,11 @@
+---
+type: project
+area: project
+status: active
+tags:
+  - project
+  - planning
+---
 # Master Project Plan
 
 **Project:** Biometric Attendance (school attendance demonstrator)
@@ -47,4 +55,4 @@ Every functional/non-functional requirement has a verification plan in [requirem
 - [Hardware/BOM](bill-of-materials.md) · [Wiring](wiring.md) · [Procurement](purchase-checklist.md)
 - [Firmware](../firmware/README.md) · [Backend/API](../backend/README.md) · [Database](database-plan.md) · [Frontend](../frontend/README.md)
 - [Privacy/security](privacy-security.md) · [Testing](testing-plan.md) · [Deployment](deployment-plan.md) · [Backup/recovery](backup-strategy.md)
-- [Fair timeline](science-fair-timeline.md) · [Presentation plan](science-fair.md) · [Authoritative tasks](../obsidian/Attendance%20System/TODO.md)
+- [Fair timeline](science-fair-timeline.md) · [Presentation plan](science-fair.md) · [Authoritative tasks](../10%20-%20Workshop/TODO.md)

@@ -88,12 +88,17 @@ Thumbs.db
 Desktop.ini
 ehthumbs.db
 
-# ─── Obsidian internal workspace state ────────────────────────────────────────
-# Root .obsidian is separate local UI/workspace configuration; the project knowledge base is under obsidian/.
-/.obsidian/
-# Keep any actual nested vault notes/canvas tracked; ignore only its window layout.
-obsidian/**/.obsidian/workspace.json
-obsidian/**/.obsidian/workspace-mobile.json
+# ─── Obsidian (the repository root is the vault) ─────────────────────────────
+# Track the vault configuration so a fresh clone opens on `00 - Vault Hub` with the
+# same colours, graph colour groups and workspace layout. Ignore only transient
+# per-machine application state and third-party plugin data.
+!/.obsidian/
+/.obsidian/workspace-mobile.json
+/.obsidian/cache
+/.obsidian/plugins/
+/.obsidian/themes/
+/.obsidian/hotkeys.json
+/.obsidian/plugins/*/data.json
 
 # ─── Backup archives ──────────────────────────────────────────────────────────
 *.zip

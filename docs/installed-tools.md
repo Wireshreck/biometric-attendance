@@ -1,7 +1,16 @@
+---
+type: setup
+area: documentation
+status: active
+tags:
+  - setup
+  - tooling
+  - record
+---
 # Installed Development Tools Record
 
 **Snapshot date:** 2026-09-24; GitHub authentication rechecked 2026-09-25
-**Project:** Biometric School Attendance System (`biometric-attendance`)  
+**Project:** Biometric School Attendance System (`biometric-attendance`)
 
 This document logs all development tools installed or configured during the bootstrap process, adhering strictly to the principle of minimal, necessary tool installation.
 

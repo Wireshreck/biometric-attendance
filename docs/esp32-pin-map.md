@@ -1,3 +1,12 @@
+---
+type: hardware
+area: hardware
+status: deprecated
+tags:
+  - hardware
+  - pinout
+  - redirect
+---
 # ESP32 pin map — superseded navigation
 
 The authoritative current component/pin/voltage/breadboard table is [final-pin-map.md](final-pin-map.md). Use it with [power-and-safety.md](power-and-safety.md) and the [recommended breadboard layout](complete-breadboard-layout.md).

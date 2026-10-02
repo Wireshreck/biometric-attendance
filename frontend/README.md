@@ -1,3 +1,11 @@
+---
+type: reference
+area: documentation
+status: planned
+tags:
+  - frontend
+  - planned
+---
 # Web Dashboard Plan
 
 **Status:** PLANNED — UI not implemented. The `frontend/` directory currently contains this design note only. The backend owns the static-file mount once `backend/app/main.py` exists.

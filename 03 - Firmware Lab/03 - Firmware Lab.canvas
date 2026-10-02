@@ -1,0 +1,707 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 03 · FIRMWARE LAB — the terminal runtime",
+      "x": -1000,
+      "y": -1250,
+      "width": 1000,
+      "height": 110,
+      "color": "#15803d"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "**`main.cpp`** (12 lines)\ndelegates and nothing else",
+      "x": -1000,
+      "y": -1090,
+      "width": 380,
+      "height": 120,
+      "color": "#15803d"
+    },
+    {
+      "id": "t003",
+      "type": "text",
+      "text": "**`app/attendance_app.cpp`** (248)\nlifecycle · state machine · serial ops",
+      "x": -520,
+      "y": -1090,
+      "width": 420,
+      "height": 150,
+      "color": "#15803d"
+    },
+    {
+      "id": "f004",
+      "type": "file",
+      "file": "firmware/include/attendance_state.h",
+      "x": 0,
+      "y": -1090,
+      "width": 380,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "## FIRMWARE LAB\n**BUILD PASS** — `production` compiles: RAM 13.3%, Flash 66.0%\n**0 physical components have ever been exercised by this firmware.**\n[[03 - Firmware Lab/Firmware Lab.md]]",
+      "x": -1000,
+      "y": -880,
+      "width": 620,
+      "height": 140,
+      "color": "#15803d"
+    },
+    {
+      "id": "g006",
+      "type": "group",
+      "label": "HARDWARE SERVICES  —  `src/hardware/device_services.cpp`",
+      "x": 0,
+      "y": -1250,
+      "width": 1900,
+      "height": 520,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "**DisplayService**\nSSD1306 I2C 0x3C\ngeneric states · never a name",
+      "x": 30,
+      "y": -1170,
+      "width": 400,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "**RtcService**\nDS3231 0x68\nrefuses an invalid clock",
+      "x": 470,
+      "y": -1170,
+      "width": 400,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t009",
+      "type": "text",
+      "text": "**IndicatorService**\nGPIO 18/19/23\ngreen+beep / red+beep",
+      "x": 910,
+      "y": -1170,
+      "width": 400,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t010",
+      "type": "text",
+      "text": "**FingerprintService**\nUART2 · Adafruit_Fingerprint\nverifyPassword · scan · enroll",
+      "x": 1350,
+      "y": -1170,
+      "width": 400,
+      "height": 130,
+      "color": "#15803d"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "⚠ `firmware/include/fingerprint_sensor.h` is an **11-line DEPRECATED notice**, not an interface. It declares nothing and no production source includes it. Do not mistake it for a second driver.",
+      "x": 30,
+      "y": -1000,
+      "width": 1720,
+      "height": 120,
+      "color": "#525252"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "→ R307S over UART\n**0 bytes received**",
+      "x": 1350,
+      "y": -1000,
+      "width": 400,
+      "height": 100,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g013",
+      "type": "group",
+      "label": "STORAGE + NETWORK",
+      "x": 0,
+      "y": -680,
+      "width": 1900,
+      "height": 340,
+      "color": "#15803d"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**`storage/attendance_store.cpp`**\n`/attendance.jsonl` · CRC32 per line\nnever auto-formats · torn tail ≠ record",
+      "x": 30,
+      "y": -600,
+      "width": 500,
+      "height": 150,
+      "color": "#15803d"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**acknowledgement + compaction**\ntemp → backup-rename → swap\n**100 pending / 48 KiB** hard bound",
+      "x": 580,
+      "y": -600,
+      "width": 400,
+      "height": 150,
+      "color": "#15803d"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**`network/network_service.cpp`**\nWi-Fi · HTTP · `Bearer` token\nretry oldest every 10 s",
+      "x": 1030,
+      "y": -600,
+      "width": 420,
+      "height": 150,
+      "color": "#15803d"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "**FastAPI**\n`POST /api/v1/attendance`\n201 RECORDED / 200 DUP",
+      "x": 1500,
+      "y": -600,
+      "width": 350,
+      "height": 150,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "g018",
+      "type": "group",
+      "label": "STATE MACHINE  —  never fabricates a fact",
+      "x": -1000,
+      "y": -640,
+      "width": 900,
+      "height": 400,
+      "color": "#15803d"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "`BOOT`",
+      "x": -970,
+      "y": -570,
+      "width": 170,
+      "height": 70,
+      "color": "#15803d"
+    },
+    {
+      "id": "t020",
+      "type": "text",
+      "text": "`SELF_TEST`",
+      "x": -780,
+      "y": -570,
+      "width": 190,
+      "height": 70,
+      "color": "#15803d"
+    },
+    {
+      "id": "t021",
+      "type": "text",
+      "text": "`WAITING_FOR_FINGER`",
+      "x": -570,
+      "y": -570,
+      "width": 200,
+      "height": 70,
+      "color": "#15803d"
+    },
+    {
+      "id": "t022",
+      "type": "text",
+      "text": "`IDENTIFYING`",
+      "x": -570,
+      "y": -470,
+      "width": 200,
+      "height": 70,
+      "color": "#15803d"
+    },
+    {
+      "id": "t023",
+      "type": "text",
+      "text": "`ATTENDANCE_RECORDED`",
+      "x": -350,
+      "y": -570,
+      "width": 230,
+      "height": 70,
+      "color": "#15803d"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "`SYNCING`",
+      "x": -350,
+      "y": -470,
+      "width": 230,
+      "height": 70,
+      "color": "#15803d"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "`ERROR`",
+      "x": -970,
+      "y": -370,
+      "width": 200,
+      "height": 70,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "`OFFLINE`",
+      "x": -740,
+      "y": -370,
+      "width": 200,
+      "height": 70,
+      "color": "#92400e"
+    },
+    {
+      "id": "t027",
+      "type": "text",
+      "text": "`RECOVERY`",
+      "x": -510,
+      "y": -370,
+      "width": 200,
+      "height": 70,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t028",
+      "type": "text",
+      "text": "no valid RTC → no timestamp, so no event · no durable write → no “saved locally” · no API ack → no “attendance OK”",
+      "x": -970,
+      "y": -280,
+      "width": 850,
+      "height": 60,
+      "color": "#92400e"
+    },
+    {
+      "id": "g029",
+      "type": "group",
+      "label": "OPERATOR SERIAL CONSOLE  —  UART0 115200",
+      "x": 0,
+      "y": -290,
+      "width": 1900,
+      "height": 220,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t030",
+      "type": "text",
+      "text": "**`HELP`**\nlist commands",
+      "x": 30,
+      "y": -220,
+      "width": 430,
+      "height": 130,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t031",
+      "type": "text",
+      "text": "**`STATUS`**\nstate · sensor · rtc · storage · wifi · pending",
+      "x": 490,
+      "y": -220,
+      "width": 430,
+      "height": 130,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "**`SETTIME Y-M-D H:M:S`**\nset DS3231 local wall time, +05:30, no NTP",
+      "x": 950,
+      "y": -220,
+      "width": 430,
+      "height": 130,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "**`ENROLL <student-uuid>`**\ntwo-capture enrollment; needs sensor **and** an online backend assignment",
+      "x": 1410,
+      "y": -220,
+      "width": 430,
+      "height": 130,
+      "color": "#0891b2"
+    },
+    {
+      "id": "t034",
+      "type": "text",
+      "text": "Enrollment is deliberately unreachable from a scan. A checksummed NVS intent records the completion obligation and is retried on boot.",
+      "x": 30,
+      "y": -140,
+      "width": 1820,
+      "height": 60,
+      "color": "#92400e"
+    },
+    {
+      "id": "g035",
+      "type": "group",
+      "label": "BUILD",
+      "x": -1000,
+      "y": 420,
+      "width": 900,
+      "height": 480,
+      "color": "#15803d"
+    },
+    {
+      "id": "f036",
+      "type": "file",
+      "file": "firmware/platformio.ini",
+      "x": -970,
+      "y": 470,
+      "width": 420,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f037",
+      "type": "file",
+      "file": "firmware/include/config.h",
+      "x": -970,
+      "y": 590,
+      "width": 420,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f038",
+      "type": "file",
+      "file": "firmware/include/test_result.h",
+      "x": -970,
+      "y": 710,
+      "width": 420,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "f039",
+      "type": "file",
+      "file": "firmware/src/r307s_uart_diag.cpp",
+      "x": -970,
+      "y": 830,
+      "width": 420,
+      "height": 100,
+      "color": "#15803d"
+    },
+    {
+      "id": "t040",
+      "type": "text",
+      "text": "**27 environments**\n`production` (default) · `esp32dev`\n15 component · 9 integration\n\n```\npio run -d firmware -e production\n```\n\nCosmetic debt: `[env:production]` still filters `+<fingerprint/*.cpp>`; no such directory exists. PlatformIO ignores it — the build is unaffected.",
+      "x": -510,
+      "y": 470,
+      "width": 380,
+      "height": 460,
+      "color": "#15803d"
+    },
+    {
+      "id": "g041",
+      "type": "group",
+      "label": "DOCUMENTS + RELATED ROOMS",
+      "x": 0,
+      "y": 420,
+      "width": 1900,
+      "height": 480,
+      "color": "#475569"
+    },
+    {
+      "id": "f042",
+      "type": "file",
+      "file": "docs/production-firmware.md",
+      "x": 30,
+      "y": 470,
+      "width": 290,
+      "height": 100,
+      "color": "#475569"
+    },
+    {
+      "id": "f043",
+      "type": "file",
+      "file": "docs/failure-modes.md",
+      "x": 340,
+      "y": 470,
+      "width": 290,
+      "height": 100,
+      "color": "#475569"
+    },
+    {
+      "id": "f044",
+      "type": "file",
+      "file": "docs/esp32-pin-map.md",
+      "x": 650,
+      "y": 470,
+      "width": 290,
+      "height": 100,
+      "color": "#475569"
+    },
+    {
+      "id": "f045",
+      "type": "file",
+      "file": "docs/component-tests.md",
+      "x": 960,
+      "y": 470,
+      "width": 290,
+      "height": 100,
+      "color": "#475569"
+    },
+    {
+      "id": "f046",
+      "type": "file",
+      "file": "docs/integration-tests.md",
+      "x": 1270,
+      "y": 470,
+      "width": 290,
+      "height": 100,
+      "color": "#475569"
+    },
+    {
+      "id": "f047",
+      "type": "file",
+      "file": "firmware/README.md",
+      "x": 1580,
+      "y": 470,
+      "width": 290,
+      "height": 100,
+      "color": "#475569"
+    },
+    {
+      "id": "f048",
+      "type": "file",
+      "file": "02 - Hardware Lab/02 - Hardware Lab.canvas",
+      "x": 30,
+      "y": 600,
+      "width": 290,
+      "height": 100,
+      "color": "#c2410c"
+    },
+    {
+      "id": "f049",
+      "type": "file",
+      "file": "04 - Backend Server Room/04 - Backend Server Room.canvas",
+      "x": 340,
+      "y": 600,
+      "width": 290,
+      "height": 100,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "f050",
+      "type": "file",
+      "file": "05 - Testing Lab/05 - Testing Lab.canvas",
+      "x": 650,
+      "y": 600,
+      "width": 290,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "f051",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": 30,
+      "y": 730,
+      "width": 290,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f052",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": 340,
+      "y": 730,
+      "width": 290,
+      "height": 100,
+      "color": "#1d3557"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t002",
+      "toNode": "t003",
+      "label": "attendance_app_setup/loop",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t003",
+      "toNode": "f004",
+      "label": "10 states",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t005",
+      "toNode": "t002",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "color": "#15803d"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t003",
+      "toNode": "t007",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t003",
+      "toNode": "t008",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t003",
+      "toNode": "t009",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t003",
+      "toNode": "t010",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t010",
+      "toNode": "t012",
+      "color": "#b91c1c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t003",
+      "toNode": "t014",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t014",
+      "toNode": "t015",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t003",
+      "toNode": "t016",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t016",
+      "toNode": "t017",
+      "label": "same event_uuid on every retry",
+      "color": "#6d28d9",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t014",
+      "toNode": "t017",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "label": "replay when back online",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t019",
+      "toNode": "t020",
+      "color": "#15803d"
+    },
+    {
+      "id": "e015",
+      "fromNode": "t020",
+      "toNode": "t021",
+      "color": "#15803d"
+    },
+    {
+      "id": "e016",
+      "fromNode": "t021",
+      "toNode": "t022",
+      "color": "#15803d"
+    },
+    {
+      "id": "e017",
+      "fromNode": "t022",
+      "toNode": "t023",
+      "color": "#15803d"
+    },
+    {
+      "id": "e018",
+      "fromNode": "t023",
+      "toNode": "t024",
+      "color": "#15803d"
+    },
+    {
+      "id": "e019",
+      "fromNode": "t020",
+      "toNode": "t025",
+      "color": "#15803d"
+    },
+    {
+      "id": "e020",
+      "fromNode": "t025",
+      "toNode": "t026",
+      "color": "#15803d"
+    },
+    {
+      "id": "e021",
+      "fromNode": "t025",
+      "toNode": "t027",
+      "color": "#15803d"
+    },
+    {
+      "id": "e022",
+      "fromNode": "t005",
+      "toNode": "f048",
+      "label": "← Hardware",
+      "color": "#c2410c"
+    },
+    {
+      "id": "e023",
+      "fromNode": "t005",
+      "toNode": "f049",
+      "label": "→ Backend",
+      "color": "#6d28d9"
+    },
+    {
+      "id": "e024",
+      "fromNode": "t005",
+      "toNode": "f050",
+      "label": "→ Testing",
+      "color": "#0f766e"
+    },
+    {
+      "id": "e025",
+      "fromNode": "t005",
+      "toNode": "f051",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e026",
+      "fromNode": "t005",
+      "toNode": "f052",
+      "label": "HOME",
+      "color": "#1d3557"
+    }
+  ]
+}

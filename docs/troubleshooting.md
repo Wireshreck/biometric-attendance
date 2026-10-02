@@ -1,3 +1,10 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - troubleshooting
+---
 # Troubleshooting Matrix
 
 Production attendance workflows are implemented in firmware, but the physical system is not verified. **Disconnect USB before rewiring; never guess module voltages or short live rails.** Hardware sequence: [bring-up plan](../hardware/test-plan.md).

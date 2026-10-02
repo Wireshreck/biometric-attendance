@@ -1,0 +1,717 @@
+{
+  "nodes": [
+    {
+      "id": "t001",
+      "type": "text",
+      "text": "# 07 · SCIENCE FAIR — the public face  ·  target 9 October 2026",
+      "x": -1100,
+      "y": -1150,
+      "width": 1100,
+      "height": 110,
+      "color": "#be185d"
+    },
+    {
+      "id": "t002",
+      "type": "text",
+      "text": "## SCIENCE FAIR\nDemonstrate only what has been **physically demonstrated**.\nA demonstrator that admits its limits beats one caught overstating them.\n[[07 - Science Fair/Science Fair.md]]",
+      "x": -1100,
+      "y": -1000,
+      "width": 560,
+      "height": 160,
+      "color": "#be185d"
+    },
+    {
+      "id": "t003",
+      "type": "text",
+      "text": "## PROJECT\n01 · Project HQ\nmission + non-negotiables",
+      "x": 100,
+      "y": -1000,
+      "width": 590,
+      "height": 230,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t004",
+      "type": "text",
+      "text": "## HARDWARE\n02 · Hardware Lab\nparts, buses, safety",
+      "x": 720,
+      "y": -1000,
+      "width": 590,
+      "height": 230,
+      "color": "#c2410c"
+    },
+    {
+      "id": "t005",
+      "type": "text",
+      "text": "## FIRMWARE\n03 · Firmware Lab\nruntime + state machine",
+      "x": 1340,
+      "y": -1000,
+      "width": 590,
+      "height": 230,
+      "color": "#15803d"
+    },
+    {
+      "id": "t006",
+      "type": "text",
+      "text": "## BACKEND\n04 · Backend Server Room\nAPI + SQLite",
+      "x": 1960,
+      "y": -1000,
+      "width": 590,
+      "height": 230,
+      "color": "#6d28d9"
+    },
+    {
+      "id": "t007",
+      "type": "text",
+      "text": "## DEMO\npresentation/demo-script.md\n7 stages, every one has a fallback",
+      "x": 100,
+      "y": -740,
+      "width": 590,
+      "height": 230,
+      "color": "#be185d"
+    },
+    {
+      "id": "t008",
+      "type": "text",
+      "text": "## PRESENTATION\npresentation/outline.md\n3 min talk + ≤2 min demo",
+      "x": 720,
+      "y": -740,
+      "width": 590,
+      "height": 230,
+      "color": "#be185d"
+    },
+    {
+      "id": "t009",
+      "type": "text",
+      "text": "## JUDGE Q&A\npresentation/judge-questions.md\n10 questions, answered honestly",
+      "x": 1340,
+      "y": -740,
+      "width": 590,
+      "height": 230,
+      "color": "#be185d"
+    },
+    {
+      "id": "t010",
+      "type": "text",
+      "text": "## SETUP\ndocs/SCIENCE-FAIR-SETUP.md\npack, venue startup, recovery",
+      "x": 1960,
+      "y": -740,
+      "width": 590,
+      "height": 230,
+      "color": "#be185d"
+    },
+    {
+      "id": "t011",
+      "type": "text",
+      "text": "**Problem** — 30 s",
+      "x": -1070,
+      "y": -520,
+      "width": 520,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "t012",
+      "type": "text",
+      "text": "**Design** — 40 s",
+      "x": -530,
+      "y": -520,
+      "width": 520,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "t013",
+      "type": "text",
+      "text": "**Privacy** — 30 s",
+      "x": -1070,
+      "y": -410,
+      "width": 520,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "t014",
+      "type": "text",
+      "text": "**Build & experiment** — 40 s",
+      "x": -530,
+      "y": -410,
+      "width": 520,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "t015",
+      "type": "text",
+      "text": "**Results** — 30 s",
+      "x": -1070,
+      "y": -300,
+      "width": 520,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "t016",
+      "type": "text",
+      "text": "**Limits & next** — 20 s",
+      "x": -530,
+      "y": -300,
+      "width": 520,
+      "height": 100,
+      "color": "#be185d"
+    },
+    {
+      "id": "t017",
+      "type": "text",
+      "text": "Results slot: measured numbers **with** setup and sample size — or say “not measured”.",
+      "x": -1070,
+      "y": -190,
+      "width": 1030,
+      "height": 50,
+      "color": "#92400e"
+    },
+    {
+      "id": "g018",
+      "type": "group",
+      "label": "THE DEMO  —  7 stages, each with a labelled fallback",
+      "x": 0,
+      "y": -600,
+      "width": 2200,
+      "height": 420,
+      "color": "#be185d"
+    },
+    {
+      "id": "t019",
+      "type": "text",
+      "text": "1 Start — power, health, date/time",
+      "x": 30,
+      "y": -520,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t020",
+      "type": "text",
+      "text": "2 Enroll — synthetic student, two impressions",
+      "x": 1110,
+      "y": -520,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t021",
+      "type": "text",
+      "text": "3 Scan — consenting adult, locate by UUID",
+      "x": 30,
+      "y": -420,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t022",
+      "type": "text",
+      "text": "4 Duplicate — inside 60 s → DUPLICATE_SUPPRESSED",
+      "x": 1110,
+      "y": -420,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t023",
+      "type": "text",
+      "text": "5 Report — authorised daily aggregate / CSV",
+      "x": 30,
+      "y": -320,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t024",
+      "type": "text",
+      "text": "6 Failure & recovery — outage, replay, reconcile once",
+      "x": 1110,
+      "y": -320,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t025",
+      "type": "text",
+      "text": "7 Close — state limitations, clear the template",
+      "x": 30,
+      "y": -220,
+      "width": 1050,
+      "height": 92,
+      "color": "#be185d"
+    },
+    {
+      "id": "t026",
+      "type": "text",
+      "text": "**Today, stages 1–6 cannot be run** — stage 2 onward needs the R307S. That is not a reason to fake it. It is the reason the fallback exists.",
+      "x": 30,
+      "y": -180,
+      "width": 2130,
+      "height": 60,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g027",
+      "type": "group",
+      "label": "THE THREE QUESTIONS THAT DECIDE IT",
+      "x": -1100,
+      "y": -140,
+      "width": 1100,
+      "height": 520,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t028",
+      "type": "text",
+      "text": "**“Where is the biometric data stored?”**\nDesign keeps capture/matching/templates inside the sensor; only a slot number leaves. Exact sensor capabilities are not independently verified. We do not claim templates are irreversible.",
+      "x": -1070,
+      "y": -60,
+      "width": 1030,
+      "height": 130,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t029",
+      "type": "text",
+      "text": "**“What results have you measured?”**\nOnly dated results with setup, sample count and method. Accuracy, FAR/FRR, latency and reliability are **not measured**.",
+      "x": -1070,
+      "y": 90,
+      "width": 1030,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "t030",
+      "type": "text",
+      "text": "**“Is this ready for schools?”**\nNo. HTTP bearer traffic is unencrypted, sensor spoof resistance is unknown, retention and compliance unresolved.",
+      "x": -1070,
+      "y": 230,
+      "width": 1030,
+      "height": 120,
+      "color": "#b91c1c"
+    },
+    {
+      "id": "g031",
+      "type": "group",
+      "label": "EXPERIMENTS DEFINED IN ADVANCE  —  so results cannot be reverse-engineered",
+      "x": 0,
+      "y": -140,
+      "width": 2200,
+      "height": 520,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t032",
+      "type": "text",
+      "text": "**Enrollment success**\nmeasure: successes / attempts\ncontrol: consenting adults; module firmware",
+      "x": 30,
+      "y": -60,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t033",
+      "type": "text",
+      "text": "**Recognition reliability**\nmeasure: genuine accept / reject; impostor\ncontrol: consent and safety protocol",
+      "x": 1110,
+      "y": -60,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t034",
+      "type": "text",
+      "text": "**Response latency**\nmeasure: finger→feedback; commit→UI\ncontrol: ≥30 trials, p50/p95",
+      "x": 30,
+      "y": 50,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t035",
+      "type": "text",
+      "text": "**Duplicate boundary**\nmeasure: outcomes at 59 / 60 / 61 s\ncontrol: fixed synthetic identities",
+      "x": 1110,
+      "y": 50,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t036",
+      "type": "text",
+      "text": "**Offline resilience**\nmeasure: queued UUIDs vs stored UUIDs\ncontrol: separate Wi-Fi and API loss",
+      "x": 30,
+      "y": 160,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t037",
+      "type": "text",
+      "text": "**Power interruption**\nmeasure: DB integrity, queue recovery\ncontrol: controlled removal only",
+      "x": 1110,
+      "y": 160,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t038",
+      "type": "text",
+      "text": "**Backup recovery**\nmeasure: duration, integrity, row counts\ncontrol: separate restore destination",
+      "x": 30,
+      "y": 270,
+      "width": 1050,
+      "height": 100,
+      "color": "#0f766e"
+    },
+    {
+      "id": "t039",
+      "type": "text",
+      "text": "**Every one of these is currently “not measured.”**",
+      "x": 30,
+      "y": 320,
+      "width": 2130,
+      "height": 50,
+      "color": "#525252"
+    },
+    {
+      "id": "g040",
+      "type": "group",
+      "label": "TIMELINE  —  targets, not evidence",
+      "x": -1100,
+      "y": 430,
+      "width": 1100,
+      "height": 340,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t041",
+      "type": "text",
+      "text": "**Sep 25**\nhardware order confirmed",
+      "x": -1070,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t042",
+      "type": "text",
+      "text": "**Sep 28**\nbench bring-up",
+      "x": -918,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t043",
+      "type": "text",
+      "text": "**Oct 01**\nstandalone prototype",
+      "x": -766,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t044",
+      "type": "text",
+      "text": "**Oct 04**\nfirst end-to-end demo",
+      "x": -614,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t045",
+      "type": "text",
+      "text": "**Oct 06**\ntesting and code freeze",
+      "x": -462,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t046",
+      "type": "text",
+      "text": "**Oct 08**\nbackup and rehearsal",
+      "x": -310,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#1d3557"
+    },
+    {
+      "id": "t047",
+      "type": "text",
+      "text": "**Oct 09**\nSCIENCE FAIR",
+      "x": -158,
+      "y": 500,
+      "width": 140,
+      "height": 110,
+      "color": "#be185d"
+    },
+    {
+      "id": "t048",
+      "type": "text",
+      "text": "Canonical: `docs/science-fair-timeline.md`. Every presentation file already refuses to present a target as a result.",
+      "x": -1070,
+      "y": 630,
+      "width": 1030,
+      "height": 100,
+      "color": "#92400e"
+    },
+    {
+      "id": "g049",
+      "type": "group",
+      "label": "DOCUMENTS",
+      "x": 0,
+      "y": 430,
+      "width": 2200,
+      "height": 340,
+      "color": "#475569"
+    },
+    {
+      "id": "f050",
+      "type": "file",
+      "file": "docs/science-fair.md",
+      "x": 30,
+      "y": 500,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f051",
+      "type": "file",
+      "file": "docs/science-fair-timeline.md",
+      "x": 575,
+      "y": 500,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f052",
+      "type": "file",
+      "file": "docs/SCIENCE-FAIR-SETUP.md",
+      "x": 1120,
+      "y": 500,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f053",
+      "type": "file",
+      "file": "presentation/outline.md",
+      "x": 1665,
+      "y": 500,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f054",
+      "type": "file",
+      "file": "presentation/demo-script.md",
+      "x": 30,
+      "y": 610,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f055",
+      "type": "file",
+      "file": "presentation/judge-questions.md",
+      "x": 575,
+      "y": 610,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f056",
+      "type": "file",
+      "file": "docs/backup-strategy.md",
+      "x": 1120,
+      "y": 610,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f057",
+      "type": "file",
+      "file": "docs/COMPLETE-SOFTWARE-SETUP.md",
+      "x": 1665,
+      "y": 610,
+      "width": 520,
+      "height": 95,
+      "color": "#475569"
+    },
+    {
+      "id": "f058",
+      "type": "file",
+      "file": "00 - Master Canvas.canvas",
+      "x": -1100,
+      "y": 820,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f059",
+      "type": "file",
+      "file": "00 - Vault Hub.md",
+      "x": -560,
+      "y": 820,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f060",
+      "type": "file",
+      "file": "01 - Project HQ/01 - Project HQ.canvas",
+      "x": -20,
+      "y": 820,
+      "width": 500,
+      "height": 100,
+      "color": "#1d3557"
+    },
+    {
+      "id": "f061",
+      "type": "file",
+      "file": "02 - Hardware Lab/02 - Hardware Lab.canvas",
+      "x": 520,
+      "y": 820,
+      "width": 500,
+      "height": 100,
+      "color": "#c2410c"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "fromNode": "t003",
+      "toNode": "t004",
+      "color": "#c2410c",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e002",
+      "fromNode": "t004",
+      "toNode": "t005",
+      "color": "#15803d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e003",
+      "fromNode": "t005",
+      "toNode": "t006",
+      "color": "#6d28d9",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e004",
+      "fromNode": "t006",
+      "toNode": "t007",
+      "color": "#be185d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e005",
+      "fromNode": "t007",
+      "toNode": "t008",
+      "color": "#be185d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e006",
+      "fromNode": "t008",
+      "toNode": "t009",
+      "color": "#be185d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e007",
+      "fromNode": "t009",
+      "toNode": "t010",
+      "color": "#be185d",
+      "toEnd": "arrow"
+    },
+    {
+      "id": "e008",
+      "fromNode": "t002",
+      "toNode": "t003",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#be185d"
+    },
+    {
+      "id": "e009",
+      "fromNode": "t002",
+      "toNode": "t003",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#be185d"
+    },
+    {
+      "id": "e010",
+      "fromNode": "t002",
+      "toNode": "t003",
+      "fromSide": "right",
+      "toSide": "left",
+      "color": "#be185d"
+    },
+    {
+      "id": "e011",
+      "fromNode": "t002",
+      "toNode": "f058",
+      "label": "FACILITY MAP",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e012",
+      "fromNode": "t002",
+      "toNode": "f059",
+      "label": "HOME",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e013",
+      "fromNode": "t002",
+      "toNode": "f060",
+      "label": "→ Project HQ",
+      "color": "#1d3557"
+    },
+    {
+      "id": "e014",
+      "fromNode": "t002",
+      "toNode": "f061",
+      "label": "→ Hardware Lab",
+      "color": "#c2410c"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Normalise line endings for text artifacts so the vault stays diff-clean on Windows.
+* text=auto
+
+*.md   text eol=lf
+*.canvas text eol=lf
+*.mmd  text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.sql  text eol=lf
+*.ini  text eol=lf
+*.ps1  text eol=crlf
+*.py   text eol=lf
+*.cpp  text eol=lf
+*.h    text eol=lf
+*.png  binary
+*.jpg  binary
+*.pdf  binary
+*.db   binary

@@ -1,3 +1,11 @@
+---
+type: reference
+area: testing
+status: active
+tags:
+  - testing
+  - traceability
+---
 # Requirements Traceability
 
 **Status:** IMPLEMENTED — traceability map for the baseline SRS. Product behavior statuses in the matrix remain PLANNED unless updated with evidence. Source: [requirements.md](requirements.md).

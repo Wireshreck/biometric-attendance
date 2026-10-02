@@ -1,3 +1,12 @@
+---
+type: test
+area: testing
+status: unverified
+tags:
+  - hardware
+  - testing
+  - evidence
+---
 # Hardware Verification Evidence Log
 
 **Status:** Hardware results are reported only when physically executed and observed. Runnable test procedure is maintained in [docs/hardware-test-plan.md](../docs/hardware-test-plan.md); this file records evidence and owner confirmations.

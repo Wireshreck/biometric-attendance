@@ -1,3 +1,11 @@
+---
+type: setup
+area: documentation
+status: active
+tags:
+  - setup
+  - tooling
+---
 # Complete software setup (Windows)
 
 **Status:** Commands are documented from the current repo configuration. Firmware compilation and backend tests pass; physical device upload and full-system operation still need testing.

@@ -1,3 +1,11 @@
+---
+type: reference
+area: documentation
+status: active
+tags:
+  - contributing
+  - process
+---
 # Contributing to Biometric School Attendance System
 
 Thank you for your interest in contributing to this open-source project!
@@ -56,4 +64,4 @@ Use conventional commits:
 
 ## Questions?
 
-Open a GitHub Discussion or check the Obsidian knowledge base at `obsidian/Attendance System/`.
+Open a GitHub Discussion, or open the repository root as the Obsidian vault and start at [`00 - Vault Hub.md`](00%20-%20Vault%20Hub.md).

@@ -1,3 +1,11 @@
+---
+type: science-fair
+area: science-fair
+status: planned
+tags:
+  - science-fair
+  - presentation
+---
 # Science Fair Presentation Outline (Draft)
 
 **Target:** 3-minute explanation + up to 2-minute demonstration. **Current project state:** planning/toolchain stage. Fill measurements only after tests; omit unimplemented features from the “built” section.
@@ -12,4 +20,4 @@
 
 ## Claims gate
 
-Before speaking, compare each “implemented” claim with a test record in [testing plan](../docs/testing-plan.md), the current build/source, and [authoritative tracker](../obsidian/Attendance%20System/TODO.md). No accuracy, response time, cost comparison, zero-loss, compliance, or security guarantee without evidence.
+Before speaking, compare each “implemented” claim with a test record in [testing plan](../docs/testing-plan.md), the current build/source, and [authoritative tracker](../10%20-%20Workshop/TODO.md). No accuracy, response time, cost comparison, zero-loss, compliance, or security guarantee without evidence.

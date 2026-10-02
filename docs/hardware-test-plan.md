@@ -1,3 +1,11 @@
+---
+type: test
+area: testing
+status: planned
+tags:
+  - testing
+  - procedure
+---
 # Hardware Test Plan
 
 **Status:** TEST FIRMWARE IMPLEMENTED; physical test execution remains unverified unless an evidence row below says otherwise.

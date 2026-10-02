@@ -1,3 +1,12 @@
+---
+type: hardware
+area: hardware
+status: blocked
+tags:
+  - hardware
+  - safety
+  - gates
+---
 # Power and Electrical Safety
 
 **Status:** The reported R307S connection is assembled, but measured voltage/current evidence is absent. Sensor main rail and UART levels are **UNVERIFIED — REQUIRES MULTIMETER**.

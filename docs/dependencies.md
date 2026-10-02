@@ -1,3 +1,11 @@
+---
+type: reference
+area: backend
+status: active
+tags:
+  - reference
+  - dependencies
+---
 # Dependency Inventory
 
 Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. Backend implements a tested API subset; firmware implements enrollment/matching/event queue/API-client workflows that still need hardware integration verification. SQLite schema setup is in `backend/app/database.py`; database/API tests use temporary synthetic databases.

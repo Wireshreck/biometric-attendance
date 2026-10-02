@@ -1,3 +1,12 @@
+---
+type: project
+area: workshop
+status: active
+tags:
+  - next-steps
+  - planning
+  - unverified
+---
 # Firmware and hardware next steps
 
 The software now contains a production runtime and isolated diagnostic images. Prioritize physical evidence; do not write more feature code until actual component results expose a concrete defect.

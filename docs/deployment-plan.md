@@ -1,3 +1,11 @@
+---
+type: reference
+area: backend
+status: active
+tags:
+  - operations
+  - deployment
+---
 # Local Demo Deployment Plan
 
 **Status:** PLANNED — the backend app/dashboard/attendance firmware do not exist yet. Do not attempt to follow this as a working demo recipe until implementation gates pass. Development setup: [environment](environment.md).
