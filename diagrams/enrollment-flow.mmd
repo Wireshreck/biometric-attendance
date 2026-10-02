@@ -5,7 +5,7 @@ sequenceDiagram
   participant API as FastAPI
   participant DB as SQLite
   participant ESP as ESP32 USB serial console
-  participant Sensor as R703
+  participant Sensor as R307S (firmware flow implemented; exact unit unverified)
 
   Admin->>UI: Create synthetic student record
   UI->>API: POST /api/v1/students (admin auth)

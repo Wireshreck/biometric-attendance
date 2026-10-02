@@ -1,13 +1,13 @@
 # Dependency Inventory
 
-Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. The backend currently implements a tested API subset; firmware attendance behavior is not implemented. SQLite schema setup exists in `backend/app/database.py`; database/API tests use temporary synthetic databases.
+Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, `backend/requirements.txt`, and `backend/requirements-dev.txt`. Backend implements a tested API subset; firmware implements enrollment/matching/event queue/API-client workflows that still need hardware integration verification. SQLite schema setup is in `backend/app/database.py`; database/API tests use temporary synthetic databases.
 
 | Name | Pinned version/range | Used for | Required? | Install/verification | License note |
 | --- | --- | --- | --- | --- | --- |
 | PlatformIO Core | Host tool; audit recorded 6.2.0 | Resolve/build/upload firmware | Required for firmware dev | `python -m pip install platformio`; `pio --version`, `pio run` | PlatformIO Core license applies; inspect upstream terms before redistribution |
 | `espressif32` platform | 6.5.0 | ESP32 board/framework/toolchain | Required firmware | PlatformIO `pio run` | Platform/package component terms; review upstream metadata |
 | Arduino framework | Selected by PlatformIO platform | Firmware API | Required firmware | Bundled/resolved by PlatformIO | Upstream framework license |
-| Adafruit Fingerprint Sensor Library | 2.1.3 | UART fingerprint enroll/match commands (common Grow/HF-series protocol family); R703 compatibility UNVERIFIED — must be proven at first handshake | Planned required firmware | `pio run`, then physical sensor test | Adafruit library license; preserve notices if redistributing |
+| Adafruit Fingerprint Sensor Library | 2.1.3 | R307S diagnostic and runtime probe/match abstraction (common Grow/HF-series protocol family); exact-unit compatibility unverified because no ACK has been received | Included in production and R307S test builds; hardware use remains unverified | PlatformIO environment builds; then safe physical sensor test | Adafruit library license; preserve notices if redistributing |
 | Adafruit SSD1306 | 2.5.9 | OLED driver | Planned required firmware | `pio run` and display bench test | Adafruit library license |
 | Adafruit GFX | 1.11.9 | OLED graphics dependency | Planned required firmware | Resolved as direct dependency; `pio run` | Adafruit library license |
 | RTClib | 2.1.3 | DS3231 access | Planned required firmware | `pio run` and RTC bench test | Adafruit library license |

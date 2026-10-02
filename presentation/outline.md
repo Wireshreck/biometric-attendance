@@ -3,7 +3,7 @@
 **Target:** 3-minute explanation + up to 2-minute demonstration. **Current project state:** planning/toolchain stage. Fill measurements only after tests; omit unimplemented features from the “built” section.
 
 1. **Problem/question (30s):** Explain the engineering question: how to test a local attendance pipeline while minimizing biometric data transfer and surviving a LAN outage. Avoid unsupported claims about school time savings or vendor prices.
-2. **Design (40s):** ESP32/R703 edge match, event metadata only, local API/SQLite, vanilla dashboard, LittleFS offline queue (planned until implemented).
+2. **Design (40s):** ESP32/R307S edge-match firmware, event metadata only, local API/SQLite, and LittleFS offline journal are implemented in source. Do not present a successful sensor scan, network post, dashboard or outage recovery until physically demonstrated and recorded.
 3. **Privacy (30s):** On-sensor matching is the design boundary, not a verified guarantee of irreversibility. Slot IDs linked to attendance are sensitive. Demo data is synthetic. HTTP/local prototype is not school-ready.
 4. **Build/experiment (40s):** State exactly which component gates passed. Show wiring, event path, duplicate test and outage/recovery test only if measured.
 5. **Results (30s):** Provide measured enrollment/recognition counts and p50/p95 timings with setup and sample size. If unavailable, say “not measured”; do not substitute targets for results.

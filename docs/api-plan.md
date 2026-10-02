@@ -1,8 +1,8 @@
 # MVP HTTP API Contract
 
 **Status:** IN PROGRESS — see implementation matrix below. Contract items without an implemented route remain PLANNED.
-**Base path:** `/api/v1`; JSON over the isolated local demo network.  
-**Frontend transport:** `fetch()` for commands/queries plus authenticated Server-Sent Events for live updates.  
+**Base path:** `/api/v1`; JSON over the isolated local demo network.
+**Frontend transport:** `fetch()` for commands/queries plus authenticated Server-Sent Events for live updates.
 **Canonical data model:** [database design](database-plan.md); [requirements](requirements-traceability.md).
 
 ## Authentication and common behavior
@@ -43,7 +43,7 @@ Current endpoint tests use temporary SQLite databases and synthetic records. A r
 | `GET /api/v1/devices` | Admin | Optional `status`, pagination | `{"items":[{device_uuid,device_name,location_name,status,sensor_capacity,last_seen_at_utc}]}`; no token hash. | 200, 401, 422 |
 | `GET /api/v1/devices/{device_uuid}` | Admin | UUID path | One safe device status representation. | 200, 401, 404 |
 | `GET /api/v1/devices/{device_uuid}/enrollment/{student_uuid}` | Device | Device token must match path UUID | `{student_uuid,fingerprint_slot_id,capacity}` only if student is pending and assignment belongs to device. No identity fields/template bytes. | 200, 401, 404, 409 wrong state/device |
-| `POST /api/v1/devices/{device_uuid}/enrollment/{student_uuid}/complete` | Device | `{result:"SUCCESS",fingerprint_slot_id}`; device-reported slot must match assignment | `200 {student_uuid,status:"ACTIVE"}`; activate only after device confirms sensor write; audit transition. No image/template payload. | 200, 401, 404, 409 invalid transition/slot, 422 |
+| `POST /api/v1/devices/{device_uuid}/enrollment/{student_uuid}/complete` | Device | `{result:"SUCCESS",fingerprint_slot_id}`; device-reported slot must match assignment | `200 {student_uuid,status:"ACTIVE"}`; activate only after device confirms sensor write; audit transition. An exact retry for an already ACTIVE student/same slot returns the same status without a second transition/audit write. No image/template payload. | 200, 401, 404, 409 invalid transition/slot, 422 |
 | `GET /api/v1/devices/{device_uuid}/cleanup` | Device | Device bearer token | List inactive students on this device with remaining slot assignment; no names. Operator starts clear from serial console. | 200, 401, 404 |
 | `POST /api/v1/devices/{device_uuid}/cleanup/{student_uuid}/complete` | Device | `{result:"SUCCESS",fingerprint_slot_id}` | On verified sensor erase and matching inactive assignment, set student slot NULL and audit cleanup; slot becomes reusable only now. | 200, 401, 404, 409 invalid state/slot, 422 |
 | `POST /api/v1/devices/{device_uuid}/heartbeat` | Device | `{firmware_version,uptime_s,sensor_ok,rtc_valid,wifi_rssi,sensor_capacity}`; bounded diagnostics only, no secrets | `200 {device_uuid,status:"ACTIVE",last_seen_at_utc}`; update safe status and capacity fields. Do not log request credentials. | 200, 401, 404, 422 |

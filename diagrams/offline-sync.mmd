@@ -1,0 +1,34 @@
+sequenceDiagram
+  autonumber
+  participant Sensor as R307S
+  participant ESP as ESP32 firmware
+  participant RTC as DS3231
+  participant FS as LittleFS journal
+  participant WiFi as Private local Wi-Fi
+  participant API as FastAPI
+  participant DB as SQLite
+
+  Sensor-->>ESP: Match result: template slot only
+  ESP->>RTC: Read valid local wall time
+  RTC-->>ESP: Timestamp or invalid-clock error
+  ESP->>ESP: Create UUIDv4 event
+  ESP->>FS: Append JSON event + CRC and flush
+  alt API available immediately
+    ESP->>API: POST event (LIVE)
+    API->>DB: Validate auth/slot/time/idempotency
+    DB-->>API: RECORDED or DUPLICATE_SUPPRESSED
+    API-->>ESP: Matching event_uuid and accepted outcome
+    ESP->>FS: Append acknowledgement; compact acknowledged rows later
+  else Network/API unavailable
+    ESP-->>ESP: Show queued only after durable append
+    loop Wi-Fi restored; oldest event each retry interval
+      ESP->>API: POST same UUID, original time (REPLAYED_OFFLINE)
+      API->>DB: Idempotent validation/insert
+      DB-->>API: Stored prior/new outcome
+      API-->>ESP: Matching UUID + accepted outcome
+      ESP->>FS: Append acknowledgement
+    end
+  end
+
+  Note over FS: Bounded at 100 pending/48 KiB; no auto-format. Queue is not encrypted.
+  Note over Sensor,ESP: No fingerprint image or template data enters the event.

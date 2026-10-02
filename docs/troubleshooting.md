@@ -1,6 +1,6 @@
 # Troubleshooting Matrix
 
-This project is not yet a functioning attendance app. Follow diagnostics only for tooling/artifacts that exist. **Disconnect USB before rewiring; never guess module voltages or short live rails.** Hardware sequence: [bring-up plan](../hardware/test-plan.md).
+Production attendance workflows are implemented in firmware, but the physical system is not verified. **Disconnect USB before rewiring; never guess module voltages or short live rails.** Hardware sequence: [bring-up plan](../hardware/test-plan.md).
 
 | Symptom | Likely cause | Diagnostic | Safe response |
 | --- | --- | --- | --- |

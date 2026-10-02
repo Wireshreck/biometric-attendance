@@ -1,7 +1,7 @@
 ---
 type: milestone-index
 status: IN PROGRESS
-updated: 2026-09-25
+updated: 2026-10-02
 ---
 
 # Milestones
@@ -11,12 +11,15 @@ This is a status index, not a second schedule or task tracker. Individual tasks 
 | Milestone | Status | Exit evidence / source |
 | --- | --- | --- |
 | Foundation and repository baseline | VERIFIED | Baseline `9bb5801` preserved; current milestone `310559e`; source-of-truth map is in [[AI Project Handoff]] |
-| Obsidian workspace and handoff | VERIFIED | Root vault, file-backed [[Architecture.canvas]], AI guide/handoff, ADR, and task tracker cross-links reviewed |
+| Obsidian workspace and handoff | VERIFIED | Vault under `obsidian/`, file-backed [[Architecture.canvas]], AI guide/handoff, ADR, and task tracker cross-links reviewed |
 | Database foundation | VERIFIED | Schema v1, transactional migrations, temporary database constraints/rollback tests; 6 tests passed; milestone commit `310559e`, see DB-01 in [[TODO]] |
 | Backend/API vertical slice | VERIFIED (local and CI software tests) | 10 backend tests pass; implementation/fix commits `42c0849` and `a7aa14e`; GitHub Actions `36148997541` passed; see API-01/API-02 |
 | Remaining API: reports, CSV, SSE, device lifecycle | PLANNED | Contract and security tests; see API-03 |
 | Reproducible human build guide | IN PROGRESS | Software setup recorded; hardware/procurement and product integration gates remain; see [[18 - Complete Build Guide]] and BUILD-01 |
-| Hardware/firmware | NEEDS HARDWARE | Exact parts and safe bench evidence; see `hardware/test-plan.md` |
+| Firmware test infrastructure | VERIFIED (build-only) | Production/runtime and 25 isolated component/integration environments compile; see FW-01 in [[TODO]] and `docs/component-tests.md` |
+| Production firmware workflow | IMPLEMENTED (build-only) | Matching/enrollment, RTC gate, journal/replay and API client in `docs/production-firmware.md`; hardware/API device integration remains NEEDS HARDWARE |
+| Beginner setup documentation | IMPLEMENTED; NEEDS HARDWARE | `docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md`, `docs/complete-breadboard-layout.md`, `docs/COMPLETE-SOFTWARE-SETUP.md`, `docs/SCIENCE-FAIR-SETUP.md` |
+| Hardware/firmware physical validation | NEEDS HARDWARE | Exact parts and safe bench evidence; R307S supply/UART state unverified; see `hardware/test-plan.md` |
 | Dashboard | PLANNED | Accessible UI with real API/SSE behavior; see UI-01/UI-02 |
 | Integrated demo and verification | NEEDS HARDWARE | Repeatable enrollment-to-dashboard trace, outage recovery and restore evidence; see INT-01/DEMO-01 |
 

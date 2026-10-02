@@ -3,8 +3,8 @@ graph LR
         VIN["VIN (5V USB Rail)"]
         V33["3V3 (3.3V Regulated)"]
         GND_ESP["GND (System Ground)"]
-        GPIO16["GPIO 16 (U2_RXD - 3.3V Max)"]
-        GPIO17["GPIO 17 (U2_TXD - 3.3V Out)"]
+        GPIO32["GPIO 32 (UART2 RX - signal level unmeasured)"]
+        GPIO33["GPIO 33 (UART2 TX)"]
     end
 
     subgraph Harness["Observed 6-Wire Cable Harness (Order Observed, Signals Unverified)"]
@@ -16,7 +16,7 @@ graph LR
         W6["Wire 6: White<br/><b>[TO VERIFY: 3.3V / NC?]</b>"]
     end
 
-    subgraph R307S["R307S Optical Fingerprint Sensor (Acquired, Unpowered)"]
+    subgraph R307S["R307S Optical Fingerprint Sensor (owner reports assembled; power unverified; UART silent)"]
         P1["Pin 1: VCC (4.2V-6V or 3.3V)<br/><b>[TO VERIFY]</b>"]
         P2["Pin 2: GND (Ground)<br/><b>[TO VERIFY]</b>"]
         P3["Pin 3: TXD (Serial Out)<br/><b>[TO VERIFY Level <= 3.3V]</b>"]
@@ -29,8 +29,8 @@ graph LR
     VIN -.->|"TO VERIFY (If 5V required)"| W1
     V33 -.->|"TO VERIFY (If 3.3V required)"| W1
     GND_ESP ==>|"MANDATORY COMMON GND"| W2
-    W3 -.->|"TO VERIFY Level <= 3.3V"| GPIO16
-    GPIO17 -.->|"TO VERIFY Logic Level"| W4
+    W3 -.->|"owner-reported wire route; function/level unverified"| GPIO32
+    GPIO33 -.->|"owner-reported wire route; function/level unverified"| W4
 
     W1 --- P1
     W2 --- P2

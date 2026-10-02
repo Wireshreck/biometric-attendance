@@ -1,12 +1,12 @@
 # Master Project Plan
 
-**Project:** Biometric Attendance (school attendance demonstrator)  
-**Target event:** 2026-10-09  
+**Project:** Biometric Attendance (school attendance demonstrator)
+**Target event:** 2026-10-09
 **Current phase:** Early implementation; SQLite schema v1 and a software-tested FastAPI vertical slice are verified. Remaining API/application features and physical hardware validation remain incomplete/unconfirmed.
 
 ## Objective
 
-Explore a local attendance pipeline with ESP32 + R703 fingerprint matching, offline event buffering, a laptop-hosted FastAPI/SQLite service, and a vanilla-JS dashboard. The science-fair MVP must use synthetic data and consenting adult testers. It is an educational prototype, not authorized for live institutional attendance.
+Build a local attendance pipeline with ESP32 + R307S fingerprint matching, offline event buffering, a laptop-hosted FastAPI/SQLite service, and a planned vanilla-JS dashboard. Firmware now implements explicit enrollment/matching, RTC-qualified events, LittleFS queue/replay and API sync, but the current R307S owner report has no UART response and the physical workflow is unverified. The science-fair MVP must use synthetic data and consenting adult testers. It is an educational prototype, not authorized for live institutional attendance.
 
 ## MVP scope
 

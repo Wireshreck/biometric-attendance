@@ -6,17 +6,17 @@ updated: 2026-09-29
 
 # AI Development Guide
 
-This file is the operating guide for AI agents and human contributors. **Open the repository root as the Obsidian vault.** The root `.obsidian/` directory is local UI/workspace configuration and is ignored by Git. `obsidian/Attendance System/` contains the project home, navigation notes, task tracker, decisions, milestones, and handoff; those notes link to canonical implementation and design files elsewhere in this vault.
+This file is the operating guide for AI agents and human contributors. **Open `obsidian/` as the project vault.** The root `.obsidian/` directory is separate local UI/workspace configuration and is ignored by Git. `obsidian/Attendance System/` contains the project home, navigation notes, task tracker, decisions, milestones, and handoff. Canonical implementation/design files remain in the repository's `firmware/`, `backend/`, `docs/`, and other source directories.
 
 ## Project overview
 
-The project is a local-first science-fair attendance demonstrator planned around an ESP32 + fingerprint sensor, local FastAPI service, SQLite, and a browser dashboard. **Hardware note (2026-09-29):** the original plan named an AS608; the physically acquired module is an **R703** UART fingerprint module whose electrical specifications and pinout are UNVERIFIED — HARDWARE VERIFICATION REQUIRED (see [[Decision Log]] ADR-012). SQLite schema v1 and a tested FastAPI subset exist (health, admin student lifecycle, device enrollment assignment/completion, attendance ingest). Remaining reports/CSV/SSE/device lifecycle, firmware, dashboard, and physical integration are incomplete. Use synthetic identities and consenting adult testers for any future demo. The optional local AI reporting layer is deferred and must remain read-only and unnecessary for core operation.
+The project is a local-first science-fair attendance demonstrator based on an ESP32 + R307S, local FastAPI service, and SQLite. Firmware implements sensor matching/two-capture enrollment, RTC timestamp gating, OLED/indicator services, a LittleFS append journal/replay, and the backend's authenticated API contract. The runtime builds but has no full physical pass evidence; the owner reports the R307S returns zero UART bytes and its rail/TX level remain unmeasured. The backend vertical slice is tested; browser dashboard and later reports/API features remain planned. Use synthetic identities and consenting adult testers. The optional local AI reporting layer is deferred and must stay read-only and unnecessary for core operation.
 
 ## Repository map
 
 | Path | Purpose / current state |
 | --- | --- |
-| `firmware/` | PlatformIO toolchain sketch, provisional pin config, and build config; no attendance firmware yet |
+| `firmware/` | PlatformIO production runtime, device/network/storage modules, isolated component/integration tests and read-only R307S diagnostic |
 | `backend/` | SQLite schema v1, tests, and partial FastAPI app (health, student/enrollment, attendance ingest); reports/CSV/SSE/device lifecycle remain planned |
 | `frontend/` | Dashboard plan only; no UI source |
 | `hardware/` | Provisional pinout and physical bring-up gates; parts and measurements unconfirmed |
@@ -37,8 +37,8 @@ Do not maintain parallel copies of technical specifications. Use these canonical
 | Requirement implementation/test traceability | `docs/requirements-traceability.md` |
 | Architecture and data/failure flows | `docs/architecture.md`; diagrams in `diagrams/` |
 | Hardware, safe wiring, BOM/procurement | `docs/hardware.md`, `docs/wiring.md`, `docs/bill-of-materials.md`, `docs/purchase-checklist.md`; physical gates in `hardware/test-plan.md` |
-| Human construction procedure | `obsidian/Attendance System/18 - Complete Build Guide.md`; it must remain marked IN PROGRESS until physical evidence exists |
-| Firmware | `firmware/README.md`, `firmware/platformio.ini`, and actual sources under `firmware/src/` / `firmware/include/` |
+| Human construction procedure | `docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md`, `docs/complete-breadboard-layout.md`, and `docs/final-pin-map.md`; physical mapping/measurements remain unverified |
+| Firmware | `firmware/README.md`, `firmware/platformio.ini`, `docs/production-firmware.md`, and actual sources under `firmware/src/` / `firmware/include/` |
 | Backend | `backend/README.md`, `backend/pyproject.toml`, and actual sources/tests under `backend/app/` and `backend/tests/` |
 | Database | `docs/database-plan.md` and checked-in migrations under `backend/migrations/` when implemented |
 | API | `docs/api-plan.md` status matrix and actual route code/tests in `backend/app/main.py` and `backend/tests/test_api.py` |
@@ -87,7 +87,7 @@ An existing plan or note is not evidence that its product feature is implemented
 
 - Inspect actual source before saying functionality exists. Never infer implementation from diagrams or plans.
 - Keep docs synchronized with behavior and distinguish planned, implemented, and verified scope.
-- Do not invent sensor behavior, template properties, voltage tolerance, purchases, measurements, test outcomes, or security guarantees. The R703's specifications are unverified; do not wire or power it from assumptions, and do not claim its library/protocol compatibility until a bench handshake succeeds.
+- Do not invent sensor behavior, template properties, voltage tolerance, purchases, measurements, test outcomes, or security guarantees. The exact R307S unit's electrical state is unverified; do not alter wiring on assumptions or claim library/protocol compatibility until a bench handshake succeeds.
 - Protect credentials, local config, student identity, attendance data, and biometric data. Use synthetic data. Never add secrets to examples or Git.
 - Do not casually move/delete existing files, duplicate specifications, change architecture, or add dependencies/frameworks without a concrete need.
 - Do not send biometric images/templates to cloud services. The planned prototype HTTP transport is unencrypted and is restricted to synthetic demo data on an isolated network.

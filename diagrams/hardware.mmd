@@ -1,7 +1,7 @@
 flowchart LR
   USB[USB 5V data/power] --> ESP[ESP32-WROOM-32 DevKit]
-  ESP -->|UART RX GPIO16 provisional; R703 pinout/voltage UNVERIFIED| Sensor[R703 UART]
-  ESP -->|UART TX GPIO17 provisional; verify module| Sensor
+  ESP -->|UART2 RX GPIO32; owner-reported wiring, electrical levels unverified| Sensor[R307S UART]
+  ESP -->|UART2 TX GPIO33; owner-reported wiring, electrical levels unverified| Sensor
   ESP -.->|Confirm sensor supply and UART logic levels; shift if needed| Sensor
   ESP -->|GPIO21 SDA / GPIO22 SCL| Bus[I2C shared bus]
   Bus --> OLED[SSD1306 4-pin I2C]
@@ -14,5 +14,5 @@ flowchart LR
   OLED --- GND
   RTC --- GND
   Buzzer --- GND
-  Note[All voltages, pull-ups, pin labels and power draw unverified until exact boards arrive]:::warning
+  Note[Owner reports sensor assembled; diagnostic returned 0 bytes. Sensor rail, PCB pin mapping, UART levels and other peripheral wiring remain unverified]:::warning
   classDef warning fill:#fff2cc,stroke:#b8860b,color:#111

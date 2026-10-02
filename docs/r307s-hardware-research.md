@@ -3,24 +3,26 @@
 **Document:** `docs/r307s-hardware-research.md`
 **Date:** 2026-10-01
 **Scope:** R307S optical fingerprint sensor (GROW / Hangzhou Grow Technology), the module wired to this repository's ESP32 terminal.
-**Evidence tags:** **[LAB]** = measured on this bench on 2026-10-01 (§8, firmware diagnostic `firmware/src/r307s_uart_diag.cpp`). **[DOC]** = published datasheet/manual fact. **[INF]** = deduction; reasoning shown.
+**Evidence tags:** **[OWNER-REPORTED]** = current assembled setup/results reported by the project owner; not independently repeated in this session. **[DOC]** = published datasheet/manual fact. **[INF]** = deduction; reasoning shown. Historical bench-log details in §8 are retained as provenance and should not be mistaken for new measurements.
 
 > **R307 vs R307S:** the R307S is the compact sibling of the R307 in GROW's R30X series. Core electrical/protocol data is documented at family level; where a value is R307-only documentation, that is stated explicitly and not silently applied to the R307S.
 
 ---
 
-## 1. Verified Pinout
+## 1. Reported Harness and Wiring (electrical mapping unverified)
 
 Harness wire colors are this unit's observed order; colors must never be trusted alone over silkscreen/continuity.
 
 | Pin | Wire (observed) | Function | Electrical requirement | Connected to | Source |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| 1 | Red | VCC (main supply) | DC 4.2–6.0 V (R307 datasheet); some listings state 3.6–6.0 V | ESP32 **VIN (5 V)** [LAB — wired] | [DOC][1][2] |
-| 2 | Black | GND | Ground, common with ESP32 | ESP32 **GND** [LAB — wired] | [DOC][1][2] |
-| 3 | Yellow | TXD (UART out, TTL) | UART idle = high; logic level 3.3 V typical | ESP32 **GPIO32 (RX)** [LAB — wired] | [DOC][1][2] |
-| 4 | Green | RXD (UART in, TTL) | Accepts 3.3 V logic | ESP32 **GPIO33 (TX)** [LAB — wired] | [DOC][1][2] |
-| 5 | Blue | TOUCH (finger-detect output) | Goes HIGH when a finger is present **only if pin 6 is powered**; max output current ~50 mA | **Disconnected** [LAB — wired] | [DOC][1][3] |
-| 6 | White | Touch-sense power | DC 3.3–5 V, ~5 µA (powers only the TTP233D touch IC) | **Disconnected** [LAB — wired] | [DOC][1][3] |
+| 1 | Red | Candidate VCC | Exact unit/revision must be checked; family docs are not proof of this board's wiring | ESP32 **VIN**, owner-reported connection; voltage/current not measured | [OWNER-REPORTED][DOC][1][2] |
+| 2 | Black | Candidate GND | Common ground expected | ESP32 **GND**, owner-reported connection; continuity not independently measured | [OWNER-REPORTED][DOC][1][2] |
+| 3 | Yellow | Candidate sensor TX | Candidate UART output | ESP32 **GPIO32 (RX)**, owner-reported connection; function not verified at board pad | [OWNER-REPORTED][DOC][1][2] |
+| 4 | Green | Candidate sensor RX | Candidate UART input | ESP32 **GPIO33 (TX)**, owner-reported connection; function not verified at board pad | [OWNER-REPORTED][DOC][1][2] |
+| 5 | Blue | Unknown on this exact unit | Family sources describe touch function; exact mapping unverified | Disconnected per owner report | [OWNER-REPORTED][DOC][1][3] |
+| 6 | White | Unknown on this exact unit | Family sources describe touch supply; exact mapping unverified | Disconnected per owner report | [OWNER-REPORTED][DOC][1][3] |
+
+**No verified six-wire pinout is established for this exact unit.** Treat the table's functions as candidates from family/retailer documentation, not measured identification. Project owner reports this wiring has been physically assembled and the diagnostic returned zero bytes; do not infer the module is powered or healthy.
 
 Board also carries a **3.3V solder jumper** (§5) and, on this variant family, **USB interface pads** (see `docs/r307s-usb-test.md`).
 
@@ -91,9 +93,9 @@ Plausible causes by symptom, cross-referenced to evidence:
 
 **Response at unexpected baud:** module's baud multiplier N was changed by a previous owner/program (any N in 1…12 is legal [DOC][1]). The ladder scan covers every legal value.
 
-## 8. Evidence vs Inference — bench results 2026-10-01
+## 8. Historical Evidence vs Inference — bench results reported 2026-10-01
 
-Captured via USB serial (COM4, 115200) after fresh reset; full log in the session handoff (`docs/r307s-next-session.md`).
+The following results were recorded in the prior session via USB serial (reported COM4, 115200); the current task owner also confirms the broad outcome (ESP32 TX active, R307S returned 0 bytes across baud/routing probes). This session did not independently flash or run that hardware diagnostic. Full prior log details are in `docs/r307s-next-session.md`.
 
 1. **[LAB] TX-line idle-state probe (GPIO32, sensor TXD wire):**
    - ADC estimate ≈ **2822 mV** (uncalibrated; ESP32 ADC1, eFuse Vref 1163).

@@ -1,7 +1,7 @@
 # Database Design
 
 **Status:** VERIFIED — schema v1 migration and connection setup are implemented in `backend/migrations/001_initial_schema.sql` and `backend/app/database.py`; six migration/constraint tests pass. The API also implements and tests a limited transactional attendance-ingest path. Reports, data exports, lifecycle operations, and full integration remain PLANNED.
-**Engine:** SQLite, one local writer, WAL for concurrent dashboard reads.  
+**Engine:** SQLite, one local writer, WAL for concurrent dashboard reads.
 **File:** `backend/data/attendance.db` (generated at runtime; never commit it).
 
 This design is subordinate to the attendance requirements in [requirements.md](requirements.md). Raw fingerprint images and templates stay on the sensor; the host database stores only the assigned sensor slot.
@@ -28,7 +28,7 @@ Every device event carries a persistent `event_uuid`. A replay of that UUID retu
 | `status` | TEXT CHECK in `PENDING_ENROLLMENT`, `ACTIVE`, `INACTIVE` | Enrollment/administrative state |
 | `created_at_utc`, `updated_at_utc` | TEXT NOT NULL, RFC3339 UTC | Audit timestamps |
 
-Only `ACTIVE` students are resolved for attendance. Add `UNIQUE(enrollment_device_id, fingerprint_slot_id)`; SQLite permits multiple NULL pending slots. Attendance slot resolution is by `(device_id, fingerprint_slot_id)`. Capacity is reported from the exact sensor at bring-up; do not assume any slot count for the unverified R703. MVP supports one physical terminal; multi-terminal attendance enrollment requires explicit per-device assignment and is not implied by the `devices` table.
+Only `ACTIVE` students are resolved for attendance. Add `UNIQUE(enrollment_device_id, fingerprint_slot_id)`; SQLite permits multiple NULL pending slots. Attendance slot resolution is by `(device_id, fingerprint_slot_id)`. Capacity must be read from the exact sensor at bring-up; do not assume a count for the unverified R307S. MVP supports one physical terminal; multi-terminal attendance enrollment requires explicit per-device assignment and is not implied by the `devices` table.
 
 ### `devices`
 

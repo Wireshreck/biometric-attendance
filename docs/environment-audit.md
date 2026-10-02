@@ -1,10 +1,10 @@
 # Development Environment Audit
 
-**Audit Date:** 2026-09-24  
-**Project:** Biometric School Attendance System (`biometric-attendance`)  
-**Auditor:** Automated Project Initialization Agent  
+**Audit Date:** 2026-09-24
+**Project:** Biometric School Attendance System (`biometric-attendance`)
+**Auditor:** Automated Project Initialization Agent
 
-> Historical machine snapshot. Current Git/GitHub state is in [GitHub setup](github-setup.md); the repository root is now the Obsidian vault, while `obsidian/Attendance System/` is its project workspace. The pinned `esp32dev` validation sketch compiled with `pio run -d firmware` on 2026-09-25; this is compile evidence only, not a flash or hardware test.
+> Historical machine snapshot. Current Git/GitHub state is in [GitHub setup](github-setup.md). The project vault is under `obsidian/`; the root `.obsidian/` folder is separate local app configuration. The pinned `esp32dev` validation sketch compiled with `pio run -d firmware` on 2026-09-25; this is compile evidence only, not a flash or hardware test.
 
 ---
 
@@ -87,4 +87,4 @@ Description: Communications Port (Standard motherboard serial port)
 
 * **Obsidian Executable:** `C:\Users\user\AppData\Local\Programs\Obsidian\Obsidian.exe`
 * **Existing Vaults Registry:** Located in `C:\Users\user\AppData\Roaming\obsidian\obsidian.json`
-* **Project Workspace:** Notes were originally created under `biometric-attendance/obsidian/Attendance System/`; current convention is to open the repository root as the vault, keeping the rest of the user's vaults separate.
+* **Project Workspace:** Notes are stored under `biometric-attendance/obsidian/Attendance System/`; open `obsidian/` as this project's vault and keep root `.obsidian/` identified as separate local app configuration.

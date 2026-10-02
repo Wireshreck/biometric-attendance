@@ -1,9 +1,9 @@
 # R307S Fingerprint Sensor Integration Plan
 
-**Document:** `docs/r307s-integration-plan.md`  
-**Status:** PREPARATION ONLY — NOT YET ELECTRICALLY CONNECTED OR POWERED  
-**Date:** 2026-10-01  
-**Target Hardware:** ESP32-WROOM-32 DevKit V1 + R307S Optical Fingerprint Sensor  
+**Document:** `docs/r307s-integration-plan.md`
+**Status:** UART DIAGNOSTIC ATTEMPTED — SENSOR VOLTAGES / HARDWARE HEALTH UNVERIFIED
+**Date:** 2026-10-01
+**Target Hardware:** ESP32-WROOM-32 DevKit V1 + R307S Optical Fingerprint Sensor
 
 ---
 
@@ -13,8 +13,8 @@ This document establishes the authoritative, phased engineering plan for integra
 
 > [!CAUTION]
 > **ELECTRICAL SAFETY & HARDWARE BOUNDARY:**
-> - The R307S module has **NOT** been electrically connected or powered.
-> - The pinout and voltage specifications are **UNVERIFIED — HARDWARE VERIFICATION REQUIRED**.
+> - The owner reports the current R307S harness assembled to ESP32 VIN/GND/GPIO32/GPIO33 and reports UART diagnostics with zero response bytes.
+> - This is not an independent electrical measurement. Supply rail, sensor TX high level, exact board pin mapping/jumper and module health remain **UNVERIFIED — REQUIRES MULTIMETER / exact-board inspection**.
 > - Observed wire colors on the harness must **NEVER** be assumed to indicate signal functions.
 > - Connecting 5V logic to an ESP32 3.3V GPIO will cause **permanent silicon destruction**.
 > - Do not skip ahead in the test sequence. Follow each phase gate strictly.
@@ -35,14 +35,14 @@ This document establishes the authoritative, phased engineering plan for integra
    - **Position 4:** Green
    - **Position 5:** Blue
    - **Position 6:** White
-6. **Physical State:** The R307S is currently disconnected on the workbench with zero electrical power applied.
+6. **Physical State:** The current user report says the R307S is assembled to ESP32 VIN/GND and GPIO32/33; no independent voltage/current measurement is available.
 
 ---
 
 ### B. INFORMATION THAT STILL NEEDS TO BE VERIFIED (UNVERIFIED)
-1. **Harness Pin Mapping:** Does Position 1 (Red) correspond to VCC, or is Position 1 something else? Wire colors vary widely across batch suppliers and clone factories.
+1. **Harness/board mapping:** Current owner-reported wiring is red/VIN, black/GND, yellow/GPIO32 RX, green/GPIO33 TX, blue/white open. This reports the assembled wiring, but the exact contact function and electrical rail are not independently measured.
 2. **Module Silkscreen / PCB Labels:** Does the PCB underside or connector housing have laser-etched or silkscreened pin labels (e.g., `VCC`, `GND`, `TX`, `RX`, `TOUCH`, `3.3V`)?
-3. **Supply Voltage Requirements ($V_{CC}$):** 
+3. **Supply Voltage Requirements ($V_{CC}$):**
    - Standard R307/R307S modules typically specify DC 4.2V – 6.0V on their primary power rail (using an internal 3.3V LDO).
    - Some specialized R307S revisions accept a regulated 3.3V input.
    - Supplying 3.3V to a 5V LDO input may result in brownout and optical sensor failure. Supplying 5V to a 3.3V-direct rail will burn the sensor DSP.
@@ -59,8 +59,8 @@ This document establishes the authoritative, phased engineering plan for integra
 ### C. PROPOSED DESIGN DECISIONS (Pending Verification Gates)
 1. **ESP32 UART Pin Allocation:**
    - Propose using ESP32 Hardware UART2.
-   - Default GPIOs: **GPIO 16 (RX2)** and **GPIO 17 (TX2)** via the ESP32 GPIO matrix.
-   - Note: GPIO 16/17 are available on WROOM-32 DevKit boards (verify they are not tied to PSRAM).
+   - Current bench GPIOs: **GPIO 32 (RX2)** and **GPIO 33 (TX2)** via the ESP32 GPIO matrix; this is the firmware configuration and reported assembly.
+   - Older GPIO16/17 recommendations are superseded for the current bench wiring.
 2. **Software Abstraction Layer:**
    - Abstract the fingerprint driver behind a dedicated interface (`firmware/include/fingerprint_sensor.h`).
    - Keep `main.cpp` as an application state machine coordinator, preventing vendor protocol code from tangling with networking, database sync, and OLED rendering.
@@ -103,7 +103,7 @@ This document establishes the authoritative, phased engineering plan for integra
 
 ```mermaid
 flowchart TD
-    P0["Phase 0: ESP32 Serial Test<br/><b>[PASSED - COM3 115200]</b>"] --> P1["Phase 1: Verify Documentation & Pinout<br/><b>[NEXT IMMEDIATE ACTION]</b>"]
+    P0["Phase 0: ESP32 Serial Test<br/><b>[PASSED - owner report]</b>"] --> P1["Phase 1: Verify exact board/power/logic<br/><b>[INCOMPLETE - needs meter]</b>"]
     P1 --> P2["Phase 2: Minimum Wiring Connection<br/>(GND, VCC, TX, RX only)"]
     P2 --> P3["Phase 3: Power-On Sanity Test<br/>(Check rails, thermals, current)"]
     P3 --> P4["Phase 4: Establish UART Communication<br/>(Configure baud, check frame)"]
@@ -131,7 +131,7 @@ flowchart TD
 - **Objective:** Verify microcontroller boots, PlatformIO toolchain builds, and serial monitor communicates.
 - **Evidence:** Compiled `firmware/src/main.cpp`, uploaded via PlatformIO to COM3, verified serial monitor at 115200 baud showing chip model and heap.
 
-#### Phase 1: R307S Documentation & Physical Pinout Verification — STATUS: IN PROGRESS / BLOCKED ON HUMAN BENCH INSPECTION
+#### Phase 1: R307S Documentation & Physical Pinout Verification — STATUS: PARTIALLY DOCUMENTED; ELECTRICAL CHECKS INCOMPLETE
 - **Objective:** Establish authoritative pin assignment and electrical ratings from physical markings or official datasheet.
 - **Required Actions:**
   1. Inspect module connector pins for numbers (1–6) or silkscreen labels (`VCC`, `GND`, `TXD`, `RXD`, `TOUCH`, `3.3V`).
@@ -140,17 +140,17 @@ flowchart TD
   4. Record the definitive pinout table in `hardware/pinout.md`.
 - **Pass Criteria:** Pinout and supply voltage documented with zero ambiguity.
 
-#### Phase 2: Minimum Wiring Connection
+#### Phase 2: Minimum Wiring Connection — OWNER REPORTS ASSEMBLED
 - **Objective:** Wire only the 4 essential lines between ESP32 and R307S.
 - **Required Actions:**
   - Common Ground: ESP32 GND ↔ R307S GND.
   - Power: ESP32 VIN (5V) ↔ R307S VCC (if 5V verified) OR ESP32 3V3 ↔ R307S VCC (if 3.3V verified).
-  - ESP32 RX (GPIO 16) ↔ R307S TXD.
-  - ESP32 TX (GPIO 17) ↔ R307S RXD.
+  - ESP32 RX (GPIO 32) ↔ R307S TXD (owner-reported yellow wire).
+  - ESP32 TX (GPIO 33) ↔ R307S RXD (owner-reported green wire).
   - Leave Touch (Pin 5) and auxiliary pins unconnected.
 - **Pass Criteria:** Breadboard wiring matches verified pinout; no loose wires or short circuits.
 
-#### Phase 3: Power-On Sanity Test
+#### Phase 3: Power-On Sanity Test — DIAGNOSTIC ATTEMPTED; MEASUREMENTS UNVERIFIED
 - **Objective:** Ensure safe electrical operation without damaging components.
 - **Required Actions:**
   1. Connect ESP32 to USB with multimeter monitoring the 5V and 3.3V rails.
@@ -162,9 +162,9 @@ flowchart TD
 #### Phase 4: Establish UART Communication
 - **Objective:** Verify serial data link between ESP32 and R307S.
 - **Required Actions:**
-  - Initialize ESP32 `HardwareSerial(2)` on GPIO 16 (RX) and GPIO 17 (TX) at 57600 baud.
+  - Initialize ESP32 `HardwareSerial(2)` on GPIO 32 (RX) and GPIO 33 (TX) at 57600 baud.
   - Listen for boot packets or transmit probe bytes.
-  - Test alternative baud rates (9600, 19200, 38400, 115200) if 57600 fails.
+  - Test all documented family baud rates (9600 × N, N=1..12) if 57600 fails; the existing read-only diagnostic reports zero bytes at all rates/routings in the prior run.
 - **Pass Criteria:** Valid serial frames received without UART framing errors.
 
 #### Phase 5: Minimal Command & Response
@@ -215,12 +215,12 @@ flowchart TD
 
 | Symptom | Probable Cause | Diagnostic / Resolution Step |
 | :--- | :--- | :--- |
-| **No response from sensor (Timeout)** | RX/TX lines reversed | Swap GPIO 16 (RX) and GPIO 17 (TX) connections. |
+| **No response from sensor (Timeout)** | Possible unverified supply, exact pin mapping, RXD path/address, module state, or protocol issue | Preserve the reported GPIO32/33 routing; first inspect exact board/pin markings and safely measure rail/signal levels. Do not blindly swap wires. Keep using the read-only diagnostic; 0 bytes does not prove module failure. |
 | **Sensor LED ring does not light up** | Power not connected or voltage too low | Verify VCC rail with multimeter; confirm 5V/3.3V selection. |
 | **Garbage characters received** | Baud rate mismatch | Iterate baud rates: 57600 (default) → 9600 → 115200 → 38400. |
 | **Sensor warms up or draws > 200mA** | Incorrect pinout / short circuit | **POWER OFF IMMEDIATELY.** Re-verify pin 1 vs pin 6 orientation. |
 | **ESP32 resets when finger placed** | Brownout caused by optical LED surge | Add 100µF electrolytic capacitor across 5V and GND near sensor. |
-| **Communication fails on GPIO 16/17** | PSRAM conflict on board | Remap UART2 to alternative GPIOs (e.g., GPIO 25/26 or 27/14) via GPIO matrix. |
+| **No response on GPIO 32/33** | Physical supply, module, harness, line, protocol/password/address or sensor fault; software baud/routing scan already recorded separately | Keep current routing; verify board labels/continuity and meter-measure supply and TX level before any wiring change. Do not conclude the sensor is dead from silence. |
 
 ---
 

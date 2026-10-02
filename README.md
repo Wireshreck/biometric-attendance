@@ -1,7 +1,7 @@
 # Biometric School Attendance System
 
 > **Open-source, local-first biometric attendance demonstrator for schools.**
-> Planned core: ESP32 + R703 fingerprint module + FastAPI + SQLite.
+> Core implementation: ESP32 + R307S fingerprint module + FastAPI + SQLite. Production firmware and backend software compile/test, but the R307S currently returns no UART response in owner-reported diagnostics and has unmeasured supply/logic levels. Full physical attendance operation is not verified.
 > Science Fair Exhibition: **9 October 2026**
 
 ---
@@ -15,16 +15,17 @@
 | GitHub and CI | VERIFIED locally; Actions run `36148997541` passed firmware build and backend smoke/tests on commit `06f7713` |
 | Hardware selection and BOM | IMPLEMENTED (planning docs; procurement unconfirmed) |
 | Purchase/delivery confirmation | BLOCKED (owner status unknown) |
-| Firmware toolchain validation sketch | VERIFIED (compile only; flashing and hardware behavior NEEDS HARDWARE) |
+| Firmware component/integration test builds | VERIFIED (25 test environments compile/link; hardware execution NEEDS HARDWARE) |
+| Production firmware | IMPLEMENTED (matching/enrollment, RTC gate, journal, Wi-Fi/API); physical operation NEEDS HARDWARE |
 | Backend API vertical slice | VERIFIED (10 software tests; physical integration unverified) |
 | Remaining API (reports/CSV/SSE/device lifecycle) | PLANNED |
-| Obsidian project workspace | VERIFIED (repo root is vault; guide/handoff/file-backed Canvas link to source files) |
-| Architecture documentation | VERIFIED (firmware/dashboard and full integration remain planned) |
+| Obsidian project workspace | VERIFIED (project vault under `obsidian/`; root `.obsidian/` is separate; Canvas JSON and repository-relative file targets validate) |
+| Architecture documentation | VERIFIED (dashboard remains planned; firmware workflows are implemented) |
 | Hardware bench tests | NEEDS HARDWARE |
-| Attendance firmware | PLANNED; NEEDS HARDWARE for sensor validation |
+| Attendance event recording | IMPLEMENTED in firmware/backend; end-to-end NEEDS HARDWARE |
 | Database schema v1 migration | VERIFIED (6 temporary-database migration/constraint tests passed) |
 | Dashboard | PLANNED |
-| End-to-end integration | PLANNED; NEEDS HARDWARE |
+| End-to-end integration | NEEDS HARDWARE; no physical pass evidence |
 | Science-fair demo | PLANNED |
 
 ---
@@ -50,18 +51,18 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 ```
 ┌─────────────────────────────────┐
 │     Edge Terminal (ESP32)       │
-│  R703 ─ UART ─ ESP32 ─ OLED    │
+│  R307S ─ UART ─ ESP32 ─ OLED   │
 │              │                  │
 │           DS3231 RTC            │
 │    Green/Red LED  Buzzer        │
-│    LittleFS offline buffer      │
+│    LittleFS offline journal     │
 └──────────────┬──────────────────┘
                │ Wi-Fi (2.4 GHz)
                ▼
 ┌─────────────────────────────────┐
 │  Local Laptop (Python server)   │
 │  FastAPI ──► SQLite3 (WAL)      │
-│  Vanilla JS Web Dashboard       │
+│  Web Dashboard (planned)        │
 └──────────────┬──────────────────┘
                │ Optional
                ▼
@@ -71,13 +72,15 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 └─────────────────────────────────┘
 ```
 
+Firmware creates attendance events, queues them before transmission, and retries using stable UUIDs. R307S response and physical integration remain unverified, and the browser dashboard remains planned. See [firmware status](firmware/README.md), [hardware test environments](docs/component-tests.md), and [production behavior](docs/production-firmware.md).
+
 ---
 
 ## 🔑 Key Design Principles
 
-- **Local-first design:** Core service is planned to run locally without cloud services; not implemented yet.
-- **Biometric minimization:** The planned boundary keeps image/template operations on the sensor and sends a match slot only; exact sensor behavior is unverified.
-- **Offline resilience:** DS3231 timekeeping and a LittleFS event queue are planned; neither is implemented or validated yet.
+- **Local-first design:** API, database and device client can run on a private local network; public-network deployment is unsupported.
+- **Biometric minimization:** Firmware sends only template slot, event UUID, timestamp and synchronization state; no fingerprint image/template is sent.
+- **Offline resilience:** LittleFS journal and replay logic are implemented; persistence across actual power loss needs hardware verification.
 - **Open source:** MIT License — free for any school to use and modify.
 - **Affordable target:** Current planning envelope is ~₹2,399 before any unpriced conditional RTC cell; verify the actual cart.
 
@@ -89,41 +92,39 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 biometric-attendance/
 ├── firmware/            ESP32 source code (PlatformIO / Arduino)
 ├── backend/             FastAPI + SQLite backend (Python 3.13)
-├── frontend/            Vanilla JS/HTML5 web dashboard
+├── frontend/            Dashboard placeholder (UI not implemented)
 ├── hardware/            Pinout, bench test plans
 ├── docs/                Project documentation
 ├── diagrams/            Mermaid diagrams
 ├── scripts/             Automation and backup scripts
 ├── presentation/        Demo script, judge Q&A, outline
-├── obsidian/            Project navigation notes and Canvas (open repository root as vault)
+├── obsidian/            Obsidian vault and project navigation notes / Canvas
 └── .github/             Issue templates, CI workflows
 ```
 
 ---
 
-## 🚀 Planned Quick Start (After Implementation and Hardware Bring-Up)
+## 🚀 Current Development Checks
 
-The commands below describe the intended end-to-end workflow; they are **not runnable yet**. The backend currently has no `main.py` application and the firmware sketch only validates the toolchain. Follow the subsystem READMEs for current setup checks.
+These commands build firmware and run implemented backend tests. They do **not** flash hardware or demonstrate attendance recording; use [component-test instructions](docs/component-tests.md) for isolated physical diagnostics.
 
 ```powershell
-# 1. Flash firmware to ESP32
-cd firmware
-pio run -t upload
-pio device monitor -b 115200
+# Build production firmware (build only)
+pio run -d firmware -e production
 
-# 2. Start backend server (future; app/main.py is not implemented yet)
-cd ..\backend
-.\.venv\Scripts\Activate.ps1
-uvicorn app.main:app --host 127.0.0.1 --port 8000
+# Build read-only R307S diagnostic; do not upload before the electrical safety gate
+pio run -d firmware -e r307s
 
-# 3. Open dashboard at http://localhost:8000
+# Run backend API/database tests with project dependencies
+Push-Location backend
+try { & .\.venv\Scripts\python.exe -m pytest tests -q } finally { Pop-Location }
 ```
 
 ---
 
 ## 📖 Documentation Index
 
-Open the repository root as the Obsidian vault. Start with the [project overview](obsidian/Attendance%20System/00%20-%20Project%20Overview.md), [AI development guide](obsidian/Attendance%20System/AI%20Development%20Guide.md), and [AI handoff](obsidian/Attendance%20System/AI%20Project%20Handoff.md). The numbered vault notes are navigation/status pages; subsystem design details remain authoritative in the linked files below.
+Open `obsidian/` as the Obsidian vault. Root `.obsidian/` is separate, ignored local app configuration. Start with the [project overview](obsidian/Attendance%20System/00%20-%20Project%20Overview.md), [AI development guide](obsidian/Attendance%20System/AI%20Development%20Guide.md), and [AI handoff](obsidian/Attendance%20System/AI%20Project%20Handoff.md). The vault notes are navigation/status pages; subsystem design details remain authoritative in the repository source files.
 
 | Document | Description |
 | :--- | :--- |
@@ -133,7 +134,11 @@ Open the repository root as the Obsidian vault. Start with the [project overview
 | [`docs/architecture.md`](docs/architecture.md) | System architecture & topology |
 | [`docs/hardware.md`](docs/hardware.md) | Component datasheets & specs |
 | [`docs/bill-of-materials.md`](docs/bill-of-materials.md) | Full BOM with Indian pricing |
-| [`docs/wiring.md`](docs/wiring.md) | GPIO pin map & electrical connections |
+| [`docs/final-pin-map.md`](docs/final-pin-map.md) | Authoritative firmware GPIO map and electrical gates |
+| [`docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md`](docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md) | Beginner physical assembly and inspection |
+| [`docs/complete-breadboard-layout.md`](docs/complete-breadboard-layout.md) | Recommended coordinate layout; exact board dimensions unverified |
+| [`docs/COMPLETE-SOFTWARE-SETUP.md`](docs/COMPLETE-SOFTWARE-SETUP.md) | Windows setup, backend, build and upload |
+| [`docs/SCIENCE-FAIR-SETUP.md`](docs/SCIENCE-FAIR-SETUP.md) | Packing, startup, demonstration and recovery |
 | [`docs/software-stack.md`](docs/software-stack.md) | Technology selection rationale |
 | [`docs/database-plan.md`](docs/database-plan.md) | SQLite schema design |
 | [`docs/api-plan.md`](docs/api-plan.md) | REST API endpoint specification |
@@ -149,7 +154,7 @@ Open the repository root as the Obsidian vault. Start with the [project overview
 | Component | Est. Price |
 | :--- | :---: |
 | ESP32-WROOM-32 DevKit V1 | ₹349 |
-| R703 Fingerprint Module (acquired; specs unverified) | record from receipt |
+| R307S Fingerprint Module (acquired; electrical state unverified) | record from receipt |
 | SSD1306 0.96" I2C OLED | ₹163 (listing, ex GST) |
 | DS3231 High Precision RTC | ₹189 |
 | Active Buzzer, LEDs, Resistors | ₹105 |

@@ -1,72 +1,52 @@
 ---
 type: project-handoff
-status: IN PROGRESS (ESP32 Serial Test PASSED, R307S Integration Prepared)
-updated: 2026-10-01
+status: IN PROGRESS
+updated: 2026-10-02
 ---
 
 # AI Project Handoff
 
-## Project and Vault Overview
+This repository is an established ESP32 biometric attendance project. Read [[00 - Project Overview]], [[AI Development Guide]], [[TODO]], and [[Architecture.canvas]]. Actual implementation and task status are authoritative in repository source/tests and `docs/`.
 
-Biometric School Attendance System: a local-first biometric school attendance terminal and data platform for a science-fair demonstration. The **repository root is the Obsidian vault**; open `C:\Users\user\projects\fair\biometric-attendance` in Obsidian. Start at [[00 - Project Overview]], use [[Architecture.canvas]] for an interactive color-coded map, and review [[AI Development Guide]] before making changes.
+## Implemented
 
----
+- FastAPI/SQLite backend slice: health, admin student lifecycle/slot reservation, device enrollment assignment/completion, and authenticated idempotent attendance ingestion with the 60-second duplicate rule. Backend has 10 passing tests in the repository venv.
+- ESP32 production firmware source: sensor match/two-capture serial enrollment, RTC timestamp gate, OLED and indicators, UUIDv4 event creation, LittleFS checksummed journal, bearer-authenticated API client, offline queue replay, sensor and Wi-Fi retry. Production and compatibility builds pass after current modifications; no physical test has passed.
+- Independent component and integration test environments from prior phase; all 25 test envs plus production/compatibility env compile after current implementation.
+- Beginner docs: `docs/COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md`, `docs/complete-breadboard-layout.md`, `docs/final-pin-map.md`, `docs/COMPLETE-SOFTWARE-SETUP.md`, and `docs/SCIENCE-FAIR-SETUP.md`.
+- Read-only R307S diagnostic retained. It uses VerifyPassword/ReadSysPara/template count and sends no destructive enrollment/delete commands.
 
-## 🚨 CRITICAL CURRENT-STATE SUMMARY (2026-10-01)
+## Physical state and blockers
 
-An incoming AI agent must strictly understand the following verified facts and boundaries:
+- Owner-reported wiring: red/VIN, black/GND, yellow/GPIO32 RX, green/GPIO33 TX, blue/white disconnected. The sensor reported zero valid UART bytes at previously tried rates/routings. This does not prove it is dead.
+- R307S rail voltage/current, TX level, exact board/pad mapping/jumper and sensor condition: **UNVERIFIED — REQUIRES MULTIMETER / exact-unit inspection**. Keep the current wiring report; do not tell the owner to reconnect without a specific reason.
+- OLED, RTC, LEDs, buzzer, LittleFS reboot/corruption handling, Wi-Fi and API client need physical/integration tests. No firmware was flashed in this task.
+- Actual fingerprint sensor capacity is unknown. Do not provision backend device capacity until read from the responding physical sensor.
+- Browser dashboard and reports/CSV/SSE remain planned. Complete hardware-to-backend-to-dashboard experience is not yet available.
 
-1. **ESP32 Serial Test: PASSED**
-   - The ESP32-WROOM-32 DevKit V1 has been connected and physically tested on the workbench.
-   - **COM3 communication PASSED:** USB-UART communication is confirmed functional on port `COM3` at `115200` baud.
-   - **PlatformIO build PASSED:** Firmware builds cleanly under `espressif32@6.5.0` with the Arduino framework.
-   - **ESP32 firmware upload PASSED:** The baseline toolchain validation sketch was flashed to the board, booting successfully and emitting valid system telemetry (chip revision, CPU clock, free heap).
+## Architecture and source of truth
 
-2. **R307S Hardware Status:**
-   - **Target Sensor:** The canonical fingerprint hardware target is the **R307S optical fingerprint sensor** (superseding earlier AS608 and provisional R703 designations; see [[Decision Log]] ADR-013).
-   - **R307S hardware NOT YET CONNECTED:** The sensor is physically in hand but has not been connected to the ESP32.
-   - **R307S power NOT YET APPLIED:** No electrical voltage has been applied to the module.
-   - **R307S pinout NOT YET VERIFIED:** Pin assignments, supply requirements (5V vs 3.3V), and UART signal levels are **UNVERIFIED — HARDWARE VERIFICATION REQUIRED**.
-   - **Observed Harness Order:** The physical cable harness has 6 wires in the order:
-     `1: Red, 2: Black, 3: Yellow, 4: Green, 5: Blue, 6: White`.
-   - **CRITICAL WARNING:** **DO NOT ASSUME WIRE COLORS PROVE THE PINOUT.** Many low-cost Chinese cable assemblies use arbitrary color sequences. Verify ground continuity and PCB silkscreen before connecting.
-   - **Next immediate action:** Verification of R307S electrical and pinout information (Phase 1 in `docs/r307s-integration-plan.md`).
+- Pins/wiring: `docs/final-pin-map.md`; electrical gates: `docs/power-and-safety.md`.
+- Runtime behavior and privacy limits: `docs/production-firmware.md`; code: `firmware/src/app/`, `hardware/`, `network/`, `storage/` and `include/`.
+- Backend API: `backend/app/schemas.py`, `auth.py`, `main.py`, tests, and `docs/api-plan.md`.
+- Local configuration: ignored `firmware/include/local_config.h` and `backend/.env`. Never commit secrets.
+- Repository/vault plans and tasks: [[AI Development Guide]], [[TODO]], [[Milestones]], [[Decision Log]], and [[Architecture.canvas]].
 
-> [!WARNING]
-> **MANDATORY INSTRUCTION FOR FUTURE AI AGENTS:**  
-> Do not assume AS608 compatibility with the R307S. Verify the R307S variant, electrical interface, pinout, and protocol before physical wiring or firmware assumptions. Never connect a 5V UART signal to an ESP32 GPIO pin (ESP32 is strictly 3.3V logic and NOT 5V tolerant).
+## Build and test
 
----
+- Final run: production and compatibility envs built successfully; all 25 standalone/integration test environments built successfully. Backend: 10 tests passed. These are software-only results; no device test was run.
 
-## Verified Subsystem Summary
+- Firmware: from repo root, `pio run -d firmware -e production`. Isolated environment names and prerequisites: `docs/component-tests.md` and `docs/integration-tests.md`.
+- Backend: from `backend/`, `.\.venv\Scripts\python.exe -m pytest tests -q` (10 passed in this task). System Python currently lacks dependencies.
+- Physical commands, setup and COM port guidance: `docs/COMPLETE-SOFTWARE-SETUP.md`.
+- New blank LittleFS: `pio run -d firmware -t uploadfs --upload-port COMx` only before any pending event exists; this erases the device filesystem. Firmware never auto-formats.
 
-- **Firmware Environment:** PlatformIO Core 6.2.0 + `espressif32@6.5.0` + Arduino framework. PlatformIO monitor configuration is documented in `firmware/platformio.ini` (`monitor_speed = 115200`, `upload_speed = 921600`, exception decoder filter). Hardware abstraction layer interface is defined in `firmware/include/fingerprint_sensor.h`.
-- **Backend Environment:** Python 3.13 + FastAPI 0.115.0 + SQLite3 (WAL mode) in `backend/.venv`.
-- **Database & API Verification:** 10 pytest tests pass (6 database migration/constraint tests and 4 API vertical-slice tests). Coverage includes 60-second duplicate suppression, 61-second acceptance, UUID replay, validation/auth/slot errors, and hash-only device provisioning.
-- **Frontend Subsystem:** Zero-build modern vanilla HTML5/CSS3/JavaScript architecture decided; implementation pending.
-- **Documentation & Canvas:**
-  - Full 10-phase bring-up sequence: [`docs/r307s-integration-plan.md`](../../docs/r307s-integration-plan.md)
-  - Color-coded Canvas: [[Architecture.canvas]] (Green = Verified, Yellow = Needs Verification, Blue = Planned, Red = Warning/Risk, Purple = Reference).
-  - Pinout & Wiring: [`hardware/pinout.md`](../../hardware/pinout.md) and [`docs/wiring.md`](../../docs/wiring.md).
+## Privacy and limitations
 
----
+No raw fingerprint image/template is sent. Events include only slot, UUID, timestamp and sync status. LittleFS is not encrypted. HTTP bearer token is unencrypted on the isolated LAN; synthetic data only, never use public internet/real student data. Device time is manual local time assumed `+05:30`; use `SETTIME` only after checking a trusted clock. Full queue/recovery behavior remains unverified until tested on device.
 
-## 10-Phase Hardware Integration Sequence
+## Next three actions
 
-- **Phase 0:** ESP32 baseline toolchain & USB serial test — **PASSED on COM3 (115200 baud)**.
-- **Phase 1:** R307S physical inspection, silkscreen, ground continuity, voltage check — **NEXT IMMEDIATE ACTION**.
-- **Phase 2:** Minimum wiring connection (GND, VCC, TX, RX only; touch disconnected).
-- **Phase 3:** Power-on sanity check (monitor rails, check sensor thermals, check TX voltage $\le 3.3\text{V}$).
-- **Phase 4:** Establish UART communication on GPIO 16/17 (57600 baud default).
-- **Phase 5:** Minimal command & response (send verifyPassword packet, receive ACK `0x00`).
-- **Phase 6:** Read sensor system parameters (confirm capacity = 1000, security level, baud).
-- **Phase 7:** Test 2-pass biometric enrollment to template slot 1.
-- **Phase 8:** Test 1:N fingerprint search and matching.
-- **Phase 9:** Attendance application integration (OLED, RTC, LittleFS, FastAPI).
-
----
-
-## Next Concrete Actions
-
-1. **Human Action:** Physically inspect the R307S connector. Check if silkscreen pin labels exist. Use a multimeter in continuity mode to identify which pin connects to the ground plane/shield. Check whether power input is marked 5V or 3.3V.
-2. **Software Action:** Once Phase 1 is confirmed by the human, write the Phase 4/5 diagnostic test sketch in `firmware/src/` to send a minimal handshake packet over UART2 at 57600 baud.
+1. At the next safe hardware session, identify the exact R307S board/contact/jumper and measure sensor VIN and TX idle high level; record readings before changing wiring. No multimeter is currently available.
+2. Run UART1/2 loopback with sensor disconnected, then the read-only R307S diagnostic only after the electrical safety gate; capture exact output.
+3. Independently run I2C/OLED/RTC/LED/buzzer tests, then test firmware queue + local synthetic API and outage/reboot/replay. Do not claim end-to-end success until the matched event is found in the local backend after replay.

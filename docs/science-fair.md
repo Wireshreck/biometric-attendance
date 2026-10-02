@@ -10,7 +10,7 @@ Motivation is to study a technical trade-off: biometric convenience versus priva
 
 ## Proposed solution (not yet implemented)
 
-An ESP32/R703 terminal is intended to match locally, submit slot/event metadata to a FastAPI service on a laptop, persist records in SQLite, and display reports in a static vanilla-JS dashboard. A LittleFS queue is intended to survive LAN interruption. Use synthetic identities and adult consented testers only. The optional local AI report explainer is deferred.
+An ESP32/R307S terminal firmware implements local matching/enrollment, metadata-only event submission to FastAPI/SQLite on a laptop, a LittleFS offline queue, RTC timestamps and local status display. These workflows compile, but the owner-reported R307S currently returns zero UART bytes and exact power/logic levels are unmeasured, so no complete physical demonstration is verified. A browser dashboard and reports remain planned. Use synthetic identities and adult-consented testers only. The optional local AI report explainer is deferred. See [transport and demo setup](SCIENCE-FAIR-SETUP.md).
 
 ## Scientific method and experiments
 

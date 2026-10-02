@@ -6,12 +6,12 @@ updated: 2026-09-29
 
 # Biometric School Attendance System — Project Home
 
-Welcome to the project workspace for the **local-first Biometric School Attendance demonstrator**. Open the repository root as the Obsidian vault so this workspace can navigate the actual source, plans, configuration, and tests.
+Welcome to the project workspace for the **local-first Biometric School Attendance demonstrator**. Open the `obsidian/` directory as the Obsidian vault. The root `.obsidian/` directory is separate local app configuration; source, plans, configuration and tests remain in their repository directories.
 
 > [!NOTE]
-> **Current Status:** `IN PROGRESS` — ESP32 bring-up verified on COM3; R307S integration plan prepared; sensor NOT yet connected or powered; backend API vertical slice software-verified; dashboard and hardware integration pending
-> **Exhibition Date:** 09 October 2026  
-> **Target Platform:** ESP32-WROOM-32 + R307S + FastAPI + SQLite  
+> **Current Status:** `IN PROGRESS` — production attendance/enrollment/queue/API firmware implemented and builds; backend API tests pass; R307S owner report is 0 UART bytes with power/logic unmeasured; component/full hardware integration and dashboard remain pending
+> **Exhibition Date:** 09 October 2026
+> **Target Platform:** ESP32-WROOM-32 + R307S + FastAPI + SQLite
 
 ---
 
@@ -57,14 +57,14 @@ Welcome to the project workspace for the **local-first Biometric School Attendan
 
 | Area | Status | Evidence / remaining work |
 | --- | --- | --- |
-| Repository-root Obsidian workspace and AI handoff | VERIFIED | Guide, handoff, decision log, task tracker and file-backed Canvas |
+| Obsidian vault under `obsidian/` and AI handoff | VERIFIED | Guide, handoff, decision log, task tracker and Canvas; root `.obsidian/` is separate local configuration |
 | Git baseline / GitHub remote / CLI auth | VERIFIED | Preserved baseline and configured `origin/main`; see current hash/state in [[AI Project Handoff]] |
 | Python environment and SQLite smoke check | VERIFIED | `backend/test_env.py` passed in `backend/.venv` |
 | SQLite schema v1 migration | VERIFIED | Six temporary-database migration/constraint tests passed |
-| Firmware toolchain & serial test | VERIFIED (Phase 0 PASSED) | ESP32 serial communication confirmed on COM3 at 115200 baud; firmware compiles cleanly |
+| Firmware build matrix | VERIFIED (build only) | Production, compatibility and 25 component/integration environments compile; no firmware was flashed in this work |
 | FastAPI vertical slice | VERIFIED (software tests) | Health, admin student lifecycle, enrollment assignment/completion, attendance ingestion; remaining routes tracked in [[TODO]] |
-| Attendance firmware and dashboard | PLANNED | R307S integration plan prepared; sensor driver, browser UI and full event pipeline pending |
-| Procurement / physical hardware | IN PROGRESS / BLOCKED ON BENCH | R307S fingerprint sensor in hand with 6-wire harness (Red, Black, Yellow, Green, Blue, White); pinout & electrical ratings UNVERIFIED — HARDWARE VERIFICATION REQUIRED; sensor NOT yet connected |
+| Attendance event runtime and dashboard | IMPLEMENTED / PLANNED | Firmware event pipeline/queue/API client exists but is not physically verified; browser UI is not implemented |
+| Procurement / physical hardware | IN PROGRESS / BLOCKED ON BENCH | R307S fingerprint sensor in hand; owner-reported harness wiring and zero-byte diagnostic; PCB pin mapping, supply and signal levels UNVERIFIED — REQUIRES MULTIMETER / board inspection |
 | Integrated science-fair demo | PLANNED | Requires application work and hardware evidence |
 
 > Dates remain targets. Hardware order/arrival is unconfirmed. Product features are planned unless their implementation and evidence are explicitly recorded. Use [[TODO|the authoritative task tracker]], [[Milestones]], and the [canonical project plan](../../docs/project-plan.md).

@@ -1,12 +1,15 @@
 flowchart TD
-  Finger[Finger touch] --> Sensor[R703 capture and on-module match]
+  Finger[Finger touch] --> Sensor[R307S capture and on-module match - implemented; exact unit unverified]
   Sensor -->|matched slot ID; no image/template payload| MCU[ESP32]
   RTC[DS3231] -->|timestamp with configured offset| MCU
   MCU --> Event[event UUID + slot + capture time + sync status]
-  Event --> Online{Local API reachable?}
+  Event --> Persist[(Append event + checksum to LittleFS before network send)]
+  Persist --> Online{Local API reachable?}
   Online -->|yes| Post[POST /api/v1/attendance]
-  Online -->|no| Persist[(Append durably to LittleFS)]
-  Persist -->|retry same UUID in capture-time order| Post
+  Online -->|no| Offline[Keep pending; retry oldest every 10 s]
+  Offline -->|same UUID and original time| Post
+  Post -->|accepted outcome| Ack[Append acknowledgment; compact acknowledged rows]
+  Ack --> MCU
   Post --> Validate[Authenticate device and validate payload]
   Validate --> Decide{UUID already seen?}
   Decide -->|yes| ReturnSaved[Return stored outcome; no new insert]

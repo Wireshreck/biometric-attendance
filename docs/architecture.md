@@ -1,19 +1,19 @@
 # System Architecture
 
-**Status:** IN PROGRESS — documentation describes planned system behavior and is cross-checked against the implemented API slice. Source diagrams: [architecture](../diagrams/architecture.mmd), [data flow](../diagrams/data-flow.mmd), [attendance](../diagrams/attendance-flow.mmd), [enrollment](../diagrams/enrollment-flow.mmd), [hardware](../diagrams/hardware.mmd), [database](../diagrams/database.mmd).
+**Status:** IN PROGRESS — backend API vertical slice is tested and firmware event/enrollment/queue workflows are implemented but need physical verification. Source diagrams: [architecture](../diagrams/architecture.mmd), [data flow](../diagrams/data-flow.mmd), [attendance](../diagrams/attendance-flow.mmd), [enrollment](../diagrams/enrollment-flow.mmd), [offline sync](../diagrams/offline-sync.mmd), [hardware](../diagrams/hardware.mmd), [database](../diagrams/database.mmd).
 
 ## What and why
 
-A low-cost, local-network school attendance demonstrator pairs an ESP32 terminal with an R703 UART fingerprint module and a laptop-hosted FastAPI/SQLite service. It aims to explore edge-side biometric matching, durable offline event delivery, and simple local reporting. Use synthetic identities at the fair. The prototype is not suitable for operational school attendance.
+A low-cost local-network attendance demonstrator uses an ESP32 terminal with R307S fingerprint module and laptop-hosted FastAPI/SQLite service. Firmware source implements match, enrollment, timestamped attendance, local journaling and sync; the R307S currently returns no bytes in owner-reported tests and no complete physical operation has been demonstrated. Use synthetic identities at the fair. The prototype is not suitable for operational school attendance.
 
 ## Components and status
 
 | Component | Intended responsibility | Actual repository state |
 | --- | --- | --- |
-| ESP32-WROOM-32 + R703 | Capture/match locally; expose slot result only; RTC and display feedback | PlatformIO toolchain-check sketch and pin config only; no attendance firmware; R703 electrical specs UNVERIFIED |
-| LittleFS queue | Persist event UUID and capture metadata offline; replay in order | Filesystem configured; queue not implemented |
+| ESP32-WROOM-32 + R307S | Local capture/match; expose slot result only; RTC and display feedback | Production runtime implements workflows and builds; owner-reported R307S setup has no UART response; electrical state unverified. |
+| LittleFS queue | Persist event UUID and capture metadata offline; replay in order | Bounded checksummed append journal and replay implemented; physical reboot/power-loss behavior NEEDS HARDWARE |
 | FastAPI | Device auth, enrollment status, event processing, reports, static files | `backend/app/main.py` implements health, admin student lifecycle, device enrollment assignment/completion, and attendance ingest; reports/SSE/CSV/static frontend and remaining device operations are absent |
-| SQLite WAL | Student/device metadata, event outcomes, audit | Schema v1 migration and connection helper exist; no runtime DB is committed and attendance processing is not implemented |
+| SQLite WAL | Student/device metadata, event outcomes, audit | Schema v1 and transaction-backed attendance ingestion exist; runtime DB files are local/ignored |
 | Vanilla dashboard | Student registration, attendance/report views, device/system status | Architecture decision only; no UI source |
 | Optional local LLM | Explain authorized read-only report results | Deferred; no code/dependency |
 
@@ -26,7 +26,7 @@ A low-cost, local-network school attendance demonstrator pairs an ESP32 terminal
 5. Dashboard calls authenticated REST endpoints; an authenticated SSE stream carries committed attendance events for a <=500ms visibility target. Daily presence is distinct active students with at least one accepted event.
 6. Optional AI may call approved read-only report endpoints only and returns model-generated explanation clearly separated from database facts. It is not part of normal operation.
 
-## Planned enrollment flow (API boundary partially implemented)
+## Enrollment flow (API and firmware implemented; physical sensor needs hardware)
 
 Admin creates a student in the dashboard; API allocates a free sensor slot and marks `PENDING_ENROLLMENT`. An operator with physical USB serial access starts enrollment for that student. Firmware asks the device-authenticated API for the assigned slot, captures two impressions, stores the model in that sensor slot, then confirms completion. API marks the student `ACTIVE`. Only success/failure metadata crosses the network. Deactivation blocks future scans; physical template deletion must be confirmed before slot reuse.
 

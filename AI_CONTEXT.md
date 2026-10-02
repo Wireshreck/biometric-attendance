@@ -1,61 +1,40 @@
-# AI_CONTEXT.md — Biometric Attendance System
+# AI Context — Biometric Attendance
 
-**Last Updated:** 2026-10-01  
-**Project:** Biometric School Attendance System (`biometric-attendance`)  
-**Target Exhibition:** Science Fair (9 October 2026)  
+**Updated:** 2026-10-02
+**Repository:** `fair/biometric-attendance`
+**Working rule:** inspect source, tests, and Git diff before acting. Preserve history and working-tree changes. This owner-requested task explicitly authorizes committing and pushing its completed work to `origin/main`.
 
----
+## Current project state
 
-## 🚨 CRITICAL HARDWARE & INTEGRATION STATE
+- Local-first prototype: ESP32/R307S firmware, FastAPI and SQLite. Backend supports health, admin student lifecycle, enrollment assignment/completion, and authenticated attendance ingestion. A browser dashboard is not implemented.
+- Production firmware implements two-capture explicit serial enrollment, fingerprint matching, DS3231 timestamp gating, OLED/indicators, durable LittleFS journal, Wi-Fi reconnect, bearer-authenticated attendance requests, and oldest-first replay with stable event UUIDs. These compile but have no full hardware/integration pass evidence.
+- The owner reports R307S red→VIN, black→GND, yellow sensor TX→GPIO32/RX, green GPIO33/TX→sensor RX, blue/white disconnected. Previous read-only diagnostics returned 0 bytes across attempted baud/routing options. This does not prove sensor failure.
+- Sensor rail, TX logic level, exact PCB pin mapping/jumper, and sensor health are **UNVERIFIED — REQUIRES MULTIMETER / exact board inspection**. OLED, RTC, indicators, buzzer, storage power-loss behavior, Wi-Fi and backend device requests also need physical testing.
+- Pin map source of truth: `docs/final-pin-map.md`; retained earlier audit map at `docs/esp32-pin-map.md` redirects to it. Configure in `firmware/include/config.h` and ignored `firmware/include/local_config.h`.
+- Backend API contract source of truth: `backend/app/schemas.py`, `backend/app/auth.py`, `backend/app/main.py`, and `docs/api-plan.md`.
 
-This document must be read by any AI agent before proposing, modifying, or executing code or hardware actions.
+## Evidence
 
-### 1. Verified Facts (Do NOT Re-test or Question)
-- **MCU Platform:** ESP32-WROOM-32 DevKit V1.
-- **ESP32 Serial Test: PASSED.** USB serial communication is confirmed functional on **COM3** at **115200 baud**.
-- **PlatformIO Build: PASSED.** PlatformIO Core 6.2.0 + `espressif32@6.5.0` compiles cleanly (`pio run -d firmware`).
-- **ESP32 Firmware Upload: PASSED.** Validation sketch was successfully flashed over COM3 and telemetry confirmed.
-- **Backend Environment: PASSED.** Python 3.13 + FastAPI 0.115.0 + SQLite3 (WAL mode) verified via 10 passed pytest tests.
-- **Acquired Fingerprint Module:** **R307S optical fingerprint sensor** (superseding earlier AS608 / provisional R703 notes; see `obsidian/Attendance System/Decision Log.md` ADR-013).
-- **Physical Cable Harness Observed:** 6-wire ribbon with order:
-  `1: Red, 2: Black, 3: Yellow, 4: Green, 5: Blue, 6: White`.
+- Current owner/task report says the ESP32 previously uploaded and ran diagnostic firmware. No firmware was flashed or peripheral physically exercised in the current task.
+- Backend suite: 10 tests pass using `backend/.venv/Scripts/python.exe -m pytest tests -q`.
+- PlatformIO's 27 production/compatibility/component/integration environments compiled in the prior phase. Rebuild production after current implementation; a compile is not a physical pass.
+- System Python does not contain backend dependencies; use the ignored repository virtual environment.
 
-### 2. Unverified Facts & Active Blockers (Do NOT Assume or Invent)
-- **R307S hardware NOT YET CONNECTED.**
-- **R307S power NOT YET APPLIED.**
-- **R307S pinout NOT YET VERIFIED.** Wire colors alone must **NEVER** be assumed to indicate pinout or polarity.
-- **Operating Voltage & UART Levels UNVERIFIED.** Must determine whether sensor requires 5V or 3.3V, and confirm sensor TX output voltage does not exceed 3.3V (ESP32 GPIO is **NOT 5V tolerant**).
-- **Next immediate action:** Physical verification of R307S pinout and electrical ratings (Phase 1).
+## Important limits
 
-### 3. Explicit Warning for AI Agents
-> "Do not assume AS608 compatibility with the R307S. Verify the R307S variant, electrical interface, pinout, and protocol before physical wiring or firmware assumptions."
+- HTTP carries a bearer token in plaintext. Use synthetic data on a private isolated LAN; do not expose publicly or use real student records.
+- The firmware queue stores fingerprint slot IDs, UUIDs and timestamps, not images/templates or names. LittleFS data is not encrypted.
+- RTC values are local wall time assumed to be India Standard Time (+05:30); no NTP or timezone database exists in firmware. Confirm manual `SETTIME` against a trusted clock.
+- Actual R307S capacity is unknown until its exact unit responds. Do not provision a backend sensor capacity by copying an unverified example.
+- The first `uploadfs` formats/replaces the device filesystem; never use it if any pending event could exist.
 
----
+## Start here
 
-## 10-Phase Hardware Integration Sequence
+Read the [Obsidian AI guide](obsidian/Attendance%20System/AI%20Development%20Guide.md), [project handoff](obsidian/Attendance%20System/AI%20Project%20Handoff.md), [task tracker](obsidian/Attendance%20System/TODO.md), [production behavior](docs/production-firmware.md), and [hardware gates](docs/power-and-safety.md). Build with `pio run -d firmware -e production`; run backend tests from `backend/` using `.venv`. Use the isolated component tests before combining hardware.
 
-Refer to [`docs/r307s-integration-plan.md`](docs/r307s-integration-plan.md) for full phase gates:
-- **Phase 0:** ESP32 baseline toolchain & USB serial test — **PASSED on COM3 (115200 baud)**.
-- **Phase 1:** R307S physical inspection, silkscreen, ground continuity, voltage check — **NEXT IMMEDIATE ACTION**.
-- **Phase 2:** Minimum wiring connection (GND, VCC, TX, RX only; touch disconnected).
-- **Phase 3:** Power-on sanity check (monitor rails, check sensor thermals, check TX voltage $\le 3.3\text{V}$).
-- **Phase 4:** Establish UART communication on GPIO 16/17 (57600 baud default).
-- **Phase 5:** Minimal command & response (send verifyPassword packet, receive ACK `0x00`).
-- **Phase 6:** Read sensor system parameters (confirm capacity = 1000, security level, baud).
-- **Phase 7:** Test 2-pass biometric enrollment to template slot 1.
-- **Phase 8:** Test 1:N fingerprint search and matching.
-- **Phase 9:** Attendance application integration (OLED, RTC, LittleFS, FastAPI).
+## Safety and privacy
 
----
-
-## Key File Locations
-
-- **Integration Plan:** [`docs/r307s-integration-plan.md`](docs/r307s-integration-plan.md)
-- **Wiring & Safety:** [`docs/wiring.md`](docs/wiring.md)
-- **Pinout Guide:** [`hardware/pinout.md`](hardware/pinout.md)
-- **Hardware Bring-Up Gates:** [`hardware/test-plan.md`](hardware/test-plan.md)
-- **Firmware Config:** [`firmware/include/config.h`](firmware/include/config.h)
-- **Hardware Abstraction Layer:** [`firmware/include/fingerprint_sensor.h`](firmware/include/fingerprint_sensor.h)
-- **Interactive Canvas:** [`obsidian/Attendance System/Architecture.canvas`](obsidian/Attendance%20System/Architecture.canvas)
-- **Master Task Tracker:** [`obsidian/Attendance System/TODO.md`](obsidian/Attendance%20System/TODO.md)
-- **Architecture Decisions:** [`obsidian/Attendance System/Decision Log.md`](obsidian/Attendance%20System/Decision%20Log.md)
+- No raw fingerprint images/templates leave the sensor or enter logs/backend/exports/AI.
+- `.env` and `firmware/include/local_config.h` remain untracked; only blank examples belong in Git.
+- Do not use CR2032 as sensor supply; do not touch unknown solder/USB pads or short arbitrary GPIOs.
+- Record only tests actually executed. Hardware-dependent checks remain **NOT EXECUTED**, **UNVERIFIED**, or **BLOCKED** until evidence exists.

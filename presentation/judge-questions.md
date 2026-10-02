@@ -8,7 +8,7 @@ We are investigating whether a low-cost local biometric attendance demonstrator 
 
 ### What is built today?
 
-The repository contains plans, a PlatformIO toolchain-check sketch that compiles for `esp32dev`, SQLite schema v1, and a partial FastAPI API for student slot reservation, device enrollment completion, and authenticated synthetic attendance ingestion. The backend tests pass against temporary databases. Product sensor enrollment/matching firmware, dashboard, reports/SSE, offline sync, and physical integration are not implemented or verified. Add only verified work here after testing.
+The repository contains modular PlatformIO firmware source for enrollment/matching, RTC-qualified events, an offline journal and authenticated API sync, plus SQLite schema v1 and a tested FastAPI API slice. Backend tests pass against synthetic temporary databases. The browser dashboard and reports/SSE remain unimplemented. Firmware compiles, but the R307S currently has no valid reported UART response and the complete physical workflow is not verified. Describe only observed results in a demonstration.
 
 ### Why fingerprint rather than RFID or face recognition?
 
@@ -20,15 +20,15 @@ The intended design keeps image capture/matching and template storage in the sen
 
 ### What does the network outage behavior do?
 
-The plan uses a durable LittleFS queue with a stable event UUID and replay after reconnection. That queue is not implemented or tested yet; we will demonstrate it only if outage/restart tests pass.
+Firmware source uses a bounded LittleFS journal with stable event UUIDs and replay after reconnection. It has not yet been physically exercised across outage/restart; demonstrate that behavior only after the corresponding hardware test passes.
 
 ### How are duplicate scans handled?
 
-The selected rule suppresses another accepted scan for the same student within 60 seconds. The same event UUID is idempotent across retries; a later same-day scan may be recorded, while daily presence counts the student once. This is planned; test boundary evidence will be reported separately.
+The backend code suppresses another accepted scan for the same student within 60 seconds; its tests cover the boundary. The same event UUID is idempotent across retries; a later same-day scan may be recorded, while daily presence counts the student once. Device replay integration is not yet physically tested.
 
 ### Is the system secure/ready for schools?
 
-No. It is an early-stage science-fair prototype. Planned HTTP is not encrypted end-to-end, application authorization is not implemented, sensor spoof resistance is unknown, and retention/compliance are unresolved. Demonstrations use synthetic records and consented adult testers only.
+No. It is an early-stage science-fair prototype. HTTP bearer traffic is not encrypted end-to-end, sensor spoof resistance is unknown, and retention/compliance are unresolved. Backend admin/device authentication exists in the implemented API slice, but that does not make this prototype suitable for live use. Demonstrations use synthetic records and consented adult testers only.
 
 ### What results have you measured?
 

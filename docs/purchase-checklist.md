@@ -8,8 +8,8 @@ Use the status column while shopping: `NOT CONFIRMED` until purchased/received a
 
 | Item / qty | Required spec to show the seller | Why / acceptable alternative | Budget estimate | Status / notes |
 | --- | --- | --- | --- | --- |
-| ESP32 dev board ×1 | Classic ESP32-WROOM-32, DevKit-style, USB-UART bridge (CP2102/CH340 or equivalent), header pins expose GPIO16/17/18/19/21/22/23; USB connector/cable included or compatible | Core controller; equivalent ESP32-WROOM-32 board only if pinout and PlatformIO board target are confirmed | ₹349 carry-forward estimate; recheck | NOT CONFIRMED — do not buy ESP32-S3/C3 without revising target/config |
-| R703 fingerprint module ×1 | **ALREADY ACQUIRED (2026-09-29)** — verify from the unit: exact connector and pin labels, module supply voltage, UART logic level, included/matching cable | Biometric capture/matching; no substitute model applies — this is the physical unit in hand. Its specs are UNVERIFIED: HARDWARE VERIFICATION REQUIRED before wiring | Actual paid price: record from receipt | ACQUIRED / UNVERIFIED — record the exact variant and markings in the BOM; identify pin labels and voltage before any powered connection |
+| ESP32 dev board ×1 | Classic ESP32-WROOM-32, DevKit-style, USB-UART bridge (CP2102/CH340 or equivalent), expose GPIO18/19/21/22/23/32/33; USB connector/cable included or compatible | Core controller; equivalent ESP32-WROOM-32 board only if pinout and PlatformIO board target are confirmed | ₹349 carry-forward estimate; recheck | Existing board used; exact board variant should still be recorded |
+| R307S fingerprint module ×1 | **ALREADY ACQUIRED** — confirm exact PCB revision, connector/pin labels, supply, jumper and UART levels before further electrical work | Intended biometric capture/matching; no substitute model applies. Current owner-reported assembly receives no UART response; electrical state remains unverified | Actual paid price: record from receipt | ACQUIRED / UNVERIFIED — see [R307S research](r307s-hardware-research.md) |
 | OLED ×1 | SSD1306, 128×64, **4-pin I2C** (VCC/GND/SCL/SDA), 3.3V-safe I2C | Local status prompts; another SSD1306 4-pin module at 0x3C/0x3D is acceptable after scan | ₹163 listing, ex GST | NOT CONFIRMED — listing: ElectronicsComp EC-6769 |
 | RTC ×1 | DS3231 I2C breakout, 3V3-compatible supply/bus, battery holder/circuit identified | Battery-backed clock; DS3231 equivalent board only if I2C and backup are supported | ₹189 listing, ex GST | NOT CONFIRMED — module listing: ElectronicsComp EC-2117; inspect cell charge circuit |
 | RTC backup cell ×1 | Exact cell type required by the specific RTC breakout | Maintains clock through USB loss | Price not set | CONDITIONAL — do not buy/install CR2032 until you know the board does not charge it; use a specified rechargeable cell if charging is present |
@@ -17,7 +17,7 @@ Use the status column while shopping: `NOT CONFIRMED` until purchased/received a
 | LEDs ×1 red pack + ×1 green pack | Standard 3mm/5mm LEDs; separate colors | Visual status | ₹50 carry-forward combined estimate | NOT CONFIRMED |
 | Resistors ×1 assorted pack | Includes 330Ω–1kΩ, ¼W | One series resistor per LED; other values useful for safe signal conditioning | ₹20 carry-forward estimate | NOT CONFIRMED |
 | Breadboard ×1 | 830-point solderless, intact power rails | First prototype | ₹125 carry-forward estimate | NOT CONFIRMED |
-| Jumper wires ×1 pack each | M-M and M-F Dupont, ~20cm; sensor cable must match the actual R703 connector | Breadboard links | ₹130 carry-forward estimate | NOT CONFIRMED — do not force an incompatible R703 connector; confirm pitch/pin count from the unit |
+| Jumper wires ×1 pack each | M-M and M-F Dupont, ~20cm; sensor cable must match the actual R307S connector | Breadboard links | ₹130 carry-forward estimate | NOT CONFIRMED — do not force an incompatible connector; confirm pitch/pin count from the unit |
 | USB cable ×1 | Data-capable cable matching board connector; ~1m | Programming, serial monitor, initial power | ₹55–89 estimate | NOT CONFIRMED — charge-only cable will not flash firmware |
 
 **Already available per environment audit:** Windows development laptop and USB host. Recheck physically before checkout. A separate supply is not needed to start if a suitable laptop USB port is available, but verify current/voltage during bring-up.
@@ -35,7 +35,7 @@ Use the status column while shopping: `NOT CONFIRMED` until purchased/received a
 
 - [ ] ESP32-WROOM-32 board ×1; same pinout/USB-UART variant — estimate ₹349.
 - [ ] SSD1306 4-pin I2C display ×1 — estimate ₹163–188.
-- [ ] Matching R703 sensor cable ×1 — confirm connector pitch/pinout from the acquired unit before purchase; price unknown.
+- [ ] Matching R307S sensor cable ×1 — confirm connector pitch/pinout from the acquired unit before purchase; price unknown.
 - [ ] Resistor/LED assortment ×1 — use existing excess pack contents first.
 
 ## Checkout checks

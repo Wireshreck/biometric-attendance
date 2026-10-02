@@ -1,12 +1,12 @@
 # Bill of Materials (BOM) & Hardware Specifications
 
-**Project:** Biometric School Attendance System  
-**Pricing Currency:** Indian Rupee (INR / ₹)  
-**Price review:** 24 September 2026 (online listings; not a purchase quote)  
-**Supplier Region:** India (ElectronicsComp.com, Robu.in, Amazon.in)  
+**Project:** Biometric School Attendance System
+**Pricing Currency:** Indian Rupee (INR / ₹)
+**Price review:** 24 September 2026 (online listings; not a purchase quote)
+**Supplier Region:** India (ElectronicsComp.com, Robu.in, Amazon.in)
 
 > [!NOTE]
-> **Hardware change (2026-09-29):** the physically acquired fingerprint module is an **R703**, not the originally planned AS608. R703 supply voltage, logic levels, pinout, baud rate, and capacity are **UNVERIFIED — HARDWARE VERIFICATION REQUIRED**; see component specification 2 below and [docs/hardware.md](hardware.md). Prices and stock change. The DS3231 (₹189) and 4-pin SSD1306 OLED (₹163) were visible in ElectronicsComp listings on 24 September 2026, before GST; shipping and local-store prices are not included. Other values are carry-forward planning estimates and must be checked at purchase. See the [phone-friendly purchase checklist](purchase-checklist.md). Do not treat prices as guaranteed or place an order based only on this plan.
+> **Current hardware (owner report):** acquired module is identified as an **R307S** and is assembled to ESP32 VIN/GND/GPIO32/33; diagnostic response is zero bytes. Its exact PCB pin mapping, jumper state, supply, and logic levels are **UNVERIFIED — REQUIRES MULTIMETER / exact-board inspection**; see [R307S hardware research](r307s-hardware-research.md) and [docs/hardware.md](hardware.md). Prices and stock change. The DS3231 (₹189) and 4-pin SSD1306 OLED (₹163) were visible in ElectronicsComp listings on 24 September 2026, before GST; shipping and local-store prices are not included. Other values are carry-forward planning estimates and must be checked at purchase. See the [phone-friendly purchase checklist](purchase-checklist.md). Do not treat prices as guaranteed or place an order based only on this plan.
 
 ---
 
@@ -15,7 +15,7 @@
 | Component | Exact Recommended Part | Qty | Purpose | Voltage | Interface | Approx. Price (INR) | Reputable Purchase Source / Direct Link | Required? |
 | :--- | :--- | :---: | :--- | :---: | :---: | :---: | :--- | :---: |
 | **Microcontroller** | ESP32-WROOM-32 DevKit V1 (30-pin or 38-pin, CP2102 or CH340) | 1 | System CPU, Wi-Fi client, local event coordinator | 3.3V Logic / 5V USB | Wi-Fi / UART / I2C / GPIO | ₹349.00 | [ElectronicsComp - ESP32 Dev Board](https://www.electronicscomp.com/esp32-development-board) | **YES** |
-| **Fingerprint Sensor** | R703 UART fingerprint module (**physically acquired 2026-09-29; exact variant and specifications UNVERIFIED**) | 1 | Sensor-side capture/matching | **UNKNOWN — HARDWARE VERIFICATION REQUIRED**; do not assume 3.3V or 5V from name alone | UART presumed; pin order, level and default baud must be confirmed from the unit before wiring | Actual paid price: record from receipt | Owner-acquired unit; historical listing was [ElectronicsComp AS608 EC-5060](https://www.electronicscomp.com/sensors-module/sensors/as608-optical-fingerprint-sensor-module?limit=75) (superseded) | **YES — in hand, unverified** |
+| **Fingerprint Sensor** | R307S UART fingerprint module (**owner identified; reported assembled, exact PCB revision/specs unverified**) | 1 | Intended sensor-side capture/matching | **UNVERIFIED**; do not infer actual unit voltage or pin mapping from family documents | Owner-reported wiring is recorded in [docs/wiring.md](wiring.md); the diagnostic received 0 bytes | Actual paid price: record from receipt | Acquired unit; confirm supplier/receipt if known | **YES — in hand; UART unresponsive in reported diagnostics** |
 | **OLED Display** | 0.96 inch SSD1306 128×64 Monochrome OLED, 4-pin I2C | 1 | Local user feedback | 3.3V signal/power when powered from 3V3 | I2C (commonly 0x3C; verify) | ₹163 listing, ex GST | [ElectronicsComp 4-pin SSD1306 OLED](https://www.electronicscomp.com/display-devices/0.96-inch-i2c-iic-128x64-oled-display-module-4-pin-blue-color?limit=100) | **YES** |
 | **Real-Time Clock** | DS3231 I2C breakout; verify battery holder/charging design | 1 | Battery-backed offline timekeeping | Power at 3V3; verify exact breakout/pull-ups | I2C (0x68) | ₹189 listing, ex GST | [ElectronicsComp DS3231 module](https://www.electronicscomp.com/ds3231-rtc-module-india) | **YES** |
 | **Buzzer** | 5V Active Buzzer Module (with onboard transistor driver) | 1 | Audible transaction feedback (success chime / error buzz) | 3.3V – 5.0V | GPIO (Digital High/Low) | ₹35.00 | [ElectronicsComp - 5V Active Buzzer Module](https://www.electronicscomp.com/5v-active-buzzer-module) | **YES** |
@@ -24,7 +24,7 @@
 | **Current Limiting Resistors** | 330Ω 1/4W Metal Film Resistors (Pack of 20) | 1 pk | Protect LEDs and ESP32 GPIOs from overcurrent | Pass-through | Passive | ₹20.00 | [ElectronicsComp - 330 Ohm Resistors](https://www.electronicscomp.com/330-ohm-resistor-pack) | **YES** |
 | **Prototyping Board** | MB-102 830-Point Solderless Breadboard | 1 | Solderless component wiring and power rail distribution | Up to 30V | 2.54mm pitch | ₹125.00 | [ElectronicsComp - MB-102 Breadboard](https://www.electronicscomp.com/mb-102-830-points-solderless-breadboard) | **YES** |
 | **Jumper Wires (M-M)** | 40-pin Male-to-Male DuPont Jumper Cables (20cm) | 1 pk | Connecting ESP32, LEDs, and buzzer on breadboard | 30V max | 2.54mm DuPont | ₹65.00 | [ElectronicsComp - 40pcs M-to-M Wires](https://www.electronicscomp.com/40-pcs-male-to-male-jumper-wire-20cm) | **YES** |
-| **Jumper Wires (M-F)** | 40-pin Male-to-Female DuPont Jumper Cables (20cm) | 1 pk | Connecting OLED, RTC, and R703 to ESP32/breadboard | 30V max | 2.54mm DuPont | ₹65.00 | [ElectronicsComp - 40pcs M-to-F Wires](https://www.electronicscomp.com/40-pcs-male-to-female-jumper-wire-20cm) | **YES** |
+| **Jumper Wires (M-F)** | 40-pin Male-to-Female DuPont Jumper Cables (20cm) | 1 pk | Connecting OLED, RTC, and R307S harness to ESP32/breadboard | 30V max | 2.54mm DuPont | ₹65.00 | [ElectronicsComp - 40pcs M-to-F Wires](https://www.electronicscomp.com/40-pcs-male-to-female-jumper-wire-20cm) | **YES** |
 | **USB Data Cable** | High-Quality Micro-USB Data & Power Cable (1.0 meter) | 1 | 5V power supply to ESP32 and serial programming | 5V / 2A | Micro-USB to USB-A | ₹89.00 | [ElectronicsComp - Micro USB Cable](https://www.electronicscomp.com/micro-usb-cable-1m) | **YES** |
 | **RTC Backup Cell** | Exact type specified by the selected DS3231 board; buy only after checking its charge circuit | 1 | RTC backup | Board-dependent | Battery | Price not set | Buy matched to exact module after inspection | **CONDITIONAL** |
 
@@ -45,7 +45,7 @@
 | Component | Recommended Spare Part | Qty | Risk Mitigated | Approx. Price (INR) |
 | :--- | :--- | :---: | :--- | :---: |
 | **Backup ESP32** | ESP32-WROOM-32 DevKit V1 | 1 | ESD damage, blown GPIO, or failed USB port | ₹349.00 |
-| **Spare Sensor Cable** | Matching ribbon cable for the acquired R703 connector (pitch/pin count confirmed from the unit first) | 1 | Broken ribbon crimp wire from repeated handling | ₹45.00 |
+| **Spare Sensor Cable** | Matching ribbon cable for the acquired R307S connector (pitch/pin count confirmed from the unit first) | 1 | Broken ribbon crimp wire from repeated handling | ₹45.00 |
 | **Spare OLED Display** | 0.96 inch SSD1306 I2C OLED | 1 | Cracked glass screen during transport to science fair | ₹188.00 |
 | **Spare Buzzer & LEDs** | Pack of 5 buzzers & mixed LEDs | 1 | Burned out LED or buzzer lead fatigue | ₹60.00 |
 
@@ -76,15 +76,15 @@
   - Strapping pins: GPIO 0 (boot mode), GPIO 2 (download mode / onboard LED), GPIO 12 (flash voltage), GPIO 15 (silence boot messages).
   - Input-only pins: GPIO 34, 35, 36, 39 (no internal pull-up/down resistors; cannot output signals).
 
-### 2. Fingerprint Module — R703 (physically acquired)
+### 2. Fingerprint Module — R307S (owner identified)
 
-**HARDWARE VERIFICATION REQUIRED.** No authoritative public datasheet for an "R703" fingerprint module was located as of 2026-09-29 (searched manufacturer/retailer catalogs and datasheet mirrors). Until the exact unit is inspected, all of the following are **UNVERIFIED and must not be assumed**: supply voltage, logic/UART voltage, pin order/labels, default baud rate, protocol variant, command set, template capacity, and timeout behavior. Do not wire or power the module until its printed pin labels are identified and its supply/logic levels are confirmed from the unit's own markings, packaging, or vendor documentation. Record the verified values here and in [docs/hardware.md](hardware.md).
+The owner reports the R307S assembled per [docs/wiring.md](wiring.md), with no valid response from the read-only UART diagnostic. R307S and R307-family documentation provides candidate behavior but does not verify this unit's PCB revision, six-wire mapping, solder-jumper state, actual voltage/current, TX logic level, command support, capacity, or health. Do not make new electrical changes until the exact board and voltages are safely checked. See [R307S hardware research](r307s-hardware-research.md).
 
 * **Privacy boundary:** Firmware is planned to request a match result/slot only. Do not request image/template transfer commands. Exact template properties are proprietary and unverified; do not claim mathematical irreversibility.
-* **Electrical:** Treat as unknown until verified. ESP32 GPIO is 3.3V logic and not 5V tolerant; confirm the R703 UART TX high level before any direct connection and use level shifting if required.
+* **Electrical:** Treat exact unit as unknown until verified. ESP32 GPIO is 3.3V logic and not 5V tolerant; the reported GPIO32 connection exists, but the TX high level has not been measured.
 * **UART configuration candidate:** 57,600 bps (8-N-1) is configured as a provisional first attempt (the common default for this class of UART fingerprint module); it is an assumption, not a fact — confirm or correct it at the first handshake and record the measured value.
-* **Library:** `Adafruit Fingerprint Sensor Library` speaks the common Grow/HF-series UART protocol family; whether this exact R703 responds must be proven at the first handshake. If it does not respond, identify the actual protocol from vendor documentation before writing any driver code.
-* **History:** The original procurement plan named the AS608 optical module (₹799 listing, ElectronicsComp EC-5060). The acquired unit is an R703; AS608-specific instructions have been retired from active documentation.
+* **Library:** `Adafruit Fingerprint Sensor Library` speaks the common Grow/HF-series UART protocol family. The exact R307S has not acknowledged diagnostic commands, so compatibility is unverified.
+* **History:** An earlier procurement plan named the AS608 EC-5060. Current owner identification is R307S; older R703 references were documentation errors and are not current hardware identity.
 
 ### 3. SSD1306 0.96" OLED Display
 * **Resolution:** 128 × 64 pixels.

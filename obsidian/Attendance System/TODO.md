@@ -1,58 +1,51 @@
 ---
 type: task-tracker
 status: IN PROGRESS
-updated: 2026-09-29
+updated: 2026-10-02
 ---
 
 # Authoritative Project Task Tracker
 
 [[00 - Project Overview|Project home]] · [[Milestones]] · [[AI Project Handoff]] · [[Architecture.canvas]]
 
-This is the single project task tracker. Component designs and acceptance criteria stay in the canonical files listed in [[AI Development Guide]]. **Status describes actual work/evidence, not the presence of a plan.**
+This is the single task list. Component designs and acceptance criteria remain in their canonical repository documents. Status reflects evidence, not intention.
 
-Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, **BLOCKED**, **DEPRECATED**, **NEEDS HARDWARE**, **NEEDS TESTING**, **DEFERRED**. Use `DECIDED` or `PROVISIONAL` only in the decision log.
+Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, **BLOCKED**, **DEPRECATED**, **NEEDS HARDWARE**, **NEEDS TESTING**, **DEFERRED**.
 
 | ID | Task | Subsystem | Priority | Status | Dependency / blocker | Verification method |
-| --- | --- | --- | --- | --- | --- | --- |
-| FND-01 | Inventory source, docs, environment, Git and vault; identify product implementation boundary | Foundation | P0 | VERIFIED | — | File inventory, source review, Git status/history, ignored-artifact review |
-| FND-02 | Align requirements, duplicate policy and requirement/test traceability | Foundation | P0 | VERIFIED | FND-01 | `docs/requirements-traceability.md`; cross-check FR-04 with schema/API plans |
-| FND-03 | Exclude credentials, runtime databases, venv and PlatformIO output | Security/Git | P0 | VERIFIED | FND-01 | `.gitignore`, `git check-ignore`, tracked-file secret scan |
-| FND-04 | Make repository root the vault; connect project notes to canonical files via file-backed Canvas | Obsidian | P0 | VERIFIED | FND-01 | Canvas JSON and file targets validated; Markdown/Obsidian links checked |
-| FND-05 | Add AI guide, current handoff, decision log and milestone index | Obsidian | P0 | VERIFIED | FND-04 | Source-of-truth map, workflow, status vocabulary, commands and current Git/app state reviewed |
-| GIT-01 | Preserve baseline branch/remote/history and use focused milestone commits | Development | P0 | VERIFIED | — | `git status`, `git log`, `git remote`, author identity; no force-push |
-| DB-01 | Implement schema v1 and transactional migration/connection setup | Backend/DB | P0 | VERIFIED | FND-02 | `backend/tests/test_database.py`; temporary file DB, constraints, rollback, version, pragmas; 6 passed |
-| API-01 | Implement config, health, authentication, student slot reservation, enrollment and deactivation | Backend/API | P0 | VERIFIED (software tests) | DB-01 | `backend/tests/test_api.py`; health, auth, student conflict, slot assignment and state transitions; no physical enrollment verification |
-| API-02 | Implement authenticated attendance ingest with idempotency, timestamp checks and 60-second policy | Backend/API | P0 | VERIFIED (software tests) | API-01 | API tests cover replay, 60/61-second boundary, invalid timestamp/auth/slot; concurrency and firmware queue replay remain unverified |
-| API-03 | Implement daily/range reports, CSV-safe export, attendance query, SSE, device heartbeat/status and cleanup/deletion routes | Backend/API | P0 | PLANNED | API-01/API-02 | Contract tests for timezone/date bounds, CSV formula escaping, SSE cursor and lifecycle safety |
-| BUILD-01 | Complete the human build procedure using identified parts, verified electrical specifications, bench evidence, and tested software/integration steps | Documentation/Hardware | P0 | IN PROGRESS | HW-01/HW-02; firmware/UI/integration implementation | Build guide and checklists match actual variants, measurements, tested procedures, and demo recovery evidence |
-| HW-00 | Identify & verify acquired R307S: 6-wire harness observed (Red, Black, Yellow, Green, Blue, White); record PCB pin labels, verify supply (5V vs 3.3V) and logic level (<=3.3V) before wiring (Phase 1) | Hardware | P0 | IN PROGRESS (Physical module in hand) | Physical unit; multimeter continuity & inspection | Recorded pinout/voltage in `docs/r307s-integration-plan.md` and `hardware/pinout.md`; see [[Decision Log]] ADR-013 |
-| HW-01 | Confirm purchase/order/delivery and exact board/sensor/module revisions (R307S in hand; remainder unconfirmed) | Procurement | P0 | IN PROGRESS | Owner confirmation | Record actual variant, seller, paid total, receipt/order and expected/actual arrival |
-| HW-02 | Execute R307S 10-Phase Bring-Up Sequence (Phase 1 pinout -> Phase 2 minimum wiring -> Phase 3 power sanity -> Phase 4 UART -> Phase 5 ACK -> Phase 6 params -> Phase 7 enroll -> Phase 8 match -> Phase 9 app) | Hardware | P0 | IN PROGRESS (Phase 0 PASSED, Phase 1 next) | HW-00, docs/r307s-integration-plan.md | Record meter/logic evidence and pass/fail in `hardware/test-plan.md` and `docs/r307s-integration-plan.md` |
-| FW-00 | ESP32 toolchain compile, upload, and USB serial verification on COM3 (Phase 0) | Firmware | P0 | VERIFIED (Phase 0 PASSED) | — | PlatformIO build passed; uploaded to ESP32 on COM3; serial output verified at 115200 baud |
-| FW-01 | Add diagnostic environments and pass peripheral/board checks | Firmware | P0 | NEEDS HARDWARE | HW-02 | I2C/UART/output/RTC tests with physical measurements in `hardware/test-plan.md` |
-| FW-02 | Implement enrollment, matching, RTC, safe feedback/errors and device event client | Firmware | P0 | NEEDS HARDWARE | HW-02, API-01/API-02 | Synthetic consenting tester; timeout, privacy and latency tests |
-| FW-03 | Implement bounded crash-safe LittleFS queue and acknowledged chronological replay | Firmware | P0 | PLANNED | FW-02, API-02 | Reboot/power-cut/outage/full-queue/replay tests with stable UUIDs |
-| UI-01 | Build accessible student, event, daily report, device and CSV views | Frontend | P0 | PLANNED | API-01/API-02 | UI tests for empty/loading/error/auth/export states and accessibility |
-| UI-02 | Add authenticated SSE reconnect/resume and deduplicated live updates | Frontend/API | P1 | PLANNED | UI-01, API-02 | `Last-Event-ID`, event UUID and measured latency tests |
-| INT-01 | Repeat synthetic enrollment-to-dashboard and offline recovery scenario | Integration | P0 | NEEDS HARDWARE | API, firmware, UI and hardware gates | Full trace with event/outcome evidence; duplicate and recovery paths |
-| SEC-01 | Review secrets, auth, network exposure, retention/deletion, backup and threat model | Security | P0 | PLANNED | API/firmware implementation | Review checklist plus negative auth, leak, deletion and restore tests |
-| DEMO-01 | Prepare evidence-led demo, backup restore, fallback and rehearsal | Delivery | P1 | PLANNED | INT-01 | Restore test; demo script matches verified implementation only |
-| AI-01 | Evaluate local read-only aggregate reporting after tested core MVP | Optional | P2 | DEFERRED | Separate future decision/privacy review | No AI dependency or write access in core path |
+|---|---|---|---|---|---|---|
+| FND-01 | Audit repository, history, implementation, docs and vault | Foundation | P0 | VERIFIED | — | `docs/firmware-audit.md` |
+| FND-02 | Keep requirements/API/duplicate policy traceable | Foundation | P0 | VERIFIED (backend scope) | — | `docs/requirements-traceability.md`, `docs/api-plan.md`, backend tests |
+| GIT-01 | Preserve current history/branch; use focused commits only when owner requests | Development | P0 | VERIFIED | — | Audit began clean on main tracking origin/main; no commit/push made |
+| HW-00 | Verify exact R307S PCB identity, connector mapping, jumper, rail and UART voltage | Hardware | P0 | BLOCKED | Multimeter / physical markings | Record exact markings, ground continuity, rail and TX readings in `hardware/test-plan.md` |
+| HW-01 | Run read-only R307S diagnostic and isolate ESP32 UART with loopback | Hardware/Firmware | P0 | NEEDS TESTING | Safe sensor electrical checks; loopback jumper | `r307s`, `uart1_loopback`, `uart2_loopback`; capture complete serial output |
+| HW-02 | Run I2C scanner, OLED, DS3231, LEDs and buzzer separately | Hardware | P0 | NEEDS HARDWARE | Physical peripherals and safe wiring | `i2c_scan`, `oled`, `rtc`, `green_led`, `red_led`, `buzzer`; record visible/observed results |
+| HW-03 | Measure rails/reset behavior under sensor/Wi-Fi loads | Hardware/Power | P0 | BLOCKED | Suitable multimeter; safe test setup | `power_reset` plus measured voltage/current evidence; software telemetry alone is insufficient |
+| FW-00 | Preserve bounded read-only R307S diagnostic | Firmware | P0 | VERIFIED (software build) | — | `firmware/src/r307s_uart_diag.cpp`; no destructive commands |
+| FW-01 | Add independent component and integration PlatformIO environments | Firmware | P0 | VERIFIED (builds only) | Physical tests remain separate | 25 component/integration environments compile/link; production and `esp32dev` compatibility environment build; see `docs/component-tests.md`, `docs/integration-tests.md` |
+| FW-02 | Production driver, explicit enrollment/matching, RTC and generic UX | Firmware | P0 | IMPLEMENTED | HW-00/HW-01/HW-02 | Production build; physically test sensor, display, RTC and no-match/enrollment flows |
+| FW-03 | Stable UUID, bounded LittleFS journal and replay | Firmware/Storage | P0 | IMPLEMENTED | Local filesystem initialization | Validate append/reboot/corruption/full/outage/replay on device; compare UUID/idempotency |
+| FW-04 | Authenticated device API client for attendance contract | Firmware/Backend | P0 | IMPLEMENTED | Local synthetic test device requires verified capacity | Isolated backend integration: 201/200, auth failure, invalid slot and offline retry; no real records |
+| API-01 | Implement health, admin student lifecycle, enrollment assignment/completion | Backend/API | P0 | VERIFIED (software tests) | DB-01 | Existing backend API tests; no physical enrollment proof |
+| API-02 | Implement authenticated attendance ingest, idempotency, timestamp validation and 60-second duplicate rule | Backend/API | P0 | VERIFIED (software tests) | API-01 | Existing synthetic API tests; queue replay remains unverified |
+| API-03 | Add reports, CSV, SSE, device status/heartbeat and cleanup/deletion routes | Backend/API | P0 | PLANNED | API-01/API-02 | Contract tests for timezone, CSV escaping, SSE resume, auth and lifecycle |
+| UI-01 | Build accessible student, event, daily report and CSV views | Frontend | P0 | PLANNED | API-03 | Empty/loading/error/auth/export and accessibility tests |
+| UI-02 | Add authenticated SSE reconnect/resume and deduplicated live updates | Frontend/API | P1 | PLANNED | UI-01, API-03 | Cursor/event UUID and measured latency tests |
+| INT-01 | Complete synthetic end-to-end scan-to-dashboard and offline recovery scenario | Integration | P0 | NEEDS HARDWARE | Firmware, API, UI, safe hardware | Full trace including duplicate and outage/recovery evidence |
+| SEC-01 | Review credential, network, retention, deletion, backup and biometric threat controls | Security | P0 | PLANNED | Implemented product flows | Negative auth/leak/deletion/restore checks; synthetic data only |
+| BUILD-01 | Complete reproducible assembly/software setup guide and record physical evidence | Documentation/Hardware | P0 | IN PROGRESS | HW-00/02; product integration | Docs created; actual board/module mapping and readings still need bench evidence |
+| DEMO-01 | Prepare evidence-led demo, backup restore, fallback and rehearsal | Delivery | P1 | PLANNED | INT-01 | Restore test and script aligned to verified behavior |
+| AI-01 | Consider local read-only aggregate reporting only after core MVP verification | Optional | P2 | DEFERRED | Explicit future privacy/architecture decision | No AI dependency or write access to core attendance |
 
-## Current blockers and limitations
+## Current blockers
 
-- The acquired fingerprint sensor is an **R307S** with a 6-wire harness (Red, Black, Yellow, Green, Blue, White). The sensor has **NOT YET BEEN CONNECTED OR POWERED**. Its pinout and electrical ratings are **UNVERIFIED — HARDWARE VERIFICATION REQUIRED** (HW-00 / Phase 1). Wire colors alone must not be assumed to prove pinout.
-- ESP32 toolchain, upload, and USB serial communication are confirmed working on **COM3** at 115200 baud (Phase 0 PASSED).
-- The implemented FastAPI slice covers health, student lifecycle, enrollment completion, and attendance ingestion. Reports/CSV/SSE/device operations, attendance firmware, frontend source, and end-to-end product suite are still absent. API/database tests do not verify physical enrollment or attendance behavior.
-- Prototype transport is planned local HTTP and is unencrypted; synthetic data only, isolated demo LAN only. No production/school deployment.
+- R307S returns no valid UART response in the previous reported diagnostic. The current assembly is owner-reported; sensor rail/TX level, exact PCB mapping/jumper and sensor health are **UNVERIFIED — REQUIRES MULTIMETER / board inspection**.
+- OLED, RTC, indicators, Wi-Fi and HTTP have test builds but no physical pass evidence in this audit.
+- Production firmware implements the attendance/enrollment workflows, network client and offline queue, but physical operation and event replay are unverified.
+- Prototype uses plain HTTP bearer tokens; only synthetic data on an isolated local network is permitted.
 
-## Evidence from current milestone
+## Current software evidence
 
-- `backend/.venv/Scripts/python.exe -m pytest tests -q` from `backend/`: 10 tests passed (6 migration/constraint and 4 API/provisioning tests) on 2026-09-25.
-- `pio run -d firmware`: passed on 2026-09-25 (compile only; framework warning noted in [[AI Project Handoff]]).
-- Backend environment smoke check previously passed; rerun after dependency changes.
-- Git baseline `9bb5801` is preserved; milestone commit `310559e` contains the reviewed coherent changes and is one commit ahead of `origin/main`. It was not pushed.
-
-## Schedule
-
-The event target is 2026-10-09. Dates are targets, not proof or guarantees. Procurement target status is unknown as of 2026-09-25. Replan the critical path using actual delivery; see `docs/science-fair-timeline.md`.
+- `pio run -d firmware -e production`, `esp32dev`, and all 25 component/integration environments compile/link; hardware execution is separate. Final run completed 2026-10-02: all 27 firmware environments built successfully.
+- `backend/.venv/Scripts/python.exe -m pytest tests -q` from `backend/`: 10 tests passed on this audit date.
+- Firmware implementation and documentation milestones are ready for the explicitly requested focused commits and push.
