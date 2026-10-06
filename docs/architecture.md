@@ -18,7 +18,7 @@ A low-cost local-network attendance demonstrator uses an ESP32 terminal with R30
 
 | Component | Intended responsibility | Actual repository state |
 | --- | --- | --- |
-| ESP32-WROOM-32 + R307S | Local capture/match; expose slot result only; RTC and display feedback | Production runtime implements workflows and builds; owner-reported R307S setup has no UART response; electrical state unverified. |
+| ESP32-WROOM-32 + R307S | Local capture/match; expose slot result only; RTC and serial-console status feedback | Production runtime implements workflows and builds; owner-reported R307S setup has no UART response; electrical state unverified. The SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project, so there is no local display/LED feedback path. |
 | LittleFS queue | Persist event UUID and capture metadata offline; replay in order | Bounded checksummed append journal and replay implemented; physical reboot/power-loss behavior NEEDS HARDWARE |
 | FastAPI | Device auth, enrollment status, event processing, reports, static files | `backend/app/main.py` implements health, admin student lifecycle, device enrollment assignment/completion, and attendance ingest; reports/SSE/CSV/static frontend and remaining device operations are absent |
 | SQLite WAL | Student/device metadata, event outcomes, audit | Schema v1 and transaction-backed attendance ingestion exist; runtime DB files are local/ignored |

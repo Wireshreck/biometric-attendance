@@ -8,7 +8,6 @@
 #include "device_services.h"
 #include "network_service.h"
 
-static DisplayService displayService;
 static RtcService rtcService;
 static IndicatorService indicators;
 static FingerprintService fingerprint;
@@ -43,8 +42,10 @@ static void transition(AttendanceState next, const char* title, const char* deta
     state = next;
     char stamp[32] = "";
     if (rtcService.valid()) rtcService.timestamp(stamp, sizeof(stamp));
-    displayService.showClock(title, detail, stamp);
-    Serial.printf("[STATE] %s: %s\n", attendance_state_name(state), title);
+    Serial.printf("[STATE] %s: %s", attendance_state_name(state), title);
+    if (detail && detail[0]) Serial.printf(" — %s", detail);
+    if (stamp[0]) Serial.printf(" (%s)", stamp);
+    Serial.println();
 }
 static void uuidV4(char out[37]) {
     uint8_t b[16]; esp_fill_random(b, sizeof(b)); b[6] = (b[6] & 0x0F) | 0x40; b[8] = (b[8] & 0x3F) | 0x80;
@@ -174,7 +175,8 @@ static void syncOne() {
 void attendance_app_setup() {
     Serial.begin(115200); delay(250);
     Serial.println("BIOMETRIC ATTENDANCE DEVICE - local-first demo firmware");
-    indicators.begin(); displayService.begin(); enrollmentPrefs.begin("attendance", false);
+    Serial.println("[INFO] OLED removed from this project. Status is reported on the serial console only.");
+    indicators.begin(); enrollmentPrefs.begin("attendance", false);
     EnrollmentIntent bootIntent{};
     if (enrollmentIntentPresent() && !loadIntent(bootIntent)) Serial.println("[CRITICAL] Stored enrollment intent is corrupt; manual sensor/backend reconciliation is required.");
     transition(AttendanceState::SELF_TEST, "SELF TEST", "Starting local services");
@@ -209,9 +211,11 @@ void attendance_app_loop() {
     }
     if (state == AttendanceState::OFFLINE && network.connected() && store.healthy() && store.pendingCount() == 0 && rtcService.valid() && fingerprint.ready())
         transition(AttendanceState::WAITING_FOR_FINGER, "READY", "Network restored");
-    if (!resultScreenActive && state == AttendanceState::WAITING_FOR_FINGER && now - lastClockDisplayMs >= 1000) {
+    if (!resultScreenActive && state == AttendanceState::WAITING_FOR_FINGER && now - lastClockDisplayMs >= 5000) {
         char stamp[32] = "";
-        if (rtcService.timestamp(stamp, sizeof(stamp))) displayService.showClock(network.connected()?"READY":"OFFLINE", network.connected()?"Scan finger":"Queued events retry", stamp);
+        if (rtcService.timestamp(stamp, sizeof(stamp))) {
+            Serial.printf("[CLOCK] %s — %s\n", network.connected() ? "READY" : "OFFLINE", stamp);
+        }
         lastClockDisplayMs = now;
     }
     if (!fingerprint.ready()) {

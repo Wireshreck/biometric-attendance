@@ -10,8 +10,8 @@ tags:
 
 | Failure | Detection | Device behavior | Recovery / operator action | Evidence status |
 |---|---|---|---|---|
-| OLED absent | SSD1306 init false | Serial diagnostics continue; display calls are no-ops | Run `i2c_scan`, check module/3.3 V-safe pull-ups and 21/22 | Physical behavior NEEDS TESTING |
-| RTC absent or oscillator stopped | DS3231 not found, lost-power bit, or invalid year | No attendance timestamp is generated; display/serial reports RTC invalid | Inspect I2C/power and explicitly set trusted local time with `SETTIME`; test again | Physical behavior NEEDS TESTING |
+| OLED absent by design | Removed from this project | Production firmware no longer initializes or writes to an OLED; status is reported on the serial console only | No action needed for the OLED; if an I2C device is later added to GPIO21/22, verify its 3.3 V pull-ups first | Design decision; physical behavior of any replacement device NEEDS TESTING |
+| RTC absent or oscillator stopped | DS3231 not found, lost-power bit, or invalid year | No attendance timestamp is generated; serial reports RTC invalid | Inspect I2C/power and explicitly set trusted local time with `SETTIME`; test again | Physical behavior NEEDS TESTING |
 | Fingerprint sensor absent/no response | bounded handshake fails | `SENSOR NOT FOUND`; reprobe every 5 seconds; no infinite wait | Run read-only `r307s` diagnostic; verify exact board and safely measure power/logic | Current UART silence reported; sensor health unknown |
 | Finger image poor / no match | capture/search result | show `NOT FOUND`; error signal; require finger lift before next attempt | Dry/clean finger and sensor surface; use test fingers | NEEDS HARDWARE |
 | Storage mount, checksum, or write failure | LittleFS mount/parser/write/flush failure | storage state unhealthy; new scans are not accepted; never auto-format | Preserve device; inspect serial; do not run `uploadfs` if queue might exist | Software compiles; power-cut behavior NEEDS HARDWARE |
@@ -21,5 +21,7 @@ tags:
 | Enrollment API complete fails after sensor store | response mismatch/timeout | retain checksummed NVS completion intent; retry after boot | Restore network/backend; do not allocate/reuse this template slot | Needs physical/API integration verification |
 | NVS intent cannot be saved after template store | putBytes fails | explicit critical warning; enrollment not reported complete | Stop enrollment and manually reconcile sensor slot with pending backend student | NOT TESTED |
 | Brownout/reset | boot log reports ESP32 reset reason | restart initialization; journal/ack protocol recovers complete records | Check USB supply/cable and rail with meter; firmware cannot measure voltage | Reset reason is logged; actual supply NEEDS MULTIMETER |
+
+Note: the SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project. The firmware no longer initializes a display and no longer drives GPIO18/GPIO19. The display-path code and the LED/resistor requirements are therefore not failure modes for the current configuration.
 
 The production build is not evidence for any physical recovery path. Never format LittleFS, clear templates, or send destructive sensor commands as a generic troubleshooting step. See [power and safety](power-and-safety.md) and [production behavior](production-firmware.md).

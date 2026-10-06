@@ -13,7 +13,7 @@ tags:
 ## Architecture
 
 - `firmware/src/app/attendance_app.cpp`: lifecycle, state transitions, serial operator commands, event creation, dispatch and retry scheduling.
-- `firmware/src/hardware/device_services.cpp`: OLED, RTC, indicators/buzzer, and Adafruit sensor wrapper.
+- `firmware/src/hardware/device_services.cpp`: RTC, buzzer, and Adafruit sensor wrapper. The SSD1306 OLED and the green/red indicator LEDs were removed from this project; GPIO18/19 are unused/reserved.
 - `firmware/src/network/network_service.cpp`: station Wi-Fi, local HTTP API authentication, contract payload, response validation, enrollment assignment/completion.
 - `firmware/src/storage/attendance_store.cpp`: LittleFS append journal with CRC32, acknowledgements, bounded size/count and compaction; damaged middle records fail closed, incomplete last write is ignored.
 - `firmware/src/r307s_uart_diag.cpp`: retained read-only diagnostic; no enrollment/delete commands in this diagnostic.
@@ -23,9 +23,9 @@ The backend contract is authoritative. Attendance sends `{event_uuid,fingerprint
 
 ## Startup and attendance lifecycle
 
-Boot initializes indicators, OLED/I2C, RTC, LittleFS, Wi-Fi, and fingerprint UART. LittleFS mount uses formatting disabled. If the RTC is stopped/invalid, storage is unavailable, or the sensor does not answer, the firmware reports the fault and avoids making up a timestamp or claiming a scan was recorded. Sensor handshake retries every five seconds. Wi-Fi reconnect attempts are spaced ten seconds apart.
+Boot initializes buzzer, RTC/I2C, LittleFS, Wi-Fi, and fingerprint UART. LittleFS mount uses formatting disabled. If the RTC is stopped/invalid, storage is unavailable, or the sensor does not answer, the firmware reports the fault on the serial console and avoids making up a timestamp or claiming a scan was recorded. Sensor handshake retries every five seconds. Wi-Fi reconnect attempts are spaced ten seconds apart. The OLED and indicator LEDs are no longer present; there is no local display feedback.
 
-For a valid match, the firmware reads a local DS3231 timestamp, formats it with the configured `+05:30` offset, creates a UUIDv4, and appends the event to LittleFS before network submission. A durable write is required before the OLED can say “Saved locally.” API acknowledgement is required before “Attendance OK.” The finger must be lifted before a new scan is accepted. The backend applies its existing 60-second duplicate policy. The OLED and serial output do not display student names; serial logs include the event UUID and slot, so keep the local serial console access-controlled.
+For a valid match, the firmware reads a local DS3231 timestamp, formats it with the configured `+05:30` offset, creates a UUIDv4, and appends the event to LittleFS before network submission. A durable write is required before the device reports “SAVED LOCALLY” on the serial console. API acknowledgement is required before “ATTENDANCE OK.” The finger must be lifted before a new scan is accepted. The backend applies its existing 60-second duplicate policy. The serial output does not display student names; serial logs include the event UUID and slot, so keep the local serial console access-controlled.
 
 The RTC stores wall time. The operator can set it explicitly through local USB serial: `SETTIME YYYY-MM-DD HH:MM:SS`. This sets local time assumed to be India Standard Time (`+05:30`); compare to a trusted clock before using it. There is no NTP time correction or DST logic. Invalid dates are rejected. No timestamp is generated from compile time or uptime.
 

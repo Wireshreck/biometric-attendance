@@ -2,21 +2,9 @@
 
 #include <Arduino.h>
 #include <Adafruit_Fingerprint.h>
-#include <Adafruit_SSD1306.h>
 #include <RTClib.h>
 
 enum class FingerprintScan { NO_FINGER, MATCH, NO_MATCH, SENSOR_ERROR };
-
-class DisplayService {
-public:
-    DisplayService();
-    bool begin();
-    void show(const char* title, const char* detail = "");
-    void showClock(const char* title, const char* detail, const char* timestamp);
-private:
-    Adafruit_SSD1306 display_;
-    bool ready_ = false;
-};
 
 class RtcService {
 public:

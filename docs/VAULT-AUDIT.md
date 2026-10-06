@@ -75,7 +75,7 @@ firmware/src/main.cpp                       12 lines — delegates to attendance
 firmware/src/app/attendance_app.cpp        248 lines — lifecycle, state machine, serial operator
                                                  commands, event creation, dispatch, retry
 firmware/src/app/attendance_state.cpp      17 lines — state-name table
-firmware/src/hardware/device_services.cpp  160 lines — OLED, DS3231, LED/buzzer, R307S wrapper
+firmware/src/hardware/device_services.cpp  160 lines — DS3231, buzzer, R307S wrapper (OLED and LEDs were later removed from this project)
 firmware/src/network/network_service.cpp   92 lines — Wi-Fi, HTTP, bearer auth, contract payloads
 firmware/src/storage/attendance_store.cpp  150 lines — LittleFS CRC32 JSONL journal, acks, compaction
 firmware/src/r307s_uart_diag.cpp          560 lines — read-only bring-up diagnostic
@@ -89,7 +89,7 @@ Key architectural properties discovered in source:
 - **Fingerprint service is `FingerprintService` in `device_services.h`**, wrapping `Adafruit_Fingerprint` on `HardwareSerial(2)` at 57600 8-N-1 on RX32/TX33.
 - `firmware/include/fingerprint_sensor.h` is now an **11-line DEPRECATED notice**. It declares nothing. No production source includes it. This is the correct resolution of the earlier "interface with no implementation" problem — and it is easy to mistake for live code during a vault build.
 - `firmware/platformio.ini` `[env:production]` `build_src_filter` still lists `+<fingerprint/*.cpp>`. **No `firmware/src/fingerprint/` directory exists.** PlatformIO ignores the unmatched filter, so the build passes, but the filter is a leftover.
-- `firmware/include/config.h` is the single code-side source of truth: `PIN_R307S_RX 32`, `PIN_R307S_TX 33`, `R307S_BAUD_RATE 57600`, I2C `21/22`, OLED `0x3C`, RTC `0x68`, green `18`, red `19`, buzzer `23`, `ATTENDANCE_ENDPOINT "/api/v1/attendance"`, `LOCAL_TIMEZONE_OFFSET "+05:30"`, queue bounds 48 KiB / 100 pending. The obsolete `PIN_R703_*` aliases noted by the earlier audit are **already gone**.
+- `firmware/include/config.h` is the single code-side source of truth: `PIN_R307S_RX 32`, `PIN_R307S_TX 33`, `R307S_BAUD_RATE 57600`, I2C `21/22`, RTC `0x68`, buzzer `23`, `ATTENDANCE_ENDPOINT "/api/v1/attendance"`, `LOCAL_TIMEZONE_OFFSET "+05:30"`, queue bounds 48 KiB / 100 pending. The obsolete `PIN_R703_*` aliases noted by the earlier audit are **already gone**. The OLED (`0x3C`), green LED (`18`), and red LED (`19`) were later removed from this project; GPIO18/19 are now unused/reserved.
 - Credentials flow through ignored `firmware/include/local_config.h`; the tracked example contains only empty strings.
 
 ## 4. Current backend architecture
@@ -119,24 +119,25 @@ Authoritative map is `docs/final-pin-map.md` (35 lines). `config.h` matches it. 
 | Component | Interface | ESP32 pins | Evidence class |
 |---|---|---|---|
 | R307S sensor | UART2, 57600 8-N-1 | RX 32, TX 33 | Assembled per owner report; **0 valid bytes received**; rail/logic UNVERIFIED |
-| SSD1306 OLED 128×64 | I2C `0x3C` | SDA 21, SCL 22 | Mapped, never executed |
+| SSD1306 OLED 128×64 | I2C `0x3C` | SDA 21, SCL 22 | Mapped, never executed — removed from this project (damaged) |
 | DS3231 RTC | I2C `0x68` | SDA 21, SCL 22 | Mapped, never executed |
-| Green LED | GPIO out via resistor | 18 | Mapped, never executed |
-| Red LED | GPIO out via resistor | 19 | Mapped, never executed |
+| Green LED | GPIO out via resistor | 18 | Mapped, never executed — removed from this project (no resistors available) |
+| Red LED | GPIO out via resistor | 19 | Mapped, never executed — removed from this project (no resistors available) |
 | Active buzzer | GPIO in / driver | 23 | Mapped, never executed; module identity unknown |
+| Unused/reserved GPIOs | — | 18, 19 | Former green/red indicator outputs; currently unused |
 | Power | USB 5 V in, 3V3 out | — | Unmeasured rails; CR2032 is **not** a sensor supply |
 
 ESP32 restrictions documented and honoured: GPIO1/3 reserved for USB serial, GPIO25/26 reserved for loopback-only, strap pins 0/2/5/12/15 avoided, flash pins 6–11 avoided, 34–39 never outputs.
 
-**Stale-hardware reconciliation already performed** by the previous work: GPIO16/17, "not connected or powered", `PIN_R703_*` aliases, and the R703/AS608 identification are all explicitly marked superseded. `docs/esp32-pin-map.md`, `docs/final-pin-map.md`, `docs/wiring.md`, `docs/power-and-safety.md`, `hardware/pinout.md`, and `hardware/test-plan.md` are all current. The remaining stale references are confined to `obsidian/`, `README.md`, and `AI_CONTEXT.md`, which all still tell the reader to *open `obsidian/` as the vault*.
+**Stale-hardware reconciliation already performed** by the previous work: GPIO16/17, "not connected or powered", `PIN_R703_*` aliases, and the R703/AS608 identification are all explicitly marked superseded. `docs/esp32-pin-map.md`, `docs/final-pin-map.md`, `docs/wiring.md`, `docs/power-and-safety.md`, `hardware/pinout.md`, and `hardware/test-plan.md` are all current for the 32/33 + 21/22 + 23 configuration. The remaining stale references are confined to `obsidian/`, `README.md`, and `AI_CONTEXT.md`, which all still tell the reader to *open `obsidian/` as the vault*. The OLED and the green/red LEDs (and their resistors) were later removed from this project; where any doc still lists them as current hardware, that doc is now out of date.
 
 ## 6. Current test architecture
 
 **27 PlatformIO environments** in `firmware/platformio.ini`:
 
 - 2 build targets: `production` (default) and `esp32dev` (compatibility alias extending `production`).
-- 15 component environments: `esp32_core`, `uart1_loopback`, `uart2_loopback`, `r307s`, `i2c_scan`, `oled`, `rtc`, `green_led`, `red_led`, `buzzer`, `gpio_sanity`, `wifi_diag`, `backend_http`, `json`, `storage`, `power_reset`.
-- 9 integration environments: `int_oled`, `int_rtc`, `int_outputs`, `int_r307s`, `int_r307s_oled`, `int_r307s_rtc`, `int_wifi`, `int_backend`, `int_full`, selected by `-D INTEGRATION_CASE=1..9` against one `integration_test.cpp`.
+- Component environments (current): `esp32_core`, `uart1_loopback`, `uart2_loopback`, `r307s`, `i2c_scan`, `rtc`, `buzzer`, `gpio_sanity`, `wifi_diag`, `backend_http`, `json`, `storage`, `power_reset`. The `oled`, `green_led`, and `red_led` environments were removed with the OLED/LED hardware.
+- Integration environments (current): `int_rtc`, `int_r307s`, `int_r307s_rtc`, `int_wifi`, `int_backend`, `int_full`, selected by `-D INTEGRATION_CASE=1..6` against one `integration_test.cpp`. The `int_oled`, `int_outputs`, and `int_r307s_oled` environments were removed with the OLED/LED hardware.
 
 Design pattern worth preserving: each environment uses `build_src_filter = -<*> +<one file>`, so exactly one `setup()/loop()` entry point compiles. `include/test_result.h` is a shared reporter whose `finish()` cannot return `PASS` when checks were skipped or marked unverified — the code itself enforces the "build ≠ hardware" discipline.
 

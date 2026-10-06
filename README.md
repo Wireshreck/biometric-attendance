@@ -23,7 +23,7 @@ tags:
 | GitHub and CI | VERIFIED locally; Actions run `36148997541` passed firmware build and backend smoke/tests on commit `06f7713` |
 | Hardware selection and BOM | IMPLEMENTED (planning docs; procurement unconfirmed) |
 | Purchase/delivery confirmation | BLOCKED (owner status unknown) |
-| Firmware component/integration test builds | VERIFIED (25 test environments compile/link; hardware execution NEEDS HARDWARE) |
+| Firmware component/integration test builds | VERIFIED (current environments compile/link; OLED/LED environments removed; hardware execution NEEDS HARDWARE) |
 | Production firmware | IMPLEMENTED (matching/enrollment, RTC gate, journal, Wi-Fi/API); physical operation NEEDS HARDWARE |
 | Backend API vertical slice | VERIFIED (10 software tests; physical integration unverified) |
 | Remaining API (reports/CSV/SSE/device lifecycle) | PLANNED |
@@ -59,10 +59,10 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 ```
 ┌─────────────────────────────────┐
 │     Edge Terminal (ESP32)       │
-│  R307S ─ UART ─ ESP32 ─ OLED   │
+│  R307S ─ UART ─ ESP32 ─ Buzzer │
 │              │                  │
 │           DS3231 RTC            │
-│    Green/Red LED  Buzzer        │
+│  (no OLED/LEDs; serial status)  │
 │    LittleFS offline journal     │
 └──────────────┬──────────────────┘
                │ Wi-Fi (2.4 GHz)
@@ -90,7 +90,7 @@ Firmware creates attendance events, queues them before transmission, and retries
 - **Biometric minimization:** Firmware sends only template slot, event UUID, timestamp and synchronization state; no fingerprint image/template is sent.
 - **Offline resilience:** LittleFS journal and replay logic are implemented; persistence across actual power loss needs hardware verification.
 - **Open source:** MIT License — free for any school to use and modify.
-- **Affordable target:** Current planning envelope is ~₹2,399 before any unpriced conditional RTC cell; verify the actual cart.
+- **Affordable target:** Current planning envelope is ~₹2,191 before any unpriced conditional RTC cell; verify the actual cart. The OLED and the green/red LEDs with resistors were removed from this project.
 
 ---
 
@@ -166,11 +166,11 @@ try { & .\.venv\Scripts\python.exe -m pytest tests -q } finally { Pop-Location }
 | :--- | :---: |
 | ESP32-WROOM-32 DevKit V1 | ₹349 |
 | R307S Fingerprint Module (acquired; electrical state unverified) | record from receipt |
-| SSD1306 0.96" I2C OLED | ₹163 (listing, ex GST) |
+| SSD1306 0.96" I2C OLED | removed from this project (damaged) |
 | DS3231 High Precision RTC | ₹189 |
-| Active Buzzer, LEDs, Resistors | ₹105 |
+| Active Buzzer | ₹35 (listing, ex GST; LEDs + resistors removed) |
 | Breadboard + Jumper Wires + USB Cable | ₹344 |
-| **Planning estimate incl. tax/shipping reserve** | **~₹2,399 (verify current cart; not a quote)** |
+| **Planning estimate incl. tax/shipping reserve** | **~₹2,191 (verify current cart; not a quote)** |
 
 ---
 

@@ -19,8 +19,8 @@ The software now contains a production runtime and isolated diagnostic images. P
 
 ## Component and integration sequence
 
-4. Run `i2c_scan`, `oled`, and `rtc` separately after confirming module rails and I2C pull-ups. Do not install a CR2032 until the exact RTC breakout's charge circuit is known.
-5. Run `green_led`, `red_led`, and `buzzer`; record actual light/sound and verify no heating or unexpected reset.
+4. Run `i2c_scan` and `rtc` separately after confirming module rails and I2C pull-ups. Do not install a CR2032 until the exact RTC breakout's charge circuit is known. The SSD1306 OLED was removed from this project, so there is no OLED test path.
+5. Run `buzzer`; record actual sound and verify no heating or unexpected reset. The green/red LEDs and their series resistors were removed from this project, so there is no LED test path.
 6. Run `storage`; then initialize a disposable/new filesystem only if safe to erase it. Never run `uploadfs` on a device that may hold queued events.
 7. Run `wifi_diag` and `backend_http` only on an isolated local synthetic-data network. Backend HTTP smoke-test performs GET `/health` only.
 8. Use local synthetic device/student records to validate enrollment assignment/confirmation and event POST; verify queue ordering, restart recovery, duplicate UUID replay, and invalid HTTP/auth cases before any public demo.
@@ -29,4 +29,4 @@ The software now contains a production runtime and isolated diagnostic images. P
 
 ## Current block
 
-Owner-reported R307S diagnostics returned no valid UART bytes at tested assumptions. Sensor rail/logic and health remain unverified. OLED/RTC/LED/buzzer/Wi-Fi/API and actual LittleFS reset behavior also have no current physical pass record. See [firmware audit](firmware-audit.md), [final pin map](final-pin-map.md), [R307S research](r307s-hardware-research.md), and [power safety](power-and-safety.md).
+Owner-reported R307S diagnostics returned no valid UART bytes at tested assumptions. Sensor rail/logic and health remain unverified. RTC/buzzer/Wi-Fi/API and actual LittleFS reset behavior also have no current physical pass record. The SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project; see [final pin map](final-pin-map.md), [firmware audit](firmware-audit.md), [R307S research](r307s-hardware-research.md), and [power safety](power-and-safety.md).

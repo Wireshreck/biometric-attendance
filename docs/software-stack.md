@@ -13,7 +13,7 @@ tags:
 | Layer | Selected technology | Current state |
 | --- | --- | --- |
 | Firmware | PlatformIO, `espressif32@6.5.0`, Arduino on ESP32-WROOM-32-class board | Toolchain-check sketch compiles for `esp32dev`; no upload or physical test; libraries pinned in config |
-| Sensor/display/RTC | Adafruit fingerprint, SSD1306/GFX, RTClib | Dependency declarations only; no product firmware |
+| Sensor/RTC | Adafruit fingerprint, RTClib | Dependency declarations only; no product firmware (SSD1306/GFX removed with the OLED) |
 | Offline storage | ESP32 LittleFS | Build setting only; queue unimplemented |
 | Device transport | Local HTTP JSON, per-device bearer credential | Planned; no TLS; synthetic demo data only |
 | Backend | Python 3.13, FastAPI, Uvicorn, Pydantic, aiosqlite | Health/student/enrollment/attendance API subset and temporary-DB tests; no reports/CSV/SSE/static dashboard |

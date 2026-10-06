@@ -57,7 +57,7 @@ This document establishes the authoritative, phased engineering plan for integra
    - Supplying 3.3V to a 5V LDO input may result in brownout and optical sensor failure. Supplying 5V to a 3.3V-direct rail will burn the sensor DSP.
 4. **UART Logic Voltage Levels:**
    - Are the `TXD` output and `RXD` input signals 3.3V TTL or 5V TTL?
-   - The ESP32 inputs are strictly 3.3V tolerant. If the R307S drives TXD at 5V, a resistor divider or bidirectional logic level shifter is mandatory.
+   - The ESP32 inputs are strictly 3.3V tolerant. If the R307S drives TXD at 5V, a level shifter or other approved 3.3V-safe interface is mandatory. (Resistors alone are not assumed available for new designs; the green/red LEDs and their series resistors were removed from this project.)
 5. **Default Factory Baud Rate:** Typically 57600 baud (8-N-1), but some firmware builds use 9600 or 115200 baud.
 6. **Default Device Address & Password:** Typically address `0xFFFFFFFF` and password `0x00000000` (standard Synochip / Grow protocol).
 7. **Template Capacity:** Documented as 1,000 templates for R307S, to be confirmed via parameter query packet.
@@ -72,7 +72,7 @@ This document establishes the authoritative, phased engineering plan for integra
    - Older GPIO16/17 recommendations are superseded for the current bench wiring.
 2. **Software Abstraction Layer:**
    - Abstract the fingerprint driver behind a dedicated interface (`firmware/include/fingerprint_sensor.h`).
-   - Keep `main.cpp` as an application state machine coordinator, preventing vendor protocol code from tangling with networking, database sync, and OLED rendering.
+   - Keep `main.cpp` as an application state machine coordinator, preventing vendor protocol code from tangling with networking, database sync, and serial-console status. The SSD1306 OLED was removed from this project, so there is no display rendering path.
 3. **Library Selection:**
    - Adafruit Fingerprint Sensor Library (`adafruit/Adafruit Fingerprint Sensor Library @ 2.1.3`) is currently pinned in `platformio.ini`. The R307S uses the standard ZFM / Synochip packet format, which this library supports. Protocol compatibility will be verified during Phase 5.
 4. **Non-Blocking Operation:**
@@ -120,7 +120,7 @@ flowchart TD
     P5 --> P6["Phase 6: Sensor Initialization & Status<br/>(Read params, capacity, security)"]
     P6 --> P7["Phase 7: Test Fingerprint Enrollment<br/>(2-pass capture, template slot)"]
     P7 --> P8["Phase 8: Test Fingerprint Matching<br/>(1:N search on-sensor)"]
-    P8 --> P9["Phase 9: Attendance Application Integration<br/>(OLED, RTC, LittleFS, FastAPI)"]
+    P8 --> P9["Phase 9: Attendance Application Integration<br/>(RTC, LittleFS, FastAPI; no OLED/LEDs)"]
 
     style P0 fill:#50C878,stroke:#2E7D32,color:#FFFFFF
     style P1 fill:#FFD000,stroke:#F57F17,color:#000000
@@ -213,8 +213,8 @@ flowchart TD
 - **Objective:** Connect verified driver into full system pipeline.
 - **Required Actions:**
   - Connect matched slot ID to student identity lookup in SQLite via FastAPI.
-  - Update OLED display with student name and real-time clock timestamp from DS3231.
-  - Trigger green LED and audio chime on match; red LED on reject.
+  - Report status on the serial console (the SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project; there is no display/LED feedback path).
+  - Trigger audio chime on match; on reject, report on the serial console (no LED path).
   - Queue attendance event to LittleFS if offline; POST to `/api/v1/attendance` if online.
 - **Pass Criteria:** End-to-end attendance scan updates web dashboard in < 1.5 seconds.
 
@@ -237,6 +237,7 @@ flowchart TD
 
 Before connecting any wire to the ESP32:
 - [ ] Physical module inspected for silkscreen labels or pin 1 indicator.
+- [ ] Any future display/LED added only after updating config.h, final-pin-map.md, and the component/integration test docs (current project has no OLED/LEDs).
 - [ ] Multimeter continuity check performed to identify ground pin.
 - [ ] Voltage requirement confirmed (5V vs 3.3V).
 - [ ] Harness wire color order documented and cross-referenced with pin numbers.

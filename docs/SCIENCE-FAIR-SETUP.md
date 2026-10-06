@@ -15,7 +15,7 @@ tags:
 
 - ESP32 DevKit and USB data cable
 - R307S sensor and its connector/harness, with blue/white ends insulated as currently reported
-- OLED and DS3231 modules, LEDs with series resistors, buzzer module, breadboard, jumper wires
+- DS3231 RTC module, buzzer module, breadboard, jumper wires (the SSD1306 OLED and the green/red LEDs with series resistors were removed from this project)
 - Laptop, charger, spare known-good USB data cable, and labeled storage device containing the repository backup
 - Printed [pin map](final-pin-map.md), [assembly guide](COMPLETE-BEGINNER-ASSEMBLY-GUIDE.md), and [hardware test plan](hardware-test-plan.md)
 - Multimeter if available for safe voltage/continuity verification; do not perform uncertain probing
@@ -33,10 +33,10 @@ tags:
 ## Venue startup
 
 1. Place the breadboard on a nonconductive, stable table and inspect wiring with USB disconnected.
-2. Verify module labels, common ground, I2C 3.3 V pull-ups, LED resistors, and the exact RTC coin-cell charging design. Leave an uncertain CR2032 out.
+2. Verify module labels, common ground, I2C 3.3 V pull-ups, and the exact RTC coin-cell charging design. The OLED and LEDs are no longer in this project; do not connect any other I2C device without confirming its 3.3 V pull-ups. Leave an uncertain CR2032 out.
 3. Do not change the current R307S harness or power it from the coin cell. If its voltage has not been measured, stop before a test requiring safe UART connection.
 4. Connect ESP32 USB only; keep other power supplies disconnected.
-5. Run `esp32_core`, then `i2c_scan`, OLED, RTC, outputs, UART loopback with the sensor disconnected, and only then R307S if its electrical safety gate is satisfied.
+5. Run `esp32_core`, then `i2c_scan`, RTC, UART loopback with the sensor disconnected, and only then R307S if its electrical safety gate is satisfied. (The OLED and indicator LEDs were removed from this project; there is no display/LED test path.)
 6. Start backend on private LAN, check `/health`, then run the read-only `backend_http` test.
 7. Run production only after synthetic device provisioning and all required hardware tests. Open serial monitor and run `STATUS`.
 

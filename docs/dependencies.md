@@ -16,8 +16,8 @@ Manifest sources of truth: `firmware/platformio.ini`, `backend/pyproject.toml`, 
 | `espressif32` platform | 6.5.0 | ESP32 board/framework/toolchain | Required firmware | PlatformIO `pio run` | Platform/package component terms; review upstream metadata |
 | Arduino framework | Selected by PlatformIO platform | Firmware API | Required firmware | Bundled/resolved by PlatformIO | Upstream framework license |
 | Adafruit Fingerprint Sensor Library | 2.1.3 | R307S diagnostic and runtime probe/match abstraction (common Grow/HF-series protocol family); exact-unit compatibility unverified because no ACK has been received | Included in production and R307S test builds; hardware use remains unverified | PlatformIO environment builds; then safe physical sensor test | Adafruit library license; preserve notices if redistributing |
-| Adafruit SSD1306 | 2.5.9 | OLED driver | Planned required firmware | `pio run` and display bench test | Adafruit library license |
-| Adafruit GFX | 1.11.9 | OLED graphics dependency | Planned required firmware | Resolved as direct dependency; `pio run` | Adafruit library license |
+| Adafruit SSD1306 | 2.5.9 | OLED driver | Removed from this project (OLED damaged) | Not used | Adafruit library license |
+| Adafruit GFX | 1.11.9 | OLED graphics dependency | Removed from this project (OLED damaged) | Not used | Adafruit library license |
 | RTClib | 2.1.3 | DS3231 access | Planned required firmware | `pio run` and RTC bench test | Adafruit library license |
 | ArduinoJson | 7.0.4 | JSON event encode/decode | Planned required firmware | `pio run` and payload tests | Benoit Blanchon library license; review upstream terms |
 | Python | 3.13.15 in audited host; project requires >=3.11 | Backend/runtime scripts | Required backend | `python --version` | Python PSF license |

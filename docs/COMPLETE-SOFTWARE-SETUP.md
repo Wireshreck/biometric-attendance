@@ -72,10 +72,7 @@ List available serial ports in PlatformIO Devices or Windows Device Manager. Rep
 pio run -d firmware -e production
 pio run -d firmware -e esp32_core
 pio run -d firmware -e i2c_scan
-pio run -d firmware -e oled
 pio run -d firmware -e rtc
-pio run -d firmware -e green_led
-pio run -d firmware -e red_led
 pio run -d firmware -e buzzer
 pio run -d firmware -e uart2_loopback
 pio run -d firmware -e r307s
@@ -92,7 +89,7 @@ pio run -d firmware -e esp32_core -t upload --upload-port COMx
 pio device monitor -d firmware --port COMx --baud 115200
 ```
 
-For each hardware test, replace its environment (`i2c_scan`, `oled`, `rtc`, `green_led`, `red_led`, `buzzer`, `uart2_loopback`, `r307s`, `wifi_diag`, `backend_http`, `storage`, `int_full`) and upload/run the image. Read [component tests](component-tests.md) for prerequisites, expected output, and what a PASS actually proves.
+For each hardware test, replace its environment (`i2c_scan`, `rtc`, `buzzer`, `uart2_loopback`, `r307s`, `wifi_diag`, `backend_http`, `storage`, `int_rtc`, `int_r307s`, `int_r307s_rtc`, `int_wifi`, `int_backend`, `int_full`) and upload/run the image. Read [component tests](component-tests.md) for prerequisites, expected output, and what a PASS actually proves. The `oled`, `green_led`, and `red_led` environments no longer exist because the SSD1306 OLED and the green/red LEDs (and their series resistors) were removed from this project.
 
 ### First-use filesystem
 

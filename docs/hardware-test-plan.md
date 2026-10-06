@@ -27,11 +27,9 @@ tags:
 | 1 | `esp32_core` | Boot, chip, CPU, heap, flash, reset reason | Serial report, no arbitrary GPIO drive | ESP32 and USB serial | Build verified; runtime prior owner-reported |
 | 2 | `uart1_loopback`, `uart2_loopback` | UART transmit/receive/checksum | Jumper from GPIO25 TX to GPIO26 RX; byte-for-byte match | Jumper wire and ESP32 | Not executed in this audit |
 | 3 | `r307s` | R307S read-only packet/baud/response test | Valid checksum ACK and read-only parameters, or honest no-response result | Existing reported connection; rail and levels need meter verification | No valid response reported by owner; rerun result not collected here |
-| 4 | `i2c_scan` | SDA/SCL address scan | Detected address list; no assumed devices | OLED/RTC if present | Not executed |
-| 5 | `oled` | SSD1306 text/graphics/repeated refresh | Expected text visible and initialization success | OLED and safe 3.3 V I2C pull-ups | Not executed |
-| 6 | `rtc` | DS3231 address/time/oscillator/repeated read | Plausible advancing time, no power-loss flag | RTC and backup supply | Not executed; no clock write occurs |
-| 7 | `green_led`, `red_led` | Individual GPIO output sequence | Off/on/three blink pulses observed | Series current-limiting resistor | Not executed |
-| 8 | `buzzer` | Quiet/two-short-beep output sequence | Beeps heard and output returns off | Suitable module/driver | Not executed |
+| 4 | `i2c_scan` | SDA/SCL address scan | Detected address list; expected device is DS3231 0x68 when present (OLED removed) | RTC if present | Not executed |
+| 5 | `rtc` | DS3231 address/time/oscillator/repeated read | Plausible advancing time, no power-loss flag | RTC and backup supply | Not executed; no clock write occurs |
+| 6 | `buzzer` | Quiet/two-short-beep output sequence | Beeps heard and output returns off | Suitable module/driver | Not executed |
 | 9 | `gpio_sanity` | Input-mode configuration | Logs only; no outputs driven | ESP32 | Not executed |
 | 10 | `wifi_diag` | Scan, optional association/DHCP/RSSI | Scan succeeds; connection evidence only if local credentials exist | 2.4 GHz test network; ignored local config | Not executed |
 | 11 | `backend_http` | Local Wi-Fi + HTTP GET `/health` + JSON parse | HTTP 200 and `{"status":"ok"}` | Local isolated backend and test Wi-Fi | Not executed; no attendance POST is sent |
@@ -52,4 +50,4 @@ See [component tests](component-tests.md), [integration tests](integration-tests
 
 ## Software build evidence (2026-10-02)
 
-All 25 component and integration PlatformIO test environments compiled and linked. Production and backwards-compatible sp32dev environments also compiled and linked. Backend suite: 10 passed. These results do not establish electrical, sensor, display, RTC, storage-on-device, Wi-Fi, or end-to-end behavior. No upload or physical test was performed.
+Component and integration PlatformIO test environments for the current configuration compiled and linked: esp32_core, uart1_loopback, uart2_loopback, r307s, i2c_scan, rtc, buzzer, gpio_sanity, wifi_diag, backend_http, json, storage, power_reset, int_rtc, int_r307s, int_r307s_rtc, int_wifi, int_backend, int_full, and production/esp32dev. The removed environments (oled, green_led, red_led, int_oled, int_outputs, int_r307s_oled) no longer exist. Backend suite: 10 passed. These results do not establish electrical, sensor, RTC, storage-on-device, Wi-Fi, or end-to-end behavior. No upload or physical test was performed.

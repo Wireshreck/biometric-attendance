@@ -3,7 +3,7 @@ flowchart LR
     Sensor[R307S sensor - electrical state unverified; UART response absent in owner-reported test]
     MCU[ESP32 firmware]
     RTC[DS3231 RTC]
-    UIhw[OLED, LEDs, buzzer]
+    UIhw[Buzzer; serial-console status; no OLED/LEDs]
     Queue[(LittleFS checksummed journal - implemented; needs device test)]
     Sensor -->|UART slot result only| MCU
     RTC -->|offset-qualified local time| MCU

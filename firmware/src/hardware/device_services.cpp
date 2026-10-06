@@ -4,37 +4,6 @@
 #include <cstring>
 #include "config.h"
 
-DisplayService::DisplayService() : display_(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1) {}
-
-bool DisplayService::begin() {
-    Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL, 100000);
-    ready_ = display_.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR);
-    return ready_;
-}
-
-void DisplayService::show(const char* title, const char* detail) {
-    if (!ready_) return;
-    display_.clearDisplay();
-    display_.setTextSize(1);
-    display_.setTextColor(SSD1306_WHITE);
-    display_.setCursor(0, 0);
-    display_.println(title);
-    if (detail && detail[0]) {
-        display_.println();
-        display_.println(detail);
-    }
-    display_.display();
-}
-
-void DisplayService::showClock(const char* title, const char* detail, const char* timestamp) {
-    if (!ready_) return;
-    display_.clearDisplay(); display_.setTextSize(1); display_.setTextColor(SSD1306_WHITE); display_.setCursor(0, 0);
-    display_.println(title ? title : "");
-    if (detail && detail[0]) display_.println(detail);
-    if (timestamp && timestamp[0]) { display_.println(); display_.println(timestamp); }
-    display_.display();
-}
-
 bool RtcService::begin() {
     if (!rtc_.begin()) return false;
     ready_ = true;
@@ -68,24 +37,19 @@ bool RtcService::setLocalTime(uint16_t year, uint8_t month, uint8_t day, uint8_t
 }
 
 void IndicatorService::begin() {
-    pinMode(PIN_LED_GREEN, OUTPUT);
-    pinMode(PIN_LED_RED, OUTPUT);
     pinMode(PIN_BUZZER, OUTPUT);
-    digitalWrite(PIN_LED_GREEN, LOW);
-    digitalWrite(PIN_LED_RED, LOW);
     digitalWrite(PIN_BUZZER, LOW);
 }
 
 void IndicatorService::successPulse() {
-    digitalWrite(PIN_LED_GREEN, HIGH); digitalWrite(PIN_BUZZER, HIGH); delay(90);
+    digitalWrite(PIN_BUZZER, HIGH); delay(90);
     digitalWrite(PIN_BUZZER, LOW); delay(50);
     digitalWrite(PIN_BUZZER, HIGH); delay(90); digitalWrite(PIN_BUZZER, LOW);
-    digitalWrite(PIN_LED_GREEN, LOW);
 }
 
 void IndicatorService::failurePulse() {
-    digitalWrite(PIN_LED_RED, HIGH); digitalWrite(PIN_BUZZER, HIGH); delay(300);
-    digitalWrite(PIN_BUZZER, LOW); delay(300); digitalWrite(PIN_LED_RED, LOW);
+    digitalWrite(PIN_BUZZER, HIGH); delay(300);
+    digitalWrite(PIN_BUZZER, LOW); delay(300);
 }
 
 FingerprintService::FingerprintService() : serial_(2), sensor_(&serial_) {}

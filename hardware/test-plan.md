@@ -18,8 +18,8 @@ tags:
 | HW-02 | R307S VIN rail / current | UNVERIFIED — REQUIRES MULTIMETER | No independent rail/current measurement. |
 | HW-03 | R307S TX high voltage / jumper / exact module wiring | UNVERIFIED — REQUIRES MULTIMETER / board inspection | Software ADC/internal-pull probe reported driven-high behavior; this is not calibrated voltage and does not prove sensor is powered. |
 | HW-04 | ESP32 UART1/UART2 physical loopback | NOT EXECUTED | Environment `uart1_loopback` / `uart2_loopback`; jumper GPIO25 TX to GPIO26 RX. |
-| HW-05 | I2C/OLED/DS3231 | NOT EXECUTED | Use `i2c_scan`, `oled`, `rtc`; no clock-setting test is performed. |
-| HW-06 | LEDs and buzzer | NOT EXECUTED | Use `green_led`, `red_led`, `buzzer`; physical light/sound confirmation required. |
+| HW-05 | I2C/DS3231 | NOT EXECUTED | Use `i2c_scan`, `rtc`; OLED removed from this project; no clock-setting test is performed. |
+| HW-06 | Buzzer | NOT EXECUTED | Use `buzzer`; physical sound confirmation required. (LEDs removed from this project.)
 | HW-07 | Wi-Fi and project API | NOT EXECUTED | Use `wifi_diag` / `backend_http` on isolated demo WLAN. HTTP image sends GET `/health` only. |
 | HW-08 | LittleFS diagnostic | NOT EXECUTED | `storage` mounts without formatting, tests and removes only its diagnostic file; production journal is implemented but reboot/power-loss behavior needs device testing. |
 | HW-09 | Integrated hardware / power recovery | NOT EXECUTED | Use staged integration tests after individual peripherals pass. Rail voltage and load behavior require measurements. |

@@ -20,7 +20,7 @@ Build a local attendance pipeline with ESP32 + R307S fingerprint matching, offli
 
 - One ESP32 terminal and one fingerprint sensor, exact revisions to be confirmed.
 - USB-serial local enrollment/deactivation; backend allocates a slot, firmware marks enrollment active only after physical sensor confirmation.
-- Generic OLED/LED/buzzer feedback; no student name on a public terminal.
+- Generic buzzer feedback and serial-console status; no student name on a public terminal. The SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project (no display/LED feedback path exists).
 - DS3231 timestamp with an explicit local timezone offset; invalid clock blocks event creation.
 - Stable event UUID, bounded durable LittleFS queue, idempotent chronological replay.
 - Local FastAPI service; SQLite WAL/migrations; auth on device/admin APIs; event ingestion and 60-second suppression.

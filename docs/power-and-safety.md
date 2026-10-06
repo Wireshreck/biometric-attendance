@@ -32,7 +32,7 @@ The R307S quick-start gives 5V/GND/TXD/RXD as its example wiring; the R307-famil
 - Do not use the Panasonic CR2032 as the R307S main supply. It is only a possible RTC backup cell, and the DS3231 board's charging circuit must be checked before installing a primary coin cell.
 - No multimeter is currently available per project context. Mark supply/logic checks **UNVERIFIED — REQUIRES MULTIMETER**; software line probing is not a substitute.
 - Do not add a capacitor, level shifter, or external supply until the failure is characterized and the exact component specifications are known.
-- For indicators, use suitable series resistors. Drive buzzer modules through a transistor/driver if their current exceeds GPIO capability.
+- Drive buzzer modules through a transistor/driver if their current exceeds GPIO capability. The SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project; there are no indicator LEDs to protect and no indicator-resistor requirement for the current configuration.
 - For Wi-Fi/backend tests, use synthetic values on the isolated local demo network. Never use live student data or expose the API to the public internet.
 
 ## Measurement gate

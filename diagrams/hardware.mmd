@@ -3,16 +3,14 @@ flowchart LR
   ESP -->|UART2 RX GPIO32; owner-reported wiring, electrical levels unverified| Sensor[R307S UART]
   ESP -->|UART2 TX GPIO33; owner-reported wiring, electrical levels unverified| Sensor
   ESP -.->|Confirm sensor supply and UART logic levels; shift if needed| Sensor
-  ESP -->|GPIO21 SDA / GPIO22 SCL| Bus[I2C shared bus]
-  Bus --> OLED[SSD1306 4-pin I2C]
+  ESP -->|GPIO21 SDA / GPIO22 SCL| Bus[I2C RTC bus]
   Bus --> RTC[DS3231 RTC]
-  ESP -->|GPIO18 via resistor| Green[Green LED]
-  ESP -->|GPIO19 via resistor| Red[Red LED]
   ESP -->|GPIO23 signal; use transistor-driver module| Buzzer[Active buzzer]
   ESP --- GND[Common ground]
   Sensor --- GND
-  OLED --- GND
   RTC --- GND
   Buzzer --- GND
-  Note[Owner reports sensor assembled; diagnostic returned 0 bytes. Sensor rail, PCB pin mapping, UART levels and other peripheral wiring remain unverified]:::warning
+  Note1[OLED removed from this project (damaged). Green/red LEDs + resistors removed (no resistors available). GPIO18/19 are unused/reserved.]:::removed
+  Note2[Owner reports sensor assembled; diagnostic returned 0 bytes. Sensor rail, PCB pin mapping, UART levels and other peripheral wiring remain unverified]:::warning
   classDef warning fill:#fff2cc,stroke:#b8860b,color:#111
+  classDef removed fill:#f5f5f5,stroke:#999,stroke-dasharray: 5 5,color:#555

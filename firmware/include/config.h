@@ -21,18 +21,17 @@
 #define PIN_R307S_TX    33  // Connects to R307S RXD after logic verification
 #define R307S_BAUD_RATE 57600  // Provisional default factory baud rate (confirm at handshake)
 
-// I2C Bus - SSD1306 OLED & DS3231 RTC
+// I2C Bus - DS3231 RTC (OLED removed from this project)
 #define PIN_I2C_SDA     21
 #define PIN_I2C_SCL     22
-#define OLED_I2C_ADDR   0x3C
 #define RTC_I2C_ADDR    0x68
-#define SCREEN_WIDTH    128
-#define SCREEN_HEIGHT   64
 
 // Actuators & Indicators
-#define PIN_LED_GREEN   18  // Provisional success indicator
-#define PIN_LED_RED     19  // Provisional error indicator
 #define PIN_BUZZER      23  // Provisional active-buzzer module input
+
+// Legacy GPIO assignments removed with OLED/LED hardware:
+//   GPIO18 and GPIO19 were green/red indicator outputs.
+//   They are currently unused/reserved. Do not add new hardware here without updating this file and the docs.
 
 // Wi-Fi & Backend Server Settings (Configurable for Exhibition)
 #ifndef DEFAULT_WIFI_SSID
