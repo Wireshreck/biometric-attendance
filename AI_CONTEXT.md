@@ -16,9 +16,9 @@ tags:
 ## Current project state
 
 - Local-first prototype: ESP32/R307S firmware, FastAPI and SQLite. Backend supports health, admin student lifecycle, enrollment assignment/completion, and authenticated attendance ingestion. A browser dashboard is not implemented.
-- Production firmware implements two-capture explicit serial enrollment, fingerprint matching, DS3231 timestamp gating, OLED/indicators, durable LittleFS journal, Wi-Fi reconnect, bearer-authenticated attendance requests, and oldest-first replay with stable event UUIDs. These compile but have no full hardware/integration pass evidence.
+- Production firmware implements two-capture explicit serial enrollment, fingerprint matching, DS3231 timestamp gating, buzzer feedback, durable LittleFS journal, Wi-Fi reconnect, bearer-authenticated attendance requests, and oldest-first replay with stable event UUIDs. (OLED/indicators removed from this project.) These compile but have no full hardware/integration pass evidence.
 - The owner reports R307S red→VIN, black→GND, yellow sensor TX→GPIO32/RX, green GPIO33/TX→sensor RX, blue/white disconnected. Previous read-only diagnostics returned 0 bytes across attempted baud/routing options. This does not prove sensor failure.
-- Sensor rail, TX logic level, exact PCB pin mapping/jumper, and sensor health are **UNVERIFIED — REQUIRES MULTIMETER / exact board inspection**. OLED, RTC, indicators, buzzer, storage power-loss behavior, Wi-Fi and backend device requests also need physical testing.
+- Sensor rail, TX logic level, exact PCB pin mapping/jumper, and sensor health are **UNVERIFIED — REQUIRES MULTIMETER / exact board inspection**. RTC, buzzer, storage power-loss behavior, Wi-Fi and backend device requests also need physical testing. OLED/indicators were removed from this project.
 - Pin map source of truth: `docs/final-pin-map.md`; retained earlier audit map at `docs/esp32-pin-map.md` redirects to it. Configure in `firmware/include/config.h` and ignored `firmware/include/local_config.h`.
 - Backend API contract source of truth: `backend/app/schemas.py`, `backend/app/auth.py`, `backend/app/main.py`, and `docs/api-plan.md`.
 

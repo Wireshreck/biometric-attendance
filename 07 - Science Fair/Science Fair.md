@@ -95,9 +95,9 @@ Canonical: [[docs/science-fair.md]] · [[docs/science-fair-timeline.md]]
 
 ## Transport and venue
 
-Pack: ESP32, USB data cable, R307S with blue/white insulated, OLED, DS3231, LEDs + resistors, buzzer, breadboard, jumpers, laptop, spare **known-good** cable, printed pin map + assembly guide + test plan, and a **multimeter if one can be found**. Synthetic roster only.
+Pack: ESP32, USB data cable, R307S with blue/white insulated, DS3231, buzzer, breadboard, jumpers, laptop, spare **known-good** cable, printed pin map + assembly guide + test plan, and a **multimeter if one can be found**. (OLED/LEDs removed from this project.) Synthetic roster only.
 
-Venue startup: nonconductive table, inspect with USB disconnected, verify ground and I2C pull-ups, leave an uncertain CR2032 out, connect USB only, then run `esp32_core` → `i2c_scan` → OLED → RTC → outputs → loopback **with the sensor disconnected** → and the R307S probe only if its electrical safety gate is satisfied.
+Venue startup: nonconductive table, inspect with USB disconnected, verify ground and I2C pull-ups, leave an uncertain CR2032 out, connect USB only, then run `esp32_core` → `i2c_scan` → RTC → buzzer → loopback **with the sensor disconnected** → and the R307S probe only if its electrical safety gate is satisfied. OLED/LEDs were removed from this project.
 
 Canonical: [[docs/SCIENCE-FAIR-SETUP.md]]
 

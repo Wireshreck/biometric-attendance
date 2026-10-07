@@ -27,7 +27,7 @@ The terminal runtime. ~1,150 lines of C++ across five modules, plus 25 isolated 
 main.cpp
   └─▶ app/attendance_app.cpp      lifecycle · state machine · serial operator
         ├─▶ app/attendance_state.cpp     state names
-        ├─▶ hardware/device_services.cpp  OLED · RTC · LED/buzzer · R307S
+        ├─▶ hardware/device_services.cpp  RTC · buzzer · R307S (OLED/LEDs removed)
         │       └─▶ Adafruit_Fingerprint on HardwareSerial(2)
         ├─▶ storage/attendance_store.cpp  LittleFS CRC32 journal · acks · compaction
         └─▶ network/network_service.cpp   Wi-Fi · HTTP · bearer auth · contract
@@ -58,7 +58,7 @@ The design rule that matters: **the firmware never fabricates a fact.** No valid
 
 | Service | Hardware | Key behaviour |
 |---|---|---|
-| `DisplayService` | SSD1306 I2C 0x3C | Generic states only. Never displays a student name |
+| `DisplayService` | removed | OLED/SSD1306 removed from this project. Status is serial-console only. |
 | `RtcService` | DS3231 I2C 0x68 | Refuses to produce a timestamp unless the year is 2024–2099 and the oscillator has not lost power. Wall time + `+05:30` |
 | `IndicatorService` | GPIO 18/19/23 | Green+double-beep on success; red+long-beep on failure |
 | `FingerprintService` | R307S UART2 | `verifyPassword` handshake, `getImage → image2Tz → fingerFastSearch`, two-capture `enroll` |

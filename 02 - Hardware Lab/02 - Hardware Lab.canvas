@@ -93,7 +93,7 @@
     {
       "id": "t010",
       "type": "text",
-      "text": "**SSD1306 OLED 128×64**  ·  [NOT EXECUTED]\nI2C 0x3C · GPIO21/22\nNOT EXECUTED",
+      "text": "**SSD1306 OLED 128×64 — REMOVED**  ·  [not in this project]\nI2C 0x3C · GPIO21/22 (not connected)\nnot in this project",
       "x": -70,
       "y": -1045,
       "width": 540,
@@ -103,7 +103,7 @@
     {
       "id": "t011",
       "type": "text",
-      "text": "**DS3231 RTC**  ·  [NOT EXECUTED]\nI2C 0x68 · GPIO21/22\nNOT EXECUTED",
+      "text": "**DS3231 RTC**  ·  [not in this project]\nI2C 0x68 · GPIO21/22\nnot in this project",
       "x": 510,
       "y": -1045,
       "width": 540,
@@ -113,7 +113,7 @@
     {
       "id": "t012",
       "type": "text",
-      "text": "**Green LED**  ·  [NOT EXECUTED]\nGPIO18 via series resistor\nNOT EXECUTED",
+      "text": "**Green LED**  ·  [not in this project]\nGPIO18 via series resistor\nnot in this project",
       "x": -70,
       "y": -910,
       "width": 540,
@@ -123,7 +123,7 @@
     {
       "id": "t013",
       "type": "text",
-      "text": "**Red LED**  ·  [NOT EXECUTED]\nGPIO19 via series resistor\nNOT EXECUTED",
+      "text": "**Red LED**  ·  [not in this project]\nGPIO19 via series resistor\nnot in this project",
       "x": 510,
       "y": -910,
       "width": 540,
@@ -133,7 +133,7 @@
     {
       "id": "t014",
       "type": "text",
-      "text": "**Active buzzer**  ·  [NOT EXECUTED]\nGPIO23 or driver\nmodule identity unknown",
+      "text": "**Active buzzer**  ·  [not in this project]\nGPIO23 or driver\nmodule identity unknown",
       "x": -70,
       "y": -775,
       "width": 540,
@@ -223,7 +223,8 @@
     {
       "id": "t023",
       "type": "text",
-      "text": "**OLED** 0x3C",
+      "text": "**OLED — REMOVED**
+(not in this project)",
       "x": 150,
       "y": -80,
       "width": 250,

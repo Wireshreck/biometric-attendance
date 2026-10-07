@@ -72,7 +72,7 @@ Also blocked: `HW-03` (rails/reset under load) on the same missing instrument.
 
 ## UNVERIFIED — everything else on the bench
 
-OLED · DS3231 · green LED · red LED · buzzer · LittleFS reboot behaviour · Wi-Fi reconnect · HTTP sync · queue replay · full attendance flow.
+DS3231 · buzzer · LittleFS reboot behaviour · Wi-Fi reconnect · HTTP sync · queue replay · full attendance flow. (OLED/green LED/red LED removed from this project.)
 
 Not one of these has a physical result. Not one is suspected broken. They are simply unknown.
 

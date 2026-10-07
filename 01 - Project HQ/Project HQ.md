@@ -32,9 +32,9 @@ Canonical: [[docs/requirements.md]] · [[docs/architecture.md]] · [[docs/projec
 ```text
 ┌─────────────────────────────────┐
 │  EDGE TERMINAL — ESP32          │
-│  R307S ──UART── ESP32 ── OLED   │
+│  R307S ──UART── ESP32 ── Buzzer  │
 │                DS3231 RTC       │
-│      green/red LED  ·  buzzer   │
+│      buzzer only (LEDs removed)   │
 │      LittleFS offline journal   │
 └──────────────┬──────────────────┘
                │ Wi-Fi 2.4 GHz, local LAN

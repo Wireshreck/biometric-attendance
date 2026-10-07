@@ -103,7 +103,7 @@
     {
       "id": "t011",
       "type": "text",
-      "text": "`TestResult::finish()` cannot return **PASS** when checks were skipped or a test called `unverified()`. OLED, LED and buzzer tests *must* land in UNVERIFIED — GPIO code cannot sense its own effect.",
+      "text": "`TestResult::finish()` cannot return **PASS** when checks were skipped or a test called `unverified()`. Buzzer tests *must* land in UNVERIFIED — GPIO code cannot sense its own effect. (OLED/LEDs removed from this project.)",
       "x": -1170,
       "y": -480,
       "width": 1140,
@@ -303,7 +303,7 @@
     {
       "id": "t031",
       "type": "text",
-      "text": "**INT-01** · `int_oled`\nESP32 + OLED",
+      "text": "**INT-01 — RTC** · `int_rtc`\nESP32 + RTC",
       "x": 30,
       "y": -740,
       "width": 710,
@@ -343,7 +343,7 @@
     {
       "id": "t035",
       "type": "text",
-      "text": "**INT-05** · `int_r307s_oled`\nR307S + OLED",
+      "text": "**INT-03 — RTC+R307S** · `int_r307s_rtc`\nR307S + RTC",
       "x": 780,
       "y": -610,
       "width": 710,

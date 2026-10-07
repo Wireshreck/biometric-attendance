@@ -23,7 +23,7 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 | GIT-01 | Preserve current history/branch; use focused commits only when owner requests | Development | P0 | VERIFIED | — | Audit began clean on main tracking origin/main; no commit/push made |
 | HW-00 | Verify exact R307S PCB identity, connector mapping, jumper, rail and UART voltage | Hardware | P0 | BLOCKED | Multimeter / physical markings | Record exact markings, ground continuity, rail and TX readings in `hardware/test-plan.md` |
 | HW-01 | Run read-only R307S diagnostic and isolate ESP32 UART with loopback | Hardware/Firmware | P0 | NEEDS TESTING | Safe sensor electrical checks; loopback jumper | `r307s`, `uart1_loopback`, `uart2_loopback`; capture complete serial output |
-| HW-02 | Run I2C scanner, OLED, DS3231, LEDs and buzzer separately | Hardware | P0 | NEEDS HARDWARE | Physical peripherals and safe wiring | `i2c_scan`, `oled`, `rtc`, `green_led`, `red_led`, `buzzer`; record visible/observed results |
+| HW-02 | Run I2C scanner, DS3231 and buzzer separately | Hardware | P0 | NEEDS HARDWARE | Physical peripherals and safe wiring | `i2c_scan`, `rtc`, `buzzer`; record visible/observed results. OLED/LEDs removed from this project. |
 | HW-03 | Measure rails/reset behavior under sensor/Wi-Fi loads | Hardware/Power | P0 | BLOCKED | Suitable multimeter; safe test setup | `power_reset` plus measured voltage/current evidence; software telemetry alone is insufficient |
 | FW-00 | Preserve bounded read-only R307S diagnostic | Firmware | P0 | VERIFIED (software build) | — | `firmware/src/r307s_uart_diag.cpp`; no destructive commands |
 | FW-01 | Add independent component and integration PlatformIO environments | Firmware | P0 | VERIFIED (builds only) | Physical tests remain separate | 25 component/integration environments compile/link; production and `esp32dev` compatibility environment build; see `docs/component-tests.md`, `docs/integration-tests.md` |
@@ -44,7 +44,7 @@ Status vocabulary: **PLANNED**, **IN PROGRESS**, **IMPLEMENTED**, **VERIFIED**, 
 ## Current blockers
 
 - R307S returns no valid UART response in the previous reported diagnostic. The current assembly is owner-reported; sensor rail/TX level, exact PCB mapping/jumper and sensor health are **UNVERIFIED — REQUIRES MULTIMETER / board inspection**.
-- OLED, RTC, indicators, Wi-Fi and HTTP have test builds but no physical pass evidence in this audit.
+- RTC, buzzer, Wi-Fi and HTTP have test builds but no physical pass evidence in this audit. OLED and indicators were removed from this project.
 - Production firmware implements the attendance/enrollment workflows, network client and offline queue, but physical operation and event replay are unverified.
 - Prototype uses plain HTTP bearer tokens; only synthetic data on an isolated local network is permitted.
 

@@ -233,7 +233,7 @@
     {
       "id": "t024",
       "type": "text",
-      "text": "**OLED**\nNOT EXECUTED",
+      "text": "**OLED — REMOVED**\n(not in this project)",
       "x": 380,
       "y": -110,
       "width": 640,
@@ -243,7 +243,7 @@
     {
       "id": "t025",
       "type": "text",
-      "text": "**DS3231**\nNOT EXECUTED",
+      "text": "**DS3231**\n(not in this project)",
       "x": 380,
       "y": -32,
       "width": 640,
@@ -253,7 +253,7 @@
     {
       "id": "t026",
       "type": "text",
-      "text": "**Green LED**\nNOT EXECUTED",
+      "text": "**Green LED**\n(not in this project)",
       "x": 380,
       "y": 46,
       "width": 640,
@@ -263,7 +263,7 @@
     {
       "id": "t027",
       "type": "text",
-      "text": "**Red LED**\nNOT EXECUTED",
+      "text": "**Red LED**\n(not in this project)",
       "x": 380,
       "y": 124,
       "width": 640,
@@ -273,7 +273,7 @@
     {
       "id": "t028",
       "type": "text",
-      "text": "**Buzzer**\nNOT EXECUTED",
+      "text": "**Buzzer**\n(not in this project)",
       "x": 380,
       "y": 202,
       "width": 640,
@@ -283,7 +283,7 @@
     {
       "id": "t029",
       "type": "text",
-      "text": "**LittleFS reboot behaviour**\nNOT EXECUTED",
+      "text": "**LittleFS reboot behaviour**\n(not in this project)",
       "x": 380,
       "y": 280,
       "width": 640,
@@ -293,7 +293,7 @@
     {
       "id": "t030",
       "type": "text",
-      "text": "**Wi-Fi reconnect**\nNOT EXECUTED",
+      "text": "**Wi-Fi reconnect**\n(not in this project)",
       "x": 380,
       "y": 358,
       "width": 640,

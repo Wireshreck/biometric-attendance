@@ -31,7 +31,7 @@ They are not the same claim, and this vault never lets them blur into each other
 | **PASS** | A person ran it **and** saw the expected physical result | — |
 | **BLOCKED** | A prerequisite prevents the test | Nothing at all |
 
-> The shared reporter `firmware/include/test_result.h` enforces this in code: `finish()` cannot return `PASS` when checks were skipped or when a test called `unverified()`. Tests that cannot sense their own effect (OLED, LEDs, buzzer) *must* land in `UNVERIFIED`.
+> The shared reporter `firmware/include/test_result.h` enforces this in code: `finish()` cannot return `PASS` when checks were skipped or when a test called `unverified()`. Tests that cannot sense their own effect (buzzer) *must* land in `UNVERIFIED`. (OLED and LEDs were removed from this project.)
 
 ---
 
@@ -44,7 +44,7 @@ They are not the same claim, and this vault never lets them blur into each other
 | `uart2_loopback` | same on UART2 | not executed |
 | `r307s` | read-only VerifyPassword / ReadSysPara / TemplateCount | **0 bytes — UNVERIFIED** |
 | `i2c_scan` | sweeps addresses 1–126 on GPIO21/22 | not executed |
-| `oled` | SSD1306 init, text, pixel, line, clear, refresh | not executed |
+| `oled` | removed from this project | SSD1306 OLED removed; no platformio `oled` env exists. |
 | `rtc` | DS3231 ACK, plausible advancing time, `lostPower`. **Never writes the clock** | not executed |
 | `green_led` | GPIO18: off 1 s, on 1 s, three blinks | not executed |
 | `red_led` | same on GPIO19 | not executed |
@@ -66,11 +66,11 @@ One `integration_test.cpp`, selected by `-D INTEGRATION_CASE=1..9`.
 
 | ID | Env | Combines |
 |---|---|---|
-| INT-01 | `int_oled` | ESP32 + OLED |
+| INT-01 | `int_rtc` | ESP32 + RTC |
 | INT-02 | `int_rtc` | ESP32 + RTC |
 | INT-03 | `int_outputs` | ESP32 + LEDs + buzzer |
 | INT-04 | `int_r307s` | ESP32 + R307S read-only probe |
-| INT-05 | `int_r307s_oled` | R307S + OLED |
+| INT-03 | `int_r307s_rtc` | R307S + RTC |
 | INT-06 | `int_r307s_rtc` | R307S + RTC |
 | INT-07 | `int_wifi` | ESP32 + Wi-Fi |
 | INT-08 | `int_backend` | ESP32 + backend `/health` |

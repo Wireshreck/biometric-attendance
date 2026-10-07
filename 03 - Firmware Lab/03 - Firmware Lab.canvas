@@ -63,7 +63,7 @@
     {
       "id": "t007",
       "type": "text",
-      "text": "**DisplayService**\nSSD1306 I2C 0x3C\ngeneric states · never a name",
+      "text": "**DisplayService — REMOVED**\nOLED/SSD1306 removed from this project\nremoved; status is serial-console only",
       "x": 30,
       "y": -1170,
       "width": 400,

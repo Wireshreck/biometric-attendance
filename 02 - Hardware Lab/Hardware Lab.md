@@ -26,7 +26,7 @@ The bench. One ESP32, one fingerprint sensor, one display, one clock, two lights
 |---|---|---|---|
 | **ESP32-WROOM-32 DevKit** | — | — | Upload + USB serial work (owner/history report). Port is now **COM4**, was COM3 |
 | **R307S fingerprint sensor** | UART2 · 57600 8-N-1 | RX **32**, TX **33** | Assembled per owner report · **0 valid bytes** · rail/logic **UNVERIFIED** |
-| **SSD1306 OLED** 128×64 | I2C `0x3C` | SDA **21**, SCL **22** | Mapped · **NOT EXECUTED** |
+| **SSD1306 OLED** — REMOVED | not connected | — | not in this project |
 | **DS3231 RTC** | I2C `0x68` | SDA **21**, SCL **22** | Mapped · **NOT EXECUTED** |
 | **Green LED** | GPIO out via resistor | **18** | Mapped · **NOT EXECUTED** |
 | **Red LED** | GPIO out via resistor | **19** | Mapped · **NOT EXECUTED** |
@@ -43,14 +43,14 @@ Canonical pin table: [[docs/final-pin-map.md]] · `firmware/include/config.h`
 
 ```text
 ESP32 ──UART2──▶  R307S        GPIO32 RX / GPIO33 TX @ 57600 8-N-1
-ESP32 ──I2C────┬─▶ OLED 0x3C   GPIO21 SDA / GPIO22 SCL @ 100 kHz
+ESP32 ──I2C────┬─▶ DS3231 only   GPIO21 SDA / GPIO22 SCL @ 100 kHz (OLED removed)
               └─▶ RTC  0x68   shared bus, shared 3.3 V pull-up domain
 ESP32 ──GPIO───┬─▶ Green LED   GPIO18 through a series resistor
                ├─▶ Red LED     GPIO19 through a series resistor
                └─▶ Buzzer      GPIO23, or a transistor driver
 ```
 
-The OLED and the RTC share one bus. An I2C ACK proves a device is listening — it does not prove pull-up voltage, and it does not prove the panel lights.
+The RTC is the only I2C device on this bus. An I2C ACK proves a device is listening — it does not prove pull-up voltage. OLED was removed from this project.
 
 ---
 
@@ -84,8 +84,8 @@ Diagnostic evidence: [[docs/r307s-test-matrix.md]] · [[docs/r307s-hardware-rese
 - R307S rail voltage, current draw, TX high level.
 - Exact PCB pin mapping, connector orientation, 3.3 V solder-jumper state.
 - Whether the reported harness wires contact the pads the owner believes they do.
-- OLED and RTC supply compatibility and I2C pull-up rail.
-- LED resistor values; buzzer module voltage and current.
+- RTC supply compatibility and I2C pull-up rail (OLED removed).
+- buzzer module voltage and current (LEDs/OLED removed).
 - Every common-ground path.
 
 **NOT EXECUTED**

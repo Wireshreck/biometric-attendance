@@ -93,7 +93,7 @@
     {
       "id": "t010",
       "type": "text",
-      "text": "**EDGE — ESP32**\nR307S · OLED · DS3231 · LEDs · buzzer · LittleFS journal",
+      "text": "**EDGE — ESP32**\nR307S · DS3231 · buzzer · LittleFS journal (OLED/LEDs removed)",
       "x": 150,
       "y": -330,
       "width": 400,
