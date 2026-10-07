@@ -19,7 +19,8 @@ void setup() {
     }
     Serial.printf("[INFO] SDA=GPIO%u SCL=GPIO%u speed=100kHz devices=%u\n",
                   PIN_I2C_SDA, PIN_I2C_SCL, count);
-    result.check(count > 0, "At least one I2C device acknowledged", "expected OLED 0x3C and/or RTC 0x68");
+
+    result.check(count > 0, "At least one I2C device acknowledged", "expected RTC 0x68; OLED was removed from this project");
     result.info("An ACK does not verify pull-up voltage or prove both expected devices are present.");
     result.finish();
 }

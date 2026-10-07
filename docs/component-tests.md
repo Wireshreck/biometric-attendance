@@ -30,7 +30,7 @@ Replace `esp32_core` with the environment in the table. To upload through a spec
 | ESP32 core | `esp32_core` | CPU, heap, flash, chip revision, reset cause; no GPIO is driven. |
 | UART loopback | `uart1_loopback`, `uart2_loopback` | Defaults to GPIO25 TX and GPIO26 RX; install one jumper. Never use the R307S as loopback. Supports two UART peripherals at 57600 8-N-1. |
 | R307S | `r307s` | Reuses `r307s_uart_diag.cpp`; bounded read-only commands only. |
-| I2C | `i2c_scan` | Scans and reports all ACKing addresses. With the SSD1306 OLED removed, the expected device on GPIO21/22 is only the DS3231 (0x68) when present. |
+| I2C | `i2c_scan` | Scans and reports all ACKing addresses. With the SSD1306 OLED removed, the expected device on GPIO25/26 is only the DS3231 (0x68) when present. |
 | RTC | `rtc` | Reads DS3231 repeatedly and checks plausible advancing time/oscillator state. Never writes time. |
 | Buzzer | `buzzer` | Two 80 ms pulses, no continuous tone; result remains UNVERIFIED until heard. |
 | GPIO sanity | `gpio_sanity` | Configures selected input-capable pins as inputs; does not drive or short pins and cannot measure wiring. |

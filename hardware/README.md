@@ -26,7 +26,7 @@ This directory contains wiring diagrams, pinout mappings, component datasheets, 
   - **Status: ASSEMBLED PER OWNER REPORT; UART RESPONSE NOT RECEIVED**
   - **Electrical mapping/power: UNVERIFIED — REQUIRES MULTIMETER / exact-board inspection**
   - Reported connection: sensor TX candidate → ESP32 GPIO32/RX; sensor RX candidate ← GPIO33/TX; see `docs/final-pin-map.md`
-* **Real-Time Clock:** DS3231 via Hardware I2C (GPIO 21/22, Address `0x68`)
+* **Real-Time Clock:** DS3231 via Hardware I2C (GPIO 25/26, Address `0x68`)
 * **Audio Indicator:** 5V Active Buzzer with onboard transistor driver (GPIO 23)
 * **Visual Status:** None — the SSD1306 OLED and the green/red LEDs were removed from this project (OLED damaged; no resistors available). Status is reported on the serial console. GPIO18 and GPIO19 are unused/reserved.
 * **Power Source:** 5V USB (via Micro-USB port)

@@ -22,8 +22,8 @@
 #define R307S_BAUD_RATE 57600  // Provisional default factory baud rate (confirm at handshake)
 
 // I2C Bus - DS3231 RTC (OLED removed from this project)
-#define PIN_I2C_SDA     21
-#define PIN_I2C_SCL     22
+#define PIN_I2C_SDA     25
+#define PIN_I2C_SCL     26
 #define RTC_I2C_ADDR    0x68
 
 // Actuators & Indicators

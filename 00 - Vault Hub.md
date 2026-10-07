@@ -47,7 +47,7 @@ Evidence vocabulary used throughout: `VERIFIED` · `UNVERIFIED` · `NOT EXECUTED
 |---|---|---|---|
 | **Vault** | **ACTIVE** | 10 area hubs, 12 canvases, 12-colour legend, link-audited | *you are here* |
 | **Project HQ** | ACTIVE | Scope, architecture, requirements, traceability | [[01 - Project HQ/Project HQ|01 - Project HQ]] |
-| **Hardware Lab** | **UNVERIFIED** | Pin map assigned; every rail unmeasured; R307S silent | [[02 - Hardware Lab/Hardware Lab|02 - Hardware Lab]] |
+| **Hardware Lab** | **UNVERIFIED** | DS3231 on GPIO25/26; every rail unmeasured; R307S silent | [[02 - Hardware Lab/Hardware Lab|02 - Hardware Lab]] |
 | **Firmware Lab** | BUILD PASS | `production` builds — RAM 13.3%, Flash 66.0%; no physical pass | [[03 - Firmware Lab/Firmware Lab|03 - Firmware Lab]] |
 | **Backend Server Room** | **VERIFIED (software)** | 10/10 pytest green against synthetic fixtures | [[04 - Backend Server Room/Backend Server Room|04 - Backend Server Room]] |
 | **Testing Lab** | **NOT EXECUTED** | 27 environments build; 0 physical results recorded | [[05 - Testing Lab/Testing Lab|05 - Testing Lab]] |

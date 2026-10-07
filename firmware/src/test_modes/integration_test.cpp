@@ -90,7 +90,7 @@ void setup() {
 #endif
 
 #if INTEGRATION_CASE == 6
-    result.info("This integration image covers RTC, R307S, Wi-Fi and backend. OLED and indicator LEDs were removed from this project; see config.h and final-pin-map.md.");
+    result.info("This integration image covers RTC (DS3231 on GPIO25/26), R307S, Wi-Fi and backend. OLED and indicator LEDs were removed from this project; see config.h and final-pin-map.md.");
     result.info("Offline queue, fingerprint match/enrollment, and attendance POST are not implemented by this integration test.");
 #endif
     result.finish();

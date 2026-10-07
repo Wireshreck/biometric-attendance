@@ -27,6 +27,6 @@ GPIO16/17 references in old integration/wiring notes are superseded by the curre
 
 ## ESP32 constraints
 
-Avoid GPIO0/2/5/12/15 strapping pins for attached peripherals, GPIO6–11 flash pins, and GPIO34–39 for outputs. UART0 GPIO1/3 remain reserved for USB serial. GPIO25/26 are used only by the UART loopback test and require a jumper between TX and RX; do not attach the sensor during that test.
+Avoid GPIO0/2/5/12/15 strapping pins for attached peripherals, GPIO6–11 flash pins, and GPIO34–39 for outputs. UART0 GPIO1/3 remain reserved for USB serial. GPIO25/26 are used by the DS3231 I2C bus and by the UART loopback test; the UART loopback test requires a jumper between its own TX and RX and must not be run with the DS3231 attached.
 
 See [power and safety](../docs/power-and-safety.md) before wiring or measuring.

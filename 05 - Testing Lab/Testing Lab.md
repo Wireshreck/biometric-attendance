@@ -43,7 +43,7 @@ They are not the same claim, and this vault never lets them blur into each other
 | `uart1_loopback` | UART1, GPIO25 TX → GPIO26 RX jumper, byte-exact + CRC16 | not executed |
 | `uart2_loopback` | same on UART2 | not executed |
 | `r307s` | read-only VerifyPassword / ReadSysPara / TemplateCount | **0 bytes — UNVERIFIED** |
-| `i2c_scan` | sweeps addresses 1–126 on GPIO21/22 | not executed |
+| `i2c_scan` | sweeps addresses 1–126 on GPIO25/26 | not executed |
 | `oled` | removed from this project | SSD1306 OLED removed; no platformio `oled` env exists. |
 | `rtc` | DS3231 ACK, plausible advancing time, `lostPower`. **Never writes the clock** | not executed |
 | `green_led` | GPIO18: off 1 s, on 1 s, three blinks | not executed |

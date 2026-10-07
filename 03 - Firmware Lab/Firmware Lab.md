@@ -60,7 +60,7 @@ The design rule that matters: **the firmware never fabricates a fact.** No valid
 |---|---|---|
 | `DisplayService` | removed | OLED/SSD1306 removed from this project. Status is serial-console only. |
 | `RtcService` | DS3231 I2C 0x68 | Refuses to produce a timestamp unless the year is 2024–2099 and the oscillator has not lost power. Wall time + `+05:30` |
-| `IndicatorService` | GPIO 18/19/23 | Green+double-beep on success; red+long-beep on failure |
+| `IndicatorService` | GPIO 23 (buzzer); GPIO 18/19 reserved (OLED/LEDs removed) | Green+double-beep on success; red+long-beep on failure |
 | `FingerprintService` | R307S UART2 | `verifyPassword` handshake, `getImage → image2Tz → fingerFastSearch`, two-capture `enroll` |
 
 > [!NOTE] `firmware/include/fingerprint_sensor.h` is an **11-line DEPRECATED notice**, not an interface. It declares nothing and no production source includes it. Do not mistake it for a second driver.
@@ -137,6 +137,6 @@ pio run -d firmware -e production -t upload --upload-port COM4
 
 ## Documents
 
-[[docs/production-firmware.md]] · [[docs/failure-modes.md]] · [[docs/esp32-pin-map.md]] · [[docs/component-tests.md]] · [[docs/integration-tests.md]] · `firmware/README.md`
+[[docs/production-firmware.md]] · [[docs/failure-modes.md]] · [[docs/final-pin-map.md]] · [[docs/component-tests.md]] · [[docs/integration-tests.md]] · `firmware/README.md`
 
 **HOME** [[00 - Vault Hub]] · **UP** [[00 - Vault Hub]] · **RELATED** [[02 - Hardware Lab]] [[04 - Backend Server Room]] [[05 - Testing Lab]] · **CANVAS** [[03 - Firmware Lab/03 - Firmware Lab.canvas]]

@@ -27,7 +27,7 @@ The bench. One ESP32, one fingerprint sensor, one display, one clock, two lights
 | **ESP32-WROOM-32 DevKit** | — | — | Upload + USB serial work (owner/history report). Port is now **COM4**, was COM3 |
 | **R307S fingerprint sensor** | UART2 · 57600 8-N-1 | RX **32**, TX **33** | Assembled per owner report · **0 valid bytes** · rail/logic **UNVERIFIED** |
 | **SSD1306 OLED** — REMOVED | not connected | — | not in this project |
-| **DS3231 RTC** | I2C `0x68` | SDA **21**, SCL **22** | Mapped · **NOT EXECUTED** |
+| **DS3231 RTC** | I2C `0x68` | SDA **25**, SCL **26** | Mapped · **NOT EXECUTED** |
 | **Green LED** | GPIO out via resistor | **18** | Mapped · **NOT EXECUTED** |
 | **Red LED** | GPIO out via resistor | **19** | Mapped · **NOT EXECUTED** |
 | **Active buzzer** | GPIO in / driver | **23** | Mapped · **NOT EXECUTED** · module identity unknown |
@@ -43,7 +43,7 @@ Canonical pin table: [[docs/final-pin-map.md]] · `firmware/include/config.h`
 
 ```text
 ESP32 ──UART2──▶  R307S        GPIO32 RX / GPIO33 TX @ 57600 8-N-1
-ESP32 ──I2C────┬─▶ DS3231 only   GPIO21 SDA / GPIO22 SCL @ 100 kHz (OLED removed)
+ESP32 ──I2C────┬─▶ DS3231 only   GPIO25 SDA / GPIO26 SCL @ 100 kHz (OLED removed)
               └─▶ RTC  0x68   shared bus, shared 3.3 V pull-up domain
 ESP32 ──GPIO───┬─▶ Green LED   GPIO18 through a series resistor
                ├─▶ Red LED     GPIO19 through a series resistor

@@ -20,7 +20,7 @@ pio device monitor -d firmware -b 115200 --port COM3
 
 | ID | Environment | Prerequisites | Expected result / limits |
 |---|---|---|---|
-| INT-01 | `int_rtc` | ESP32 + DS3231 | I2C responds, time plausible, oscillator not stopped. No time write. |
+| INT-01 | `int_rtc` | ESP32 + DS3231 on GPIO25/26 | I2C responds, time plausible, oscillator not stopped. No time write. |
 | INT-02 | `int_r307s` | Existing R307S connection; only after power/logic safety gate | Runs existing read-only diagnostic; no enrollment/deletion. No response is not proof of dead sensor. |
 | INT-03 | `int_r307s_rtc` | R307S + DS3231 | RTC does not supply a timestamp to sensor test; read-only sensor probe remains independent. |
 | INT-04 | `int_wifi` | Isolated 2.4 GHz network; optional ignored config | Scans; optional DHCP/RSSI check when credentials are configured. Does not print SSIDs. |

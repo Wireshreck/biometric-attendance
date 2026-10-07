@@ -13,7 +13,7 @@ tags:
 | Test ID | Level | Setup/action | Acceptance evidence |
 | --- | --- | --- | --- |
 | TC-HW-01 | Hardware/power | Measure USB, 3V3 rail idle and during Wi-Fi/sensor/buzzer peak | Within exact board/module specifications; record board, meter, values; no reset/heating |
-| TC-HW-02 | Hardware/I2C | Scan GPIO21/22 at 100kHz with each module isolated and together | Expected device addresses; bus high <=3.3V; board pull-ups documented |
+| TC-HW-02 | Hardware/I2C | Scan GPIO25/26 at 100kHz with each module isolated and together | Expected device addresses; bus high <=3.3V; board pull-ups documented |
 | TC-HW-03 | Hardware/UART | R307S handshake after identifying pinout and verifying voltage/baud from physical unit (Phases 1–5 in docs/r307s-integration-plan.md) | Repeated response at configured baud (57600 default); no framing/timeouts; valid ACK packet received |
 | TC-HW-04 | Firmware feedback | Exercise recognized, no-match, saved-offline, error state | Correct generic message, LED/buzzer behavior and measured durations; no identity leak |
 | TC-HW-05 | RTC | Set known timezone-qualified test time, remove primary power, wait 10m | RTC retains/advances; record drift; invalid/lost time blocks event timestamp |

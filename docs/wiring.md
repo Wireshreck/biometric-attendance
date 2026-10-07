@@ -25,14 +25,14 @@ Harness color/position is an observation, not proof of the physical PCB contact 
 
 ## Expected I2C assignment (DS3231 only)
 
-- DS3231 SDA/SCL uses GPIO21/22 at 100 kHz. No other I2C device is currently attached. The SSD1306 OLED was removed from this project; do not route GPIO21/22 to any display until the new device's 3.3 V pull-ups are verified.
+- DS3231 SDA/SCL uses GPIO25/26 at 100 kHz. No other I2C device is currently attached. The SSD1306 OLED was removed from this project; do not route GPIO25/26 to any display until the new device's 3.3 V pull-ups are verified.
 - Active buzzer uses GPIO23; use a driver if the module current exceeds the GPIO rating.
-- UART test environments use GPIO25 TX and GPIO26 RX with an explicit jumper. Disconnect the R307S from those test pins.
+- UART loopback test environments use a GPIO25 TX to GPIO26 RX jumper. Disconnect the DS3231 from GPIO25/26 before running that test.
 
 ## Removed assignments
 
 - Green LED (GPIO18) and red LED (GPIO19) were removed along with their series resistors. Those GPIOs are unused/reserved. Do not add new hardware there without updating this document, config.h, and final-pin-map.md.
-- SSD1306 OLED (GPIO21/22 I2C) was removed. GPIO21/22 remain assigned to DS3231 only.
+- SSD1306 OLED (I2C) was removed. GPIO25/26 remain assigned to DS3231 only.
 
 ## Safe procedure
 

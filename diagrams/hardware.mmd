@@ -3,7 +3,7 @@ flowchart LR
   ESP -->|UART2 RX GPIO32; owner-reported wiring, electrical levels unverified| Sensor[R307S UART]
   ESP -->|UART2 TX GPIO33; owner-reported wiring, electrical levels unverified| Sensor
   ESP -.->|Confirm sensor supply and UART logic levels; shift if needed| Sensor
-  ESP -->|GPIO21 SDA / GPIO22 SCL| Bus[I2C RTC bus]
+  ESP -->|GPIO25 SDA / GPIO26 SCL| Bus[I2C RTC bus]
   Bus --> RTC[DS3231 RTC]
   ESP -->|GPIO23 signal; use transistor-driver module| Buzzer[Active buzzer]
   ESP --- GND[Common ground]
