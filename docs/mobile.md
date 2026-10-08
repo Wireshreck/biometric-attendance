@@ -27,6 +27,23 @@ npx expo start            # dev
 npx expo run:android      # on-device build (needs Android SDK)
 ```
 
+## Local SDK setup (Windows, as used for the v1.2.0 APK)
+
+1. JDK 17 (Gradle/Groovy cannot run on JDK 25): unpack Temurin 17 to
+   `C:\Java\jdk-17.0.11+9`, set `JAVA_HOME` to it.
+2. Android cmdline-tools zip → `C:\Android\Sdk\cmdline-tools\latest`,
+   then accept licenses and install (SDK 34 shown):
+   `sdkmanager --licenses`, plus `platform-tools`,
+   `platforms;android-34`, `build-tools;34.0.0`. Set
+   `ANDROID_HOME`/`ANDROID_SDK_ROOT` to `C:\Android\Sdk`.
+3. `npx expo prebuild --platform android` (regenerates `mobile/android/`,
+   gitignored), then `gradlew assembleDebug` in `mobile/android`.
+4. Result: `mobile/android/app/build/outputs/apk/debug/app-debug.apk`
+   (debug-signed, installable; release-sign separately for stores).
+5. `minSdkVersion` is 24 via the `expo-build-properties` plugin (required
+   by async-storage 1.x); use `@react-native-async-storage/async-storage`
+   1.23.x with Expo SDK 51 (3.x needs newer Kotlin).
+
 Tab screens (no navigation dependency, `useState` tabs):
 
 - Home: today's overview, BLE scan/connect, quick actions.
