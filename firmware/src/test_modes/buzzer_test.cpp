@@ -7,7 +7,7 @@ void setup() {
     TestResult result("ACTIVE BUZZER TEST");
     pinMode(PIN_BUZZER, OUTPUT);
     digitalWrite(PIN_BUZZER, LOW);
-    Serial.println("[INFO] GPIO23: quiet 1s, two short 80ms beeps with 300ms gap.");
+    Serial.printf("[INFO] Buzzer pin %d: quiet 1s, two short 80ms beeps with 300ms gap.\n", PIN_BUZZER);
     delay(1000);
     for (uint8_t i = 0; i < 2; ++i) { digitalWrite(PIN_BUZZER, HIGH); delay(80); digitalWrite(PIN_BUZZER, LOW); delay(300); }
     result.check(true, "Configured buzzer output sequence executed");

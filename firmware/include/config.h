@@ -27,11 +27,32 @@
 #define RTC_I2C_ADDR    0x68
 
 // Actuators & Indicators
-#define PIN_BUZZER      23  // Provisional active-buzzer module input
+#define PIN_BUZZER      27  // Active-buzzer module input (final hardware configuration)
 
 // Legacy GPIO assignments removed with OLED/LED hardware:
 //   GPIO18 and GPIO19 were green/red indicator outputs.
 //   They are currently unused/reserved. Do not add new hardware here without updating this file and the docs.
+
+// Firmware identity
+#define FIRMWARE_VERSION "1.0.0"
+#define DEVICE_NAME "biometric-attendance-esp32"
+#define HARDWARE_NAME "ESP32-WROOM-32"
+
+// BLE device-management service
+#define BLE_SERVICE_UUID "89ea2240-04cc-4e36-9356-c71647be1c8d"
+#define BLE_CHAR_DEVICE_INFO_UUID "1101"
+#define BLE_CHAR_DEVICE_STATUS_UUID "1102"
+#define BLE_CHAR_PING_UUID "1103"
+#define BLE_CHAR_RTC_UUID "1104"
+#define BLE_CHAR_FINGERPRINT_STATUS_UUID "1105"
+#define BLE_CHAR_FINGERPRINT_CONTROL_UUID "1106"
+#define BLE_CHAR_DIAGNOSTIC_UUID "1107"
+#define BLE_CHAR_ATTENDANCE_UUID "1108"
+
+// BLE protocol timeouts (milliseconds, documented in docs/protocol.md)
+#define BLE_TIMEOUT_DEFAULT_MS 20000UL
+#define BLE_TIMEOUT_ENROLL_MS 120000UL
+#define BLE_TIMEOUT_SEARCH_MS 30000UL
 
 // Wi-Fi & Backend Server Settings (Configurable for Exhibition)
 #ifndef DEFAULT_WIFI_SSID

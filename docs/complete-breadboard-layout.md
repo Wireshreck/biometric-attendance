@@ -50,14 +50,14 @@ This is a logical layout, not a fitted drawing. DevKit boards vary in width, pin
 2. Use a ground rail for common ground and a separate 3V3 rail. Connect ESP32 GND to ground. Connect ESP32 3V3 only to modules confirmed to support 3.3 V and whose I2C pull-ups remain 3.3 V-safe.
 3. USB powers the ESP32 during development. Do not inject voltage into VIN/5V or 3V3 at the same time. Never put 5 V on GPIO or I2C.
 4. Keep the currently assembled R307S wires as documented in [the pin map](final-pin-map.md). Its rail and UART high level are unmeasured; this redraw is not electrical verification.
-5. Put RTC in a spare row. Join SDA to GPIO21 and SCL to GPIO22; confirm the breakout's pull-ups are 3.3 V-safe. The OLED is no longer in this project; do not share the bus with any other device without checking its I2C pull-ups.
+5. Put RTC in a spare row. Join SDA to GPIO25 and SCL to GPIO26; confirm the breakout's pull-ups are 3.3 V-safe. The OLED is no longer in this project; do not share the bus with any other device without checking its I2C pull-ups.
 6. LEDs and their series resistors were removed from this project. GPIO18 and GPIO19 are unused/reserved. Do not add LEDs, resistors, or other loads here without updating this layout, pin map, and config.h.
-7. GPIO23 drives a buzzer input only if that input is 3.3 V compatible and current is within board limits. An unknown/high-current buzzer needs a driver. The exact module is not identified.
+7. GPIO27 drives a buzzer input only if that input is 3.3 V compatible and current is within board limits. An unknown/high-current buzzer needs a driver. The exact module is not identified.
 8. Keep R307S blue/white leads insulated and apart. Avoid loose jumpers near USB and power rails.
 
 ## Connections and inspection
 
-See [final pin map](final-pin-map.md) for every signal. Current owner-reported sensor assembly is red→VIN, black→GND, yellow→GPIO32, green→GPIO33, blue/white open. I2C is 21/22 for DS3231 only (OLED removed). Buzzer control is 23 if module-compatible. RTC supply depends on exact breakout revisions. R307S power and TX logic remain **UNVERIFIED — REQUIRES MULTIMETER**.
+See [final pin map](final-pin-map.md) for every signal. Current owner-reported sensor assembly is red→VIN, black→GND, yellow→GPIO32, green→GPIO33, blue/white open. I2C is GPIO25/26 for DS3231 only (OLED removed). Buzzer control is GPIO27 if module-compatible. RTC supply depends on exact breakout revisions. R307S power and TX logic remain **UNVERIFIED — REQUIRES MULTIMETER**.
 
 Before powering, inspect for any 3V3-to-GND bridge, any 5 V-to-GPIO path, reversed module polarity, unverified RTC charging circuit, and exposed sensor leads. The Panasonic CR2032 is not the R307S main supply. Do not combine USB with another ESP32 supply rail.
 

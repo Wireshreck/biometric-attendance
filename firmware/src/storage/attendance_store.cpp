@@ -125,6 +125,34 @@ size_t AttendanceStore::pendingCount() {
     return count;
 }
 
+size_t AttendanceStore::totalCount() {
+    std::vector<Entry> entries;
+    if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return 0; }
+    size_t count = 0; for (const auto& item : entries) if (!item.acked) ++count;
+    return count;
+}
+
+bool AttendanceStore::readAll(AttendanceEvent* out, size_t capacity, size_t& count) {
+    count = 0;
+    std::vector<Entry> entries;
+    if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return false; }
+    for (const auto& item : entries) {
+        if (item.acked) continue;
+        if (count >= capacity) return true;
+        out[count++] = item.event;
+    }
+    return true;
+}
+
+bool AttendanceStore::clear() {
+    if (!healthy_) return false;
+    LittleFS.remove("/attendance.tmp");
+    File file = LittleFS.open(QUEUE_PATH, "w");
+    if (!file) { healthy_ = false; return false; }
+    file.close();
+    return true;
+}
+
 bool AttendanceStore::compact() {
     std::vector<Entry> entries;
     if (!loadEntries(entries)) { healthy_ = false; return false; }

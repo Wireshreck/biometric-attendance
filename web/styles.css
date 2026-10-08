@@ -1,0 +1,21 @@
+body { font-family: system-ui, sans-serif; margin: 0; background: #0f1420; color: #e8ecf4; }
+header, section { background: #1a2236; margin: 12px; padding: 16px; border-radius: 12px; }
+h1 { margin: 0 0 4px; font-size: 1.4rem; }
+h2 { margin-top: 0; }
+.sub { opacity: .7; margin-top: 0; }
+button { font-size: 1rem; padding: 10px 16px; margin: 4px; border-radius: 8px; border: 0; cursor: pointer; background: #2f6fed; color: #fff; }
+button:disabled { opacity: .4; cursor: default; }
+button.big { font-size: 1.2rem; padding: 14px 22px; }
+button.danger { background: #c0392b; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 8px; }
+.pill { display: inline-block; padding: 6px 14px; border-radius: 999px; font-weight: 700; margin: 4px; }
+.pill.off { background: #555; } .pill.on { background: #1e9e57; }
+.pill.idle { background: #555; } .pill.busy { background: #b7791f; } .pill.ok { background: #1e9e57; } .pill.err { background: #c0392b; }
+.log { background: #0b0f1a; padding: 10px; border-radius: 8px; max-height: 180px; overflow: auto; white-space: pre-wrap; }
+.warn { background: #5a3b00; border: 1px solid #c98a00; padding: 10px; margin: 12px; border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+th, td { border: 1px solid #3a4763; padding: 8px; text-align: left; }
+.pass { color: #4ade80; font-weight: 700; } .fail { color: #f87171; font-weight: 700; }
+.warnr { color: #fbbf24; font-weight: 700; } .skip { color: #9ca3af; font-weight: 700; }
+input[type=number] { width: 90px; font-size: 1rem; padding: 8px; border-radius: 8px; border: 1px solid #3a4763; }

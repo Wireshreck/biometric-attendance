@@ -1,0 +1,20 @@
+{
+  "name": "biometric-attendance-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "App.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "test": "node ./protocol.test.js"
+  },
+  "dependencies": {
+    "expo": "~51.0.0",
+    "expo-status-bar": "~1.12.1",
+    "react": "18.2.0",
+    "react-native": "0.74.0",
+    "react-native-ble-plx": "^3.2.0"
+  },
+  "devDependencies": {},
+  "overrides": {}
+}

@@ -10,6 +10,8 @@ class RtcService {
 public:
     bool begin();
     bool valid() const { return valid_; }
+    bool ready() const { return ready_; }
+    bool lostPower();
     bool read(DateTime& out);
     bool timestamp(char* out, size_t size);
     bool setLocalTime(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
@@ -22,8 +24,14 @@ private:
 class IndicatorService {
 public:
     void begin();
+    void setReport(void (*report)(const char*));
+    void shortBeep();
     void successPulse();
     void failurePulse();
+    void twoBeep();
+    bool selfTest();
+private:
+    void (*report_)(const char*) = nullptr;
 };
 
 class FingerprintService {
@@ -33,10 +41,17 @@ public:
     bool identify(uint16_t& slotId, uint16_t& confidence);
     FingerprintScan scan(uint16_t& slotId, uint16_t& confidence);
     bool enroll(uint16_t slotId, void (*prompt)(const char*, const char*));
+    void cancelEnroll();
+    bool isEnrolling() const { return enrolling_; }
     bool readInventory(uint16_t& capacity, uint16_t& usedTemplates);
+    bool getCount(uint16_t& capacity, uint16_t& used);
+    bool deleteModel(uint16_t slotId);
+    bool deleteAll();
     bool ready() const { return ready_; }
 private:
     HardwareSerial serial_;
     Adafruit_Fingerprint sensor_;
     bool ready_ = false;
+    volatile bool cancelEnroll_ = false;
+    bool enrolling_ = false;
 };

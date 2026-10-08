@@ -48,7 +48,7 @@ No backend implementation is present in `frontend/`; it currently contains a sta
 - `firmware/src/main.cpp` is labelled a pre-development toolchain check. It prints chip/CPU/heap data, initializes the proposed indicators low, waits, invokes the UART diagnostic once, and idles.
 - `firmware/src/r307s_uart_diag.cpp` is a substantial finite-timeout, read-only probe. It tests a baud ladder, packet construction/checksums, response parsing, raw receive data, a line-state probe, and swapped GPIO-matrix routing. It only sends VerifyPassword, ReadSysPara, and TemplateCount; no enrollment/delete/write commands are sent.
 - `firmware/include/fingerprint_sensor.h` is an interface declaration only; it has no implementation.
-- `firmware/include/config.h` is the current code-side pin/config source. It selects R307S UART RX 32/TX 33 at 57600, I2C 21/22, OLED 0x3C, RTC 0x68, green 18, red 19, buzzer 23, and an HTTP attendance path. Most assigned peripherals are still untested. Local credentials are optional through ignored `local_config.h`; the example is blank.
+- `firmware/include/config.h` is the current code-side pin/config source. It selects R307S UART RX 32/TX 33 at 57600, I2C GPIO25/26 (DS3231 only; OLED removed), RTC 0x68, buzzer GPIO27 (GPIO18/19 reserved), and an HTTP attendance path. Most assigned peripherals are still untested. Local credentials are optional through ignored `local_config.h`; the example is blank.
 - Dependencies include the Adafruit fingerprint library, SSD1306/GFX, RTClib, and ArduinoJson. The current sketch includes those libraries but does not exercise the peripherals.
 
 ### Build evidence from this audit
@@ -78,7 +78,7 @@ No backend implementation is present in `frontend/`; it currently contains a sta
 
 `config.h` selects 32/33 for R307S UART, while `hardware/pinout.md`, `docs/wiring.md`, and the integration plan still name 16/17. The latest diagnostic source uses 32/33, and the current user-provided assembly also uses 32/33. Preserve 32/33 as the current bench assignment and update the authoritative pin map/docs; do not rewire based on stale 16/17 prose.
 
-For a classic ESP32-WROOM-32, GPIO32/33 are available input/output GPIOs, with ADC1 functions; they are not boot-strapping pins, flash GPIOs, or input-only pins. GPIO21/22, 18/19/23 are also ordinary usable GPIOs in the stated mapping. UART2 uses the GPIO matrix. Confirm the exact dev-board/module variant if the hardware is later changed. Avoid ESP32 strap pins GPIO0/2/5/12/15 for fixed peripherals, GPIO6–11 for flash, and GPIO34–39 for outputs. The UART0 console uses GPIO1/3; retain it for programming/logging.
+For a classic ESP32-WROOM-32, GPIO32/33 are available input/output GPIOs, with ADC1 functions; they are not boot-strapping pins, flash GPIOs, or input-only pins. GPIO25/26, 27 and 18/19 are also ordinary usable GPIOs in the stated mapping. UART2 uses the GPIO matrix. Confirm the exact dev-board/module variant if the hardware is later changed. Avoid ESP32 strap pins GPIO0/2/5/12/15 for fixed peripherals, GPIO6–11 for flash, and GPIO34–39 for outputs. The UART0 console uses GPIO1/3; retain it for programming/logging.
 
 ### External source check
 

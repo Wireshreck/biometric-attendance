@@ -26,7 +26,7 @@ Harness color/position is an observation, not proof of the physical PCB contact 
 ## Expected I2C assignment (DS3231 only)
 
 - DS3231 SDA/SCL uses GPIO25/26 at 100 kHz. No other I2C device is currently attached. The SSD1306 OLED was removed from this project; do not route GPIO25/26 to any display until the new device's 3.3 V pull-ups are verified.
-- Active buzzer uses GPIO23; use a driver if the module current exceeds the GPIO rating.
+- Active buzzer uses GPIO27; use a driver if the module current exceeds the GPIO rating.
 - UART loopback test environments use a GPIO25 TX to GPIO26 RX jumper. Disconnect the DS3231 from GPIO25/26 before running that test.
 
 ## Removed assignments

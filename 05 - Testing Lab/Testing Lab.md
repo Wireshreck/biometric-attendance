@@ -48,7 +48,7 @@ They are not the same claim, and this vault never lets them blur into each other
 | `rtc` | DS3231 ACK, plausible advancing time, `lostPower`. **Never writes the clock** | not executed |
 | `green_led` | GPIO18: off 1 s, on 1 s, three blinks | not executed |
 | `red_led` | same on GPIO19 | not executed |
-| `buzzer` | GPIO23: quiet 1 s, two 80 ms beeps | not executed |
+| `buzzer` | GPIO27: quiet 1 s, two 80 ms beeps | not executed |
 | `gpio_sanity` | configures 25/26/27/32/33/34/35/36/39 as inputs. Drives nothing, shorts nothing | not executed |
 | `wifi_diag` | radio scan without logging SSIDs; optional association | not executed |
 | `backend_http` | optional local Wi-Fi + `GET /health` + JSON parse. **Sends no attendance record** | not executed |

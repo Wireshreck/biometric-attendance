@@ -30,7 +30,7 @@ The bench. One ESP32, one fingerprint sensor, one display, one clock, two lights
 | **DS3231 RTC** | I2C `0x68` | SDA **25**, SCL **26** | Mapped · **NOT EXECUTED** |
 | **Green LED** | GPIO out via resistor | **18** | Mapped · **NOT EXECUTED** |
 | **Red LED** | GPIO out via resistor | **19** | Mapped · **NOT EXECUTED** |
-| **Active buzzer** | GPIO in / driver | **23** | Mapped · **NOT EXECUTED** · module identity unknown |
+| **Active buzzer** | GPIO in / driver | **27** | Mapped · **NOT EXECUTED** · module identity unknown |
 | **Breadboard + jumpers** | — | — | Layout is a *recommendation*, not a record — no photo exists |
 | **USB 5 V** | power in | — | Rails never measured |
 | **CR2032** | — | — | **RTC backup only. Never the sensor supply.** |
@@ -47,7 +47,7 @@ ESP32 ──I2C────┬─▶ DS3231 only   GPIO25 SDA / GPIO26 SCL @ 100
               └─▶ RTC  0x68   shared bus, shared 3.3 V pull-up domain
 ESP32 ──GPIO───┬─▶ Green LED   GPIO18 through a series resistor
                ├─▶ Red LED     GPIO19 through a series resistor
-               └─▶ Buzzer      GPIO23, or a transistor driver
+               └─▶ Buzzer      GPIO27, or a transistor driver
 ```
 
 The RTC is the only I2C device on this bus. An I2C ACK proves a device is listening — it does not prove pull-up voltage. OLED was removed from this project.

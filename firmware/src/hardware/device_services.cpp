@@ -18,6 +18,11 @@ bool RtcService::read(DateTime& out) {
     return out.year() >= 2024 && out.year() <= 2099;
 }
 
+bool RtcService::lostPower() {
+    if (!ready_) return true;
+    return rtc_.lostPower();
+}
+
 bool RtcService::timestamp(char* out, size_t size) {
     DateTime now;
     if (!out || !size || !read(now)) return false;
@@ -41,15 +46,41 @@ void IndicatorService::begin() {
     digitalWrite(PIN_BUZZER, LOW);
 }
 
+void IndicatorService::setReport(void (*report)(const char*)) {
+    report_ = report;
+}
+
 void IndicatorService::successPulse() {
+    if (report_) report_("buzzer:success");
     digitalWrite(PIN_BUZZER, HIGH); delay(90);
     digitalWrite(PIN_BUZZER, LOW); delay(50);
     digitalWrite(PIN_BUZZER, HIGH); delay(90); digitalWrite(PIN_BUZZER, LOW);
 }
 
+void IndicatorService::shortBeep() {
+    if (report_) report_("buzzer:short");
+    digitalWrite(PIN_BUZZER, HIGH); delay(80); digitalWrite(PIN_BUZZER, LOW);
+}
+
+bool IndicatorService::selfTest() {
+    if (report_) report_("buzzer:test");
+    digitalWrite(PIN_BUZZER, HIGH); delay(80); digitalWrite(PIN_BUZZER, LOW); delay(120);
+    digitalWrite(PIN_BUZZER, HIGH); delay(80); digitalWrite(PIN_BUZZER, LOW);
+    return true;
+}
+
 void IndicatorService::failurePulse() {
+    if (report_) report_("buzzer:failure");
     digitalWrite(PIN_BUZZER, HIGH); delay(300);
     digitalWrite(PIN_BUZZER, LOW); delay(300);
+}
+
+void IndicatorService::twoBeep() {
+    if (report_) report_("buzzer:two_beep");
+    digitalWrite(PIN_BUZZER, HIGH); delay(120);
+    digitalWrite(PIN_BUZZER, LOW); delay(120);
+    digitalWrite(PIN_BUZZER, HIGH); delay(120);
+    digitalWrite(PIN_BUZZER, LOW); delay(60);
 }
 
 FingerprintService::FingerprintService() : serial_(2), sensor_(&serial_) {}
@@ -91,11 +122,18 @@ FingerprintScan FingerprintService::scan(uint16_t& slotId, uint16_t& confidence)
 
 bool FingerprintService::enroll(uint16_t slotId, void (*prompt)(const char*, const char*)) {
     if (!ready_ || slotId == 0 || sensor_.getParameters() != FINGERPRINT_OK || slotId > sensor_.capacity) return false;
+    cancelEnroll_ = false;
+    enrolling_ = true;
     auto waitForImage = [this](uint32_t timeout) -> uint8_t {
         const uint32_t start = millis();
         while (millis() - start < timeout) {
+            if (cancelEnroll_) return 0xFE;
             const uint8_t r = sensor_.getImage();
             if (r == FINGERPRINT_OK) return r;
+            if (r != FINGERPRINT_NOFINGER) {
+                // Invalid packet / bad image surfaces as non-OK capture code.
+                // Keep waiting for a clean capture until timeout.
+            }
             delay(50);
         }
         return 0xFF;
@@ -103,22 +141,49 @@ bool FingerprintService::enroll(uint16_t slotId, void (*prompt)(const char*, con
     auto waitRemoval = [this](uint32_t timeout) -> bool {
         const uint32_t start = millis();
         while (millis() - start < timeout) {
+            if (cancelEnroll_) return false;
             if (sensor_.getImage() == FINGERPRINT_NOFINGER) return true;
             delay(100);
         }
         return false;
     };
     if (prompt) prompt("ENROLL", "Place finger");
-    if (waitForImage(45000) != FINGERPRINT_OK || sensor_.image2Tz(1) != FINGERPRINT_OK) return false;
+    uint8_t first = waitForImage(45000);
+    if (first == 0xFE) { enrolling_ = false; return false; }
+    if (first != FINGERPRINT_OK || sensor_.image2Tz(1) != FINGERPRINT_OK) { enrolling_ = false; return false; }
     if (sensor_.fingerFastSearch() == FINGERPRINT_OK) {
         if (prompt) prompt("ENROLL", "Finger already enrolled");
         waitRemoval(20000);
+        enrolling_ = false;
         return false;
     }
     if (prompt) prompt("ENROLL", "Remove finger");
-    if (!waitRemoval(20000)) return false;
+    if (!waitRemoval(20000)) { enrolling_ = false; return false; }
     if (prompt) prompt("ENROLL", "Place same finger");
-    if (waitForImage(45000) != FINGERPRINT_OK || sensor_.image2Tz(2) != FINGERPRINT_OK) return false;
-    if (sensor_.createModel() != FINGERPRINT_OK) return false;
-    return sensor_.storeModel(slotId) == FINGERPRINT_OK;
+    uint8_t second = waitForImage(45000);
+    if (second == 0xFE) { enrolling_ = false; return false; }
+    if (second != FINGERPRINT_OK || sensor_.image2Tz(2) != FINGERPRINT_OK) { enrolling_ = false; return false; }
+    if (sensor_.createModel() != FINGERPRINT_OK) { enrolling_ = false; return false; }
+    const bool stored = sensor_.storeModel(slotId) == FINGERPRINT_OK;
+    enrolling_ = false;
+    cancelEnroll_ = false;
+    return stored;
+}
+
+void FingerprintService::cancelEnroll() {
+    cancelEnroll_ = true;
+}
+
+bool FingerprintService::getCount(uint16_t& capacity, uint16_t& used) {
+    return readInventory(capacity, used);
+}
+
+bool FingerprintService::deleteModel(uint16_t slotId) {
+    if (!ready_ || slotId == 0) return false;
+    return sensor_.deleteModel(slotId) == FINGERPRINT_OK;
+}
+
+bool FingerprintService::deleteAll() {
+    if (!ready_) return false;
+    return sensor_.emptyDatabase() == FINGERPRINT_OK;
 }

@@ -16,6 +16,9 @@ public:
     bool nextPending(AttendanceEvent& event);
     bool acknowledge(const char* uuid);
     size_t pendingCount();
+    size_t totalCount();
+    bool readAll(AttendanceEvent* out, size_t capacity, size_t& count);
+    bool clear();
     bool healthy() const { return healthy_; }
 private:
     bool healthy_ = false;

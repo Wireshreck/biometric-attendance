@@ -15,7 +15,7 @@ tags:
 
 - **ESP32 DevKit:** small computer running firmware. USB supplies power and provides programming/serial communication during development.
 - **R307S:** optical fingerprint sensor. It stores templates inside its module and reports a slot number over UART; the firmware sends no image or template to the backend. Its current response is unverified.
-- **OLED:** removed from this project (damaged). Do not connect any SSD1306 or other display to GPIO21/22. Status is reported on the serial console.
+- **OLED:** removed from this project (damaged). Do not connect any SSD1306 or other display to GPIO25/26 (the DS3231 I2C bus). Status is reported on the serial console.
 - **DS3231 RTC:** keeps date/time with backup power. Firmware refuses to create an attendance timestamp if the clock is invalid.
 - **LEDs:** removed from this project (no resistors available). GPIO18 and GPIO19 are unused/reserved. Do not add LEDs or resistors without updating this guide and config.h.
 - **Active buzzer module:** makes sound when its input is activated. Exact module voltage/current varies.
@@ -28,7 +28,7 @@ tags:
 2. Identify R307S connector pin-1 marker or board silkscreen. The recorded red/black/yellow/green mapping is owner-reported, not independently verified. Keep the current assembly unchanged unless a specific electrical check requires a change.
 3. Read the exact RTC breakout labels (`VCC`, `GND`, `SDA`, `SCL`). Some modules accept 5 V on VCC but pull I2C up to VCC, which could put 5 V on ESP32 GPIO. Use 3V3 only after confirming module support. The OLED was removed from this project.
 4. An LED's long leg is usually its anode and short/flat side its cathode. Check markings when available; leg length may have been trimmed.
-5. Read the buzzer voltage/current/input labels. The exact module is not identified, so GPIO23 compatibility is not proven.
+5. Read the buzzer voltage/current/input labels. The exact module is not identified, so GPIO27 compatibility is not proven.
 
 ## Place the ESP32
 
@@ -46,9 +46,9 @@ Do not power the circuit while adding wires. Add one subsystem at a time and com
 | 2 | ESP32 3V3 | 3.3 V rail | module logic supply | Only for modules confirmed to accept it; never bridge to GND |
 | 2 | DS3231 GND | ground rail | common return | Verify module labels |
 | 3 | DS3231 VCC | 3.3 V rail | RTC supply | Confirm board supports it and inspect charging circuit |
-| 4 | DS3231 SDA | ESP32 GPIO21 | I2C data | No other I2C device is attached; pull-up must be 3.3 V-safe |
-| 5 | DS3231 SCL | ESP32 GPIO22 | I2C clock | Pull-up must be 3.3 V-safe |
-| 6 | ESP32 GPIO23 | buzzer module input | audible feedback | Only if voltage/current are GPIO-safe; else use driver |
+| 4 | DS3231 SDA | ESP32 GPIO25 | I2C data | No other I2C device is attached; pull-up must be 3.3 V-safe |
+| 5 | DS3231 SCL | ESP32 GPIO26 | I2C clock | Pull-up must be 3.3 V-safe |
+| 6 | ESP32 GPIO27 | buzzer module input | audible feedback | Only if voltage/current are GPIO-safe; else use driver |
 | 7 | buzzer module GND | ground rail | common return | Verify polarity |
 | 8 | R307S red, reported pin 1 | ESP32 VIN (existing assembly) | reported sensor supply | Rail/current unmeasured; not powered from CR2032 |
 | 9 | R307S black, reported pin 2 | ESP32 GND (existing assembly) | reported return | Owner-reported existing connection |

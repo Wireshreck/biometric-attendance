@@ -29,7 +29,7 @@ Removed from this project: SSD1306 OLED and green/red LEDs (no resistors availab
 | DS3231 breakout | SDA/SCL | GPIO25/GPIO26 | bidirectional open-drain | Shared I2C bus with no other device; scan addresses; avoid 5 V pull-ups | P-rows for 25/26 | NEEDS TESTING |
 | Green indicator | — | not connected | — | LED + series resistor removed from this project (no resistors available). GPIO18 is unused/reserved. | — | REMOVED |
 | Red indicator | — | not connected | — | LED + series resistor removed from this project (no resistors available). GPIO19 is unused/reserved. | — | REMOVED |
-| Active buzzer | IN/+ | GPIO23 if module is 3.3 V GPIO-compatible; otherwise driver | output | Check module voltage/current. Do not power an unknown load from GPIO | P-row bearing GPIO23 | NEEDS COMPONENT CHECK |
+| Active buzzer | IN/+ | GPIO27 if module is 3.3 V GPIO-compatible; otherwise driver | output | Check module voltage/current. Do not power an unknown load from GPIO | P-row bearing GPIO27 | NEEDS COMPONENT CHECK |
 | Active buzzer | GND/- | GND | return | Common ground | ground rail | NEEDS COMPONENT CHECK |
 
 ## ESP32-only pins

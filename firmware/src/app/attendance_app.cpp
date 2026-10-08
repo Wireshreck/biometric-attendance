@@ -4,6 +4,7 @@
 
 #include "attendance_state.h"
 #include "attendance_store.h"
+#include "ble_service.h"
 #include "config.h"
 #include "device_services.h"
 #include "network_service.h"
@@ -13,6 +14,7 @@ static IndicatorService indicators;
 static FingerprintService fingerprint;
 static AttendanceStore store;
 static NetworkService network;
+static BleService bleManager;
 static Preferences enrollmentPrefs;
 static AttendanceState state = AttendanceState::BOOT;
 static uint32_t nextSensorProbeMs = 0, nextSyncMs = 0, nextEnrollmentRetryMs = 0, lastMatchedMs = 0;
@@ -184,7 +186,9 @@ void attendance_app_setup() {
     const bool storageOk = store.begin();
     network.begin();
     const bool sensorOk = fingerprint.begin();
-    Serial.printf("[INFO] reset=%d heap=%u RTC=%s storage=%s sensor=%s\n", static_cast<int>(esp_reset_reason()), ESP.getFreeHeap(), rtcOk?"VALID":"INVALID", storageOk?"READY":"ERROR", sensorOk?"READY":"UNAVAILABLE");
+    bleManager.configure(&rtcService, &fingerprint, &indicators, &store);
+    const bool bleOk = bleManager.begin(DEVICE_NAME);
+    Serial.printf("[INFO] reset=%d heap=%u RTC=%s storage=%s sensor=%s BLE=%s\n", static_cast<int>(esp_reset_reason()), ESP.getFreeHeap(), rtcOk?"VALID":"INVALID", storageOk?"READY":"ERROR", sensorOk?"READY":"UNAVAILABLE", bleOk?"ADVERTISING":"OFF");
     if (sensorOk) {
         uint16_t capacity = 0, used = 0;
         if (fingerprint.readInventory(capacity, used)) Serial.printf("[INFO] sensor template inventory: capacity=%u occupied=%u\n", capacity, used);

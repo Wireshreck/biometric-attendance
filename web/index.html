@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biometric Attendance — Device Manager</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Biometric Attendance — Device Manager</h1>
+  <p class="sub">ESP32 + R307S + DS3231 over BLE · protocol: <code>docs/protocol.md</code></p>
+  <div class="conn">
+    <button id="btnConnect" class="big">Connect BLE</button>
+    <button id="btnDisconnect" class="big" disabled>Disconnect</button>
+    <span id="connState" class="pill off">DISCONNECTED</span>
+  </div>
+</header>
+<div id="needBle" class="warn" hidden>This browser does not support Web Bluetooth. Use Chrome/Edge on desktop with Bluetooth enabled.</div>
+
+<main>
+<section id="secDash">
+  <h2>Dashboard</h2>
+  <div class="grid" id="dashGrid">
+    <div>Device <b id="dDevice">—</b></div>
+    <div>Firmware <b id="dFw">—</b></div>
+    <div>Uptime <b id="dUptime">—</b></div>
+    <div>RTC <b id="dRtc">—</b></div>
+    <div>R307S <b id="dR307s">—</b></div>
+    <div>Fingerprints <b id="dCount">—</b></div>
+    <div>Storage <b id="dStorage">—</b></div>
+    <div>Attendance <b id="dAtt">—</b></div>
+  </div>
+  <button id="btnRefresh">Refresh dashboard</button>
+  <pre id="dashLog" class="log"></pre>
+</section>
+
+<section id="secFp">
+  <h2>Fingerprint management</h2>
+  <div class="row">
+    <button id="btnFpStatus">Status</button>
+    <button id="btnFpCount">Count</button>
+    <label>Slot <input id="fpSlot" type="number" min="1" max="1000" value="1"></label>
+    <button id="btnEnroll">Enroll</button>
+    <button id="btnSearch">Search / Test</button>
+    <button id="btnDelete">Delete slot</button>
+    <button id="btnDeleteAll" class="danger">Delete ALL</button>
+  </div>
+  <div id="enrollState" class="pill idle">ENROLL IDLE</div>
+  <pre id="fpLog" class="log"></pre>
+</section>
+
+<section id="secRtc">
+  <h2>RTC (DS3231 · GPIO25/26)</h2>
+  <div class="row">
+    <button id="btnRtcGet">Display current time</button>
+    <button id="btnRtcSetLocal">Set RTC to this laptop time</button>
+  </div>
+  <div id="rtcWarn" class="warn" hidden>RTC reports lost-power or invalid time. Set the RTC before recording attendance.</div>
+  <pre id="rtcLog" class="log"></pre>
+</section>
+
+<section id="secAtt">
+  <h2>Attendance</h2>
+  <div class="row">
+    <button id="btnAttStatus">Status</button>
+    <button id="btnAttRead">Display records</button>
+    <button id="btnAttClear" class="danger">Clear records</button>
+  </div>
+  <table id="attTable"><thead><tr><th>Slot</th><th>Timestamp</th><th>Status</th></tr></thead><tbody></tbody></table>
+  <pre id="attLog" class="log"></pre>
+</section>
+
+<section id="secDiag">
+  <h2>Diagnostics</h2>
+  <div class="row">
+    <button id="btnDiag">Run FULL_DIAGNOSTIC</button>
+    <button id="btnBuzz">BUZZER_TEST (GPIO27)</button>
+    <button id="btnPing">PING / BLE test</button>
+  </div>
+  <table id="diagTable"><thead><tr><th>Test</th><th>Result</th><th>Reason</th></tr></thead><tbody></tbody></table>
+  <pre id="diagLog" class="log"></pre>
+</section>
+
+<section id="secHelp">
+  <h2>Help — science-fair demo</h2>
+  <ol>
+    <li><b>Setup:</b> power the ESP32 over USB, keep R307S wiring fixed (red VIN, black GND, yellow GPIO32, green GPIO33, blue/white open), DS3231 on GPIO25/26, buzzer on GPIO27.</li>
+    <li><b>Pairing:</b> click Connect BLE, pick <code>biometric-attendance-esp32</code>. No OLED/LEDs — watch this page and listen for the buzzer.</li>
+    <li><b>Enrollment:</b> enter a slot, click Enroll, place finger, remove when asked, place again. Never claim success unless the device reports <code>enroll_success</code>.</li>
+    <li><b>Troubleshooting:</b> R307S FAIL + SKIPPED dependents means check sensor power/wiring; DS3231 FAIL means check I2C wiring/pull-ups; RTC invalid blocks attendance timestamps.</li>
+    <li><b>Demo flow:</b> PING → DEVICE_INFO → DEVICE_STATUS → RTC_GET → FINGERPRINT_COUNT → ENROLL → SEARCH → ATTENDANCE_READ → FULL_DIAGNOSTIC.</li>
+  </ol>
+</section>
+</main>
+
+<script src="../shared/ble_protocol.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
