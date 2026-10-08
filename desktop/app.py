@@ -96,7 +96,7 @@ class BLE:
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Biometric Attendance v1.1.0")
+        self.title("Biometric Attendance v1.2.0")
         self.geometry("1000x720")
         self.loop = asyncio.new_event_loop()
         threading.Thread(target=self.loop.run_forever, daemon=True).start()

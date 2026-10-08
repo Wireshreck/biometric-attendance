@@ -34,7 +34,7 @@
 //   They are currently unused/reserved. Do not add new hardware here without updating this file and the docs.
 
 // Firmware identity
-#define FIRMWARE_VERSION "1.1.0"
+#define FIRMWARE_VERSION "1.2.0"
 #define DEVICE_NAME "biometric-attendance-esp32"
 #define HARDWARE_NAME "ESP32-WROOM-32"
 

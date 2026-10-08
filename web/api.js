@@ -26,8 +26,11 @@
     try { sessionStorage.removeItem(KEY); } catch (e) {}
   }
 
-  async function req(path, opts = {}) {
-    await ensureAuth();
+  async function req(path, opts = {}, silent = false) {
+    if (!state.user) {
+      if (silent) throw new Error('signed out');
+      await ensureAuth();
+    }
     const send = () => fetch(path, {
       ...opts,
       headers: { ...(opts.headers || {}), Authorization: 'Basic ' + btoa(state.user + ':' + state.pass) },
@@ -35,7 +38,11 @@
     let res;
     try { res = await send(); }
     catch (e) { throw new Error('backend unreachable: ' + e.message); }
-    if (res.status === 401) { forget(); throw new Error('unauthorized — check admin credentials'); }
+    if (res.status === 401) {
+      if (silent) throw new Error('unauthorized');
+      forget();
+      throw new Error('unauthorized — check admin credentials');
+    }
     if (!res.ok) {
       let detail = res.statusText;
       try { const j = await res.json(); detail = j.error?.message || detail; } catch (e) {}
@@ -45,7 +52,7 @@
     return ct.includes('json') ? res.json() : res.blob();
   }
 
-  const get = (path) => req(path);
+  const get = (path, silent = false) => req(path, {}, silent);
   const post = (path, body) => req(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
   const patch = (path, body) => req(path, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const download = (path, name) => req(path).then((blob) => {
@@ -63,10 +70,10 @@
     const tick = async () => {
       if (document.hidden) return;
       try {
-        const r = await get('/api/v1/attendance?limit=1&offset=0');
+        const r = await get('/api/v1/attendance?limit=1&offset=0', true);
         const cur = r.items[0]?.event_uuid || '';
         if (cur && cur !== last) { last = cur; onMsg({ type: 'attendance.recorded', data: r.items[0] }); }
-      } catch (e) {}
+      } catch (e) {} // silent: background refresh must never pop sign-in or wipe creds
     };
     tick();
     const id = setInterval(tick, ms);

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Attendance Console</title>
-<link rel="stylesheet" href="styles.css?v=110">
+<link rel="stylesheet" href="styles.css?v=113">
 <script>try { document.documentElement.dataset.theme = localStorage.getItem('att-theme') || 'light'; } catch (e) {}</script>
 </head>
 <body>
@@ -133,7 +133,8 @@
         <li>Run the backend: <code>cd backend</code>, configure <code>.env</code> from <code>.env.example</code>, then <code>python -m uvicorn app.main:app</code>. This page is served by the backend itself.</li>
         <li>Sign in with your admin credentials when prompted (browser dialog).</li>
         <li>Hardware: R307S red→VIN, black→GND, yellow→GPIO32, green→GPIO33; DS3231 SDA→GPIO25, SCL→GPIO26; buzzer→GPIO27. OLED/LEDs removed.</li>
-        <li>BLE: click Connect BLE in Device and pick <code>biometric-attendance-esp32</code> (Chrome/Edge).</li></ol></div>
+        <li>BLE: click Connect BLE in Device and pick <code>biometric-attendance-esp32</code> (Chrome/Edge).</li>
+        <li>Adding students requires one provisioned device. In <code>backend/</code> run:<br><code>python -m app.provision_device --name demo-terminal --location lab --sensor-capacity 1000</code><br>Save the printed bearer token for the device; no restart needed.</li></ol></div>
       <div class="panel"><h2>Science-fair demo</h2><p>PING → dashboard refresh → enroll a slot → search it → attendance appears live → full diagnostic → CSV export.</p></div>
       <div class="panel"><h2>AI setup</h2><p>Set <code>GEMINI_API_KEY</code> in <code>backend/.env</code> and restart. Without it the assistant answers from local data and says so. The key never leaves the server.</p></div>
     </section>
@@ -152,9 +153,9 @@
   <div class="box"><input id="palInput" placeholder="Type a command…" aria-label="Commands"><ul id="palList"></ul></div>
 </div>
 <div id="toasts" aria-live="polite"></div>
-<script src="api.js?v=110"></script>
-<script src="vendor/ble_protocol.js?v=110"></script>
-<script src="ble.js?v=110"></script>
-<script src="app.js?v=110"></script>
+<script src="api.js?v=113"></script>
+<script src="vendor/ble_protocol.js?v=113"></script>
+<script src="ble.js?v=113"></script>
+<script src="app.js?v=113"></script>
 </body>
 </html>

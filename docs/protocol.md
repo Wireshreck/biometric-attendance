@@ -440,8 +440,13 @@ Response data:
 Request:
 
 ```json
-{ "cmd": "ATTENDANCE_READ" }
+{ "cmd": "ATTENDANCE_READ", "limit": 10, "offset": 0 }
 ```
+
+`limit` (1–50, default 5) and `offset` keep each BLE response small
+enough for reliable GATT reads; `total` reports the full record count.
+If there are no records, the device returns an empty list rather than
+inventing data.
 
 Response data:
 
@@ -453,7 +458,8 @@ Response data:
       "captured_at": "2026-10-07T08:12:33+05:30",
       "status": "recorded"
     }
-  ]
+  ],
+  "total": 1
 }
 ```
 

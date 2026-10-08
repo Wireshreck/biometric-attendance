@@ -37,12 +37,19 @@
   }
 
   async function connect() {
-    if (!navigator.bluetooth) throw new Error('Web Bluetooth unsupported — use Chrome/Edge');
+    if (!navigator.bluetooth) throw new Error('Web Bluetooth unavailable in this browser — use Chrome/Edge, or enable Bluetooth in Brave site settings');
     setState(false); $('bleTxt').textContent = 'BLE: connecting…';
     $('bleDot').className = 'dot warn';
-    ble.device = await navigator.bluetooth.requestDevice({
-      filters: [{ services: [P.BLE_SERVICE_UUID] }], optionalServices: [P.BLE_SERVICE_UUID],
-    });
+    try {
+      ble.device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: [P.BLE_SERVICE_UUID] }], optionalServices: [P.BLE_SERVICE_UUID],
+      });
+    } catch (e) {
+      if (/globally disabled/i.test(e.message || '')) {
+        throw new Error('Brave blocks Web Bluetooth: open brave://settings/content/bluetooth and allow it (or use Chrome/Edge)');
+      }
+      throw e;
+    }
     ble.device.addEventListener('gattserverdisconnected', () => { ble.server = null; ble.chars = {}; setState(false); });
     ble.server = await ble.device.gatt.connect();
     const svc = await ble.server.getPrimaryService(P.BLE_SERVICE_UUID);

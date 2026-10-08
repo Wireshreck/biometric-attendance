@@ -7,3 +7,4 @@ pydantic==2.9.2
 aiosqlite==0.20.0
 tzdata==2026.4
 python-dotenv==1.0.1
+openpyxl==3.1.5

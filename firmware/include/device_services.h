@@ -58,7 +58,6 @@ public:
     bool identify(uint16_t& slotId, uint16_t& confidence);
     FingerprintScan scan(uint16_t& slotId, uint16_t& confidence);
     EnrollResult enroll(uint16_t slotId, void (*prompt)(const char*, const char*));
-    bool enrollLegacy(uint16_t slotId, void (*prompt)(const char*, const char*));
     void cancelEnroll();
     bool isEnrolling() const { return enrolling_; }
     bool readInventory(uint16_t& capacity, uint16_t& usedTemplates);

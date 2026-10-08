@@ -16,6 +16,7 @@ import aiosqlite
 import openpyxl
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -56,10 +57,22 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="Biometric Attendance API",
-        version="0.1.0",
+        version="1.2.0",
         lifespan=lifespan,
     )
     app.state.settings = actual_settings
+    origins = [o.strip() for o in actual_settings.allowed_origins.split(",") if o.strip()]
+    if origins:
+        # Explicitly configured browser origins only (LAN/self-hosted web).
+        # Native clients (Android/desktop) are unaffected by CORS.
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=True,
+            allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
+            allow_headers=["Authorization", "Content-Type"],
+            max_age=600,
+        )
 
     @app.exception_handler(HTTPException)
     async def http_error_handler(request: Request, exc: HTTPException):
@@ -308,6 +321,48 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             (now, f"device:{device['device_uuid']}", str(student_uuid)),
         )
         await connection.commit()
+        return {"student_uuid": str(student_uuid), "status": "ACTIVE"}
+
+    @app.post("/api/v1/students/{student_uuid}/activate")
+    async def activate_student(
+        student_uuid: uuid.UUID,
+        actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        """Admin confirms the fingerprint template is stored on the sensor.
+
+        Used by UI flows (web/device enroll) where the admin supervises the
+        physical enrollment. Device-initiated completion remains available
+        for the serial/API flow. Every activation is audit-logged.
+        """
+        now = _utc_text(datetime.now(UTC))
+        await connection.execute("BEGIN IMMEDIATE")
+        async with connection.execute(
+            "SELECT id, status, fingerprint_slot_id FROM students WHERE student_uuid=?",
+            (str(student_uuid),)) as cursor:
+            row = await cursor.fetchone()
+        if row is None:
+            await connection.rollback()
+            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+        if row["status"] == "ACTIVE":
+            await connection.rollback()
+            return {"student_uuid": str(student_uuid), "status": "ACTIVE"}
+        if row["status"] != "PENDING_ENROLLMENT":
+            await connection.rollback()
+            raise HTTPException(409, {"code": "invalid_state", "message": "Only pending students can be activated"})
+        await connection.execute(
+            "UPDATE students SET status='ACTIVE', updated_at_utc=? WHERE id=?",
+            (now, row["id"]),
+        )
+        await connection.execute(
+            "INSERT INTO admin_audit_log (occurred_at_utc, actor, action, target_type, target_id) VALUES (?, ?, 'ENROLLMENT_CONFIRMED', 'student', ?)",
+            (now, actor, str(student_uuid)),
+        )
+        await connection.commit()
+        EVENT_BUS.publish("student.activated", {
+            "student_uuid": str(student_uuid),
+            "fingerprint_slot_id": row["fingerprint_slot_id"],
+        })
         return {"student_uuid": str(student_uuid), "status": "ACTIVE"}
 
     @app.post("/api/v1/students/{student_uuid}/deactivate")

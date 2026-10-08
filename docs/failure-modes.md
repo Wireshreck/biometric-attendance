@@ -10,7 +10,7 @@ tags:
 
 | Failure | Detection | Device behavior | Recovery / operator action | Evidence status |
 |---|---|---|---|---|
-| OLED absent by design | Removed from this project | Production firmware no longer initializes or writes to an OLED; status is reported on the serial console only | No action needed for the OLED; if an I2C device is later added to GPIO21/22, verify its 3.3 V pull-ups first | Design decision; physical behavior of any replacement device NEEDS TESTING |
+| OLED absent by design | Removed from this project | Production firmware no longer initializes or writes to an OLED; status is reported on the serial console only | No action needed for the OLED; if another device is later added to the GPIO25/26 I2C bus, verify its 3.3 V pull-ups first | Design decision; physical behavior of any replacement device NEEDS TESTING |
 | RTC absent or oscillator stopped | DS3231 not found, lost-power bit, or invalid year | No attendance timestamp is generated; serial reports RTC invalid | Inspect I2C/power and explicitly set trusted local time with `SETTIME`; test again | Physical behavior NEEDS TESTING |
 | Fingerprint sensor absent/no response | bounded handshake fails | `SENSOR NOT FOUND`; reprobe every 5 seconds; no infinite wait | Run read-only `r307s` diagnostic; verify exact board and safely measure power/logic | Current UART silence reported; sensor health unknown |
 | Finger image poor / no match | capture/search result | show `NOT FOUND`; error signal; require finger lift before next attempt | Dry/clean finger and sensor surface; use test fingers | NEEDS HARDWARE |

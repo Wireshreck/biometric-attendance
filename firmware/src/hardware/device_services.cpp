@@ -153,10 +153,6 @@ FingerprintScan FingerprintService::scan(uint16_t& slotId, uint16_t& confidence)
     return FingerprintScan::MATCH;
 }
 
-bool FingerprintService::enrollLegacy(uint16_t slotId, void (*prompt)(const char*, const char*)) {
-    return enroll(slotId, prompt) == EnrollResult::OK;
-}
-
 EnrollResult FingerprintService::enroll(uint16_t slotId, void (*prompt)(const char*, const char*)) {
     SensorLock lock(mutex_, 5000);
     if (!lock.held) return EnrollResult::NO_SENSOR;

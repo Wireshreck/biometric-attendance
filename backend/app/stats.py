@@ -75,6 +75,12 @@ async def attendance_list(
     if section:
         clauses.append("s.section = ?")
         params.append(section)
+    if time_from:
+        clauses.append("substr(e.captured_at_utc, 12, 5) >= ?")
+        params.append(time_from)
+    if time_to:
+        clauses.append("substr(e.captured_at_utc, 12, 5) <= ?")
+        params.append(time_to)
     if fingerprint_slot_id is not None:
         clauses.append("e.fingerprint_slot_id = ?")
         params.append(fingerprint_slot_id)
@@ -102,13 +108,6 @@ async def attendance_list(
     )
     async with connection.execute(query, (*params, limit, offset)) as cursor:
         rows = [dict(r) for r in await cursor.fetchall()]
-    if time_from or time_to:
-        def in_window(ts: str) -> bool:
-            hhmm = ts[11:16]
-            if time_from and hhmm < time_from:
-                return False
-            return not (time_to and hhmm > time_to)
-        rows = [r for r in rows if in_window(r["captured_at_utc"])]
     return rows, total
 
 

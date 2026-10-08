@@ -207,6 +207,36 @@ def test_exports_respect_filters(client: TestClient):
     assert len(xlsx_resp.content) > 1000
 
 
+def test_cors_explicit_origins_only():
+    from app.main import create_app
+    base = Settings(
+        database_path=":memory:",
+        app_timezone="Asia/Kolkata",
+        admin_username="u",
+        admin_password="p" * 16,
+    )
+    closed = create_app(base)
+    with TestClient(closed) as client:
+        response = client.options(
+            "/api/v1/students",
+            headers={"Origin": "http://lan:8000", "Access-Control-Request-Method": "GET"},
+        )
+        assert "access-control-allow-origin" not in {k.lower() for k in response.headers}
+    opened_settings = Settings(
+        database_path=":memory:",
+        app_timezone="Asia/Kolkata",
+        admin_username="u",
+        admin_password="p" * 16,
+        allowed_origins="http://lan:8000",
+    )
+    with TestClient(create_app(opened_settings)) as client:
+        response = client.options(
+            "/api/v1/students",
+            headers={"Origin": "http://lan:8000", "Access-Control-Request-Method": "GET"},
+        )
+        assert response.headers.get("access-control-allow-origin") == "http://lan:8000"
+
+
 def test_event_bus_and_ai_without_key(client: TestClient):
     seed_device(client)
     queue = BUS.subscribe()
@@ -241,3 +271,35 @@ def test_duplicate_protection_counts_once(client: TestClient):
     assert dup.json()["outcome"] == "DUPLICATE_SUPPRESSED"
     listing = client.get("/api/v1/attendance", auth=ADMIN).json()
     assert listing["total"] == 1
+
+
+def test_time_filter_applies_before_pagination(client: TestClient):
+    seed_device(client)
+    student = make_student(client, "R-701", "Time", "Filter", "10A", "A")
+    activate(client, student)
+    slot = student["fingerprint_slot_id"]
+    early_ts = (datetime.now(UTC) - timedelta(hours=3)).replace(minute=5, second=0, microsecond=0)
+    late_ts = (datetime.now(UTC) - timedelta(hours=1)).replace(minute=45, second=0, microsecond=0)
+    assert checkin(client, slot, early_ts, live=False).status_code == 201
+    assert checkin(client, slot, late_ts, live=False).status_code == 201
+    lo = (late_ts - timedelta(minutes=10)).strftime("%H:%M")
+    hi = (late_ts + timedelta(minutes=10)).strftime("%H:%M")
+    window = client.get(f"/api/v1/attendance?time_from={lo}&time_to={hi}", auth=ADMIN).json()
+    assert window["total"] == 1
+    assert window["items"][0]["captured_at_utc"][11:16] == late_ts.strftime("%H:%M")
+    early = client.get("/api/v1/attendance?time_from=00:00&time_to=00:01", auth=ADMIN).json()
+    assert early["total"] == 0
+
+
+def test_admin_activate_enrollment(client: TestClient):
+    seed_device(client)
+    student = make_student(client, "R-601", "Asha", "Menon", "10A", "A")
+    assert student["status"] == "PENDING_ENROLLMENT"
+    activated = client.post(f"/api/v1/students/{student['student_uuid']}/activate", auth=ADMIN)
+    assert activated.status_code == 200
+    assert activated.json() == {"student_uuid": student["student_uuid"], "status": "ACTIVE"}
+    again = client.post(f"/api/v1/students/{student['student_uuid']}/activate", auth=ADMIN)
+    assert again.status_code == 200
+    assert again.json()["status"] == "ACTIVE"
+    assert client.post("/api/v1/students/00000000-0000-0000-0000-000000000000/activate", auth=ADMIN).status_code == 404
+    assert client.post(f"/api/v1/students/{student['student_uuid']}/activate").status_code == 401

@@ -12,7 +12,7 @@
       return new Promise((resolve) => {
         const dlg = $('authDlg');
         const done = (v) => { dlg.close(); resolve(v); };
-        $('authForm').onsubmit = () => { done({ u: $('authUser').value.trim(), p: $('authPass').value }); };
+        $('authForm').onsubmit = () => { done({ u: $('authUser').value.trim(), p: $('authPass').value.trim() }); };
         $('authCancel').onclick = () => done(null);
         dlg.onclose = () => resolve(null);
         dlg.showModal();
@@ -220,6 +220,12 @@
   let editing = null;
   async function loadStu() {
     try {
+      const devs = await API.get('/api/v1/devices');
+      if (!devs.items.length) {
+        toast('No active device: provision one first — see Help → Setup step 5', 'warn');
+      }
+    } catch (e) {}
+    try {
       const p = new URLSearchParams({ limit: 100, offset: 0 });
       if ($('sQ').value.trim()) p.set('q', $('sQ').value.trim());
       if ($('sClass').value.trim()) p.set('grade_class', $('sClass').value.trim());
@@ -240,7 +246,12 @@
       if (editing) { await API.patch('/api/v1/students/' + editing, body); }
       else { await API.post('/api/v1/students', body); }
       $('stuDlg').close(); loadStu(); toast('Saved', 'ok');
-    } catch (err) { e.preventDefault(); toast(err.message, 'err'); }
+    } catch (err) {
+      e.preventDefault();
+      toast(/one active.*device/i.test(err.message)
+        ? 'No provisioned device yet — run the provision command in Help → Setup, then retry.'
+        : err.message, 'err');
+    }
   };
   async function openStudent(id) {
     try {
@@ -249,9 +260,15 @@
       d.innerHTML = `<h2>${esc(s.first_name)} ${esc(s.last_name)} <span style="color:var(--muted)">(${esc(s.roll_number)} · ${esc(s.grade_class)}${esc(s.section)} · ${s.status})</span></h2>
         <div class="progress"><i style="width:${s.attendance_percentage}%"></i></div>
         <p>30-day attendance: <b>${s.attendance_percentage}%</b> · days present: ${s.days_present}/${s.window_days} · first: ${s.first || '—'} · last: ${s.last || '—'}</p>
-        <div class="row"><button id="btnStuEdit">Edit</button><button id="btnStuDeact">Deactivate</button></div>`;
+        <div class="row"><button id="btnStuEdit">Edit</button>${s.status === 'PENDING_ENROLLMENT' ? '<button id="btnStuActivate">Mark enrolled</button>' : ''}<button id="btnStuDeact">Deactivate</button></div>`;
       $('btnStuEdit').onclick = () => { editing = id; $('stuDlgTitle').textContent = 'Edit student'; $('stuRoll').value = s.roll_number; $('stuFirst').value = s.first_name; $('stuLast').value = s.last_name; $('stuClass').value = s.grade_class; $('stuSection').value = s.section; $('stuDlg').showModal(); };
       $('btnStuDeact').onclick = async () => { if (confirm('Deactivate this student?')) { await API.post(`/api/v1/students/${id}/deactivate`); toast('Deactivated', 'ok'); loadStu(); d.hidden = true; } };
+      const act = $('btnStuActivate');
+      if (act) act.onclick = async () => {
+        if (!confirm(`Confirm the finger template is stored in slot ${s.fingerprint_slot_id}, then activate?`)) return;
+        try { await API.post(`/api/v1/students/${id}/activate`); toast('Student activated', 'ok'); loadStu(); openStudent(id); }
+        catch (err) { toast(err.message, 'err'); }
+      };
       d.scrollIntoView({ block: 'nearest' });
     } catch (e) { toast(e.message, 'err'); }
   }

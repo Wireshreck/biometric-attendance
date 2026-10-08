@@ -458,26 +458,43 @@ bool BleService::handleCommand(const char* requestJson, char* responseOut, size_
         });
         return true;
     }
-    // ATTENDANCE_READ
+    // ATTENDANCE_READ (paginated: BLE attribute values stay small)
     if (strcmp(cmd, CMD_ATTENDANCE_READ) == 0) {
         if (!store_ || !store_->healthy()) {
             errResp(responseOut, responseSize, ERR_COMMUNICATION, "Storage unavailable");
             return true;
         }
-        AttendanceEvent items[50];
-        size_t count = 0;
-        store_->readAll(items, 50, count);
-        JsonDocument doc;
-        doc[KEY_STATUS] = STATUS_OK;
-        doc[KEY_CODE] = "attendance";
-        JsonArray arr = doc[KEY_DATA]["records"].to<JsonArray>();
-        for (size_t i = 0; i < count; ++i) {
-            JsonObject o = arr.add<JsonObject>();
-            o["slot"] = items[i].slot;
-            o["captured_at"] = items[i].capturedAt;
-            o["status"] = "recorded";
+        long limit = req["limit"] | 5;
+        long offset = req["offset"] | 0;
+        if (limit < 1) limit = 1;
+        if (limit > 50) limit = 50;
+        if (offset < 0) offset = 0;
+        // Heap-allocated: a 50-record stack array overflows the loop task.
+        AttendanceEvent* items = new (std::nothrow) AttendanceEvent[50];
+        if (!items) {
+            errResp(responseOut, responseSize, ERR_COMMUNICATION, "Out of memory");
+            return true;
         }
-        serializeJson(doc, responseOut, responseSize);
+        size_t count = 0;
+        const bool readOk = store_->readAll(items, 50, count);
+        if (readOk) {
+            JsonDocument doc;
+            doc[KEY_STATUS] = STATUS_OK;
+            doc[KEY_CODE] = "attendance";
+            doc[KEY_DATA]["total"] = (int)count;
+            JsonArray arr = doc[KEY_DATA]["records"].to<JsonArray>();
+            for (size_t i = (size_t)offset; i < count && arr.size() < (size_t)limit; ++i) {
+                JsonObject o = arr.add<JsonObject>();
+                o["slot"] = items[i].slot;
+                o["captured_at"] = items[i].capturedAt;
+                o["status"] = "recorded";
+            }
+            serializeJson(doc, responseOut, responseSize);
+        }
+        delete[] items;
+        if (!readOk) {
+            errResp(responseOut, responseSize, ERR_COMMUNICATION, "Storage unavailable");
+        }
         return true;
     }
     // ATTENDANCE_CLEAR
@@ -536,6 +553,16 @@ void BleService::poll() {
     stagedPending_ = false;
     stagedReq_[stagedLen_] = '\0';
     if (handleCommand(stagedReq_, respBuf_, sizeof(respBuf_))) {
+        // GATT attribute reads stall above a few hundred bytes on this
+        // stack/central combination (observed: ~713 B never surfaces while
+        // ~470 B works). Never publish an unservable response; paginated
+        // commands (ATTENDANCE_READ) keep payloads small by design.
+        if (strlen(respBuf_) > 500) {
+            snprintf(respBuf_, sizeof(respBuf_),
+                     "{\"status\":\"error\",\"code\":\"%s\",\"message\":"
+                     "\"Response too large; retry with a smaller page\"}",
+                     ERR_COMMUNICATION);
+        }
         BLECharacteristic* target = static_cast<BLECharacteristic*>(stagedTarget_);
         if (target) target->setValue(respBuf_);
     }
