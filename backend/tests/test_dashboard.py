@@ -273,6 +273,22 @@ def test_duplicate_protection_counts_once(client: TestClient):
     assert listing["total"] == 1
 
 
+def test_ai_key_settings_never_leaks_key(client: TestClient):
+    seed_device(client)
+    assert client.get("/api/v1/settings/ai", auth=ADMIN).json() == {"gemini_configured": False}
+    assert client.get("/api/v1/settings/ai").status_code == 401
+    put = client.put("/api/v1/settings/ai", auth=ADMIN, json={"gemini_api_key": "test-key-12345"})
+    assert put.status_code == 200
+    assert put.json() == {"gemini_configured": True}
+    assert "test-key-12345" not in put.text
+    status = client.get("/api/v1/settings/ai", auth=ADMIN).json()
+    assert status == {"gemini_configured": True}
+    assert "test-key-12345" not in str(status)
+    cleared = client.put("/api/v1/settings/ai", auth=ADMIN, json={"gemini_api_key": ""})
+    assert cleared.json() == {"gemini_configured": False}
+    assert client.put("/api/v1/settings/ai", auth=ADMIN, json={"gemini_api_key": "x"}).status_code == 422
+
+
 def test_time_filter_applies_before_pagination(client: TestClient):
     seed_device(client)
     student = make_student(client, "R-701", "Time", "Filter", "10A", "A")

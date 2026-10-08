@@ -48,6 +48,11 @@ class AIChatResponse(BaseModel):
     result: dict | None = None
 
 
+class AIKeyUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    gemini_api_key: str = Field(default="", max_length=200)
+
+
 class StudentList(BaseModel):
     items: list[Student]
     limit: int

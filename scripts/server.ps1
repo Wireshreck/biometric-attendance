@@ -15,13 +15,15 @@ $logFile = Join-Path $env:TEMP "biometric-uvicorn.log"
 $port = 8000
 
 function Get-ServerPid {
+    # PID file only. CIM/WMI process scans hang intermittently on some
+    # machines, and blind python.exe kills risk unrelated work — if the
+    # server was started outside this script, use stop-external help text.
     if (Test-Path $pidFile) {
-        $saved = Get-Content $pidFile -ErrorAction SilentlyContinue
-        if ($saved -and (Get-Process -Id $saved -ErrorAction SilentlyContinue)) { return [int]$saved }
+        $saved = (Get-Content $pidFile -ErrorAction SilentlyContinue | Select-Object -First 1)
+        if ($saved -match '^\d+$' -and (Get-Process -Id $saved -ErrorAction SilentlyContinue)) {
+            return [int]$saved
+        }
     }
-    $found = Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
-        Where-Object { $_.CommandLine -like "*uvicorn*app.main:app*" }
-    if ($found) { return $found[0].ProcessId }
     return $null
 }
 

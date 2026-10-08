@@ -287,6 +287,22 @@
   };
 
   // ---- AI ----
+  async function refreshKey() {
+    try {
+      const s = await API.get('/api/v1/settings/ai');
+      $('keyState').textContent = s.gemini_configured ? 'configured ✓' : 'not set';
+    } catch (e) { $('keyState').textContent = ''; }
+  }
+  $('btnKeySave').onclick = async (e) => {
+    const key = $('aiKey').value.trim();
+    if (!key) { toast('Paste a key first', 'warn'); return; }
+    try {
+      await API.put('/api/v1/settings/ai', { gemini_api_key: key });
+      $('aiKey').value = '';
+      toast('Key saved on server', 'ok');
+      refreshKey();
+    } catch (err) { toast(err.message, 'err'); }
+  };
   const chips = ['How many students attended today?', 'Who was absent today?', 'What is attendance for Class 10A?', 'Summarize today’s attendance.'];
   chips.forEach((c) => { const b = document.createElement('button'); b.textContent = c; b.onclick = () => { $('aiQ').value = c; $('aiForm').requestSubmit(); }; $('aiChips').appendChild(b); });
   function bubble(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; $('aiLog').appendChild(d); d.scrollIntoView({ block: 'nearest' }); return d; }

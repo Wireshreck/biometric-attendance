@@ -30,6 +30,7 @@ from app.events import BUS as EVENT_BUS
 from app.schemas import (
     AIChatRequest,
     AIChatResponse,
+    AIKeyUpdate,
     AttendanceCreate,
     AttendanceResult,
     EnrollmentComplete,
@@ -661,6 +662,52 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(422, {"code": "bad_question", "message": str(exc)}) from exc
         return {"tool": result["tool"], "answer": result["answer"],
                 "ai_available": result["ai_available"], "result": result["result"]}
+
+    @app.get("/api/v1/settings/ai")
+    async def ai_settings(
+        _actor: Annotated[str, Depends(require_admin)],
+        settings: Annotated[Settings, Depends(get_settings)],
+    ):
+        # Never return the key itself — only whether one is configured.
+        return {"gemini_configured": bool(settings.gemini_api_key)}
+
+    @app.put("/api/v1/settings/ai")
+    async def set_ai_settings(
+        body: AIKeyUpdate,
+        _actor: Annotated[str, Depends(require_admin)],
+        request: Request,
+        settings: Annotated[Settings, Depends(get_settings)],
+    ):
+        """Store the Gemini key server-side (e.g. from the on-device app).
+
+        Writes backend/.env and hot-swaps app settings so no restart is
+        needed. The key is never returned by any endpoint.
+        """
+        key = body.gemini_api_key.strip()
+        if key and (len(key) < 10 or len(key) > 200):
+            raise HTTPException(422, {"code": "invalid_key", "message": "That does not look like a valid API key"})
+        env_path = Path(settings.database_path).resolve().parent.parent / ".env"
+        lines = []
+        if env_path.exists():
+            lines = env_path.read_text(encoding="utf-8").splitlines()
+        found = False
+        for i, line in enumerate(lines):
+            if line.startswith("GEMINI_API_KEY="):
+                lines[i] = f"GEMINI_API_KEY={key}"
+                found = True
+        if not found:
+            lines.append(f"GEMINI_API_KEY={key}")
+        env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        request.app.state.settings = Settings(
+            database_path=settings.database_path,
+            app_timezone=settings.app_timezone,
+            admin_username=settings.admin_username,
+            admin_password=settings.admin_password,
+            max_clock_skew_seconds=settings.max_clock_skew_seconds,
+            gemini_api_key=key,
+            allowed_origins=settings.allowed_origins,
+        )
+        return {"gemini_configured": bool(key)}
 
     web_dir = Path(__file__).resolve().parents[2] / "web"
     if web_dir.is_dir():

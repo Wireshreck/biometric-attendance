@@ -48,6 +48,14 @@ Install the app build, enter the server URL on first launch, Test
 Connection (`/health`, shows schema), Continue, then admin credentials in
 Settings. Change servers anytime via Settings → Change server.
 
+## Hosting the backend on the phone itself
+
+No PC required: run the backend in Termux (see `docs/mobile.md`, "Hosting
+the backend ON the phone"). The app then uses `http://127.0.0.1:8000`
+— localhost on Android is the phone, which is exactly where the server
+is. Enter the Gemini key in the app's AI tab; it is saved to the
+phone-side backend only.
+
 ## Backups and updates
 
 Stop the server, copy `backend/data/attendance.db*`, restart. Update =

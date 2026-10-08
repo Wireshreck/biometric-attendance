@@ -54,6 +54,7 @@
 
   const get = (path, silent = false) => req(path, {}, silent);
   const post = (path, body) => req(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+  const put = (path, body) => req(path, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const patch = (path, body) => req(path, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const download = (path, name) => req(path).then((blob) => {
     const a = document.createElement('a');
@@ -80,5 +81,5 @@
     return () => clearInterval(id);
   }
 
-  window.API = { get, post, patch, download, pollRecent, state, forget };
+  window.API = { get, post, put, patch, download, pollRecent, state, forget };
 })();

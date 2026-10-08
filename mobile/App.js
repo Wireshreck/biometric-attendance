@@ -55,7 +55,24 @@ function useApi(cfg) {
       throw e;
     } finally { clearTimeout(timer); }
   };
-  return { get, post };
+  const put = async (p, body) => {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 15000);
+    try {
+      const r = await fetch(cfg.host + p, { method: 'PUT', headers: headers(), body: JSON.stringify(body || {}), signal: ctl.signal });
+      if (r.status === 401) throw new Error('Sign-in rejected — check admin user/password in Settings.');
+      if (!r.ok) {
+        let detail = `Server error ${r.status}`;
+        try { detail = (await r.json()).error?.message || detail; } catch (e) {}
+        throw new Error(detail);
+      }
+      return r.json();
+    } catch (e) {
+      if (e.name === 'AbortError') throw new Error(`Timed out reaching ${cfg.host}.`);
+      throw e;
+    } finally { clearTimeout(timer); }
+  };
+  return { get, post, put };
 }
 
 function Section({ title, children }) {
@@ -112,6 +129,8 @@ export default function App() {
   const [pass, setPass] = useState('');
   const [out, setOut] = useState(['Biometric Attendance']);
   const [busy, setBusy] = useState(false);
+  const [keyInput, setKeyInput] = useState('');
+  const [keyStatus, setKeyStatus] = useState('unknown');
   const [slot, setSlot] = useState('1');
   const [query, setQuery] = useState('');
   const [devices, setDevices] = useState([]);
@@ -120,6 +139,12 @@ export default function App() {
 
   useEffect(() => { loadSettings().then(setCfg); }, []);
   useEffect(() => { if (cfg) { setUser(cfg.user || ''); } }, [cfg]);
+  useEffect(() => {
+    if (!cfg || !cfg.done) return;
+    api.get('/api/v1/settings/ai').then(
+      (s) => setKeyStatus(s.gemini_configured ? 'configured ✓' : 'not set'),
+      () => setKeyStatus('unknown'));
+  }, [tab]);
 
   if (!cfg) return <View style={styles.root}><ActivityIndicator size="large" /></View>;
   if (!cfg.done) return <ScrollView style={styles.root}><Setup initial={cfg} onDone={setCfg} /><StatusBar style="auto" /></ScrollView>;
@@ -135,6 +160,12 @@ export default function App() {
     await AsyncStorage.setItem(STORE_KEY, JSON.stringify(next));
     setCfg(next);
     push('Credentials updated.');
+  };
+  const refreshKey = async () => {
+    try {
+      const s = await api.get('/api/v1/settings/ai');
+      setKeyStatus(s.gemini_configured ? 'configured ✓' : 'not set');
+    } catch (e) { setKeyStatus('unknown'); }
   };
   const changeServer = async () => {
     await AsyncStorage.setItem(STORE_KEY, JSON.stringify({ host: '', user, pass: '', done: false }));
@@ -199,6 +230,9 @@ export default function App() {
       {tab === 'ai' && <Section title="AI Assistant">
         <TextInput style={styles.input} value={query} onChangeText={setQuery} placeholder="Who was absent today?" />
         <Button title="Ask" onPress={() => run('ai', () => api.post('/api/v1/ai/chat', { question: query }))} />
+        <Text style={styles.mut}>Gemini key: {keyStatus}</Text>
+        <TextInput style={styles.input} value={keyInput} onChangeText={setKeyInput} placeholder="Paste Gemini API key here" secureTextEntry autoCapitalize="none" />
+        <Button title="Save key on server" onPress={() => run('save-key', () => api.put('/api/v1/settings/ai', { gemini_api_key: keyInput }).then(async (r) => { setKeyInput(''); await refreshKey(); return r; }))} />
       </Section>}
 
       {tab === 'settings' && <Section title="Settings">

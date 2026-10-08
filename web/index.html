@@ -126,6 +126,7 @@
       <div class="chips" id="aiChips" aria-label="Suggested questions"></div>
       <div id="aiLog" class="chat" aria-live="polite"></div>
       <form id="aiForm" class="row"><label class="grow">Ask <input id="aiQ" maxlength="500" placeholder="Who was absent today?" autocomplete="off"></label><button type="submit">Send</button></form>
+      <div class="panel"><h2>Gemini key</h2><p class="sub">Stored on the server only — never shown again, never sent to clients except here over your connection.</p><div class="row"><input id="aiKey" type="password" placeholder="Paste Gemini API key" autocomplete="off"><button id="btnKeySave">Save key</button><span id="keyState" class="sub"></span></div></div>
     </section>
     <section id="view-help" class="view" aria-label="Help">
       <header class="pagehead"><h1>Help</h1></header>
@@ -136,7 +137,7 @@
         <li>BLE: click Connect BLE in Device and pick <code>biometric-attendance-esp32</code> (Chrome/Edge).</li>
         <li>Adding students requires one provisioned device. In <code>backend/</code> run:<br><code>python -m app.provision_device --name demo-terminal --location lab --sensor-capacity 1000</code><br>Save the printed bearer token for the device; no restart needed.</li></ol></div>
       <div class="panel"><h2>Science-fair demo</h2><p>PING → dashboard refresh → enroll a slot → search it → attendance appears live → full diagnostic → CSV export.</p></div>
-      <div class="panel"><h2>AI setup</h2><p>Set <code>GEMINI_API_KEY</code> in <code>backend/.env</code> and restart. Without it the assistant answers from local data and says so. The key never leaves the server.</p></div>
+      <div class="panel"><h2>AI setup</h2><p>Enter the key in the AI Assistant view (Gemini key card) — it is stored server-side only. Or set <code>GEMINI_API_KEY</code> in <code>backend/.env</code> and restart. Without it the assistant answers from local data and says so. The key never leaves the server.</p></div>
     </section>
   </main>
 </div>

@@ -19,6 +19,21 @@ Unreachable/timeout/invalid-URL/auth failures render explicit errors
 with Retry/Settings — never a crash. The Gemini key and device tokens
 never ship in the app; AI calls go through the backend.
 
+## Hosting the backend ON the phone (Termux, no PC needed)
+
+1. Install Termux (F-Droid) and open it. Turn off battery optimization
+   for Termux so Android doesn't kill the server.
+2. `pkg install -y python git`, then get this repo on the phone
+   (`git clone <repo-url>` or copy the `backend/` folder over USB).
+3. `cd backend`, `pip install fastapi "uvicorn[standard]" pydantic aiosqlite tzdata python-dotenv openpyxl`.
+4. Copy `.env.example` → `.env`, set `ADMIN_USERNAME`/`ADMIN_PASSWORD`
+   (≥16 chars). Leave `GEMINI_API_KEY` empty for now.
+5. `python -m app.provision_device --name phone-terminal --location pocket --sensor-capacity 1000`
+6. `python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`
+7. In the app setup screen enter `http://127.0.0.1:8000`, Test, Continue.
+8. Paste the Gemini key in the app's AI tab — it is stored in the
+   phone-side `.env` via the admin settings endpoint, never in the app.
+
 ```powershell
 cd mobile
 npm install
