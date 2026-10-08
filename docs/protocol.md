@@ -476,9 +476,17 @@ Response:
 ## Timeouts and status codes
 
 Client timeouts: default 20 s; `FINGERPRINT_SEARCH` 30 s;
-`FINGERPRINT_ENROLL` 120 s (two 45 s capture windows plus messaging).
+`FINGERPRINT_ENROLL` 300 s (up to 3 attempts per capture plus messaging).
 Firmware timeouts: `BLE_TIMEOUT_DEFAULT_MS 20000`, `BLE_TIMEOUT_SEARCH_MS
-30000`, `BLE_TIMEOUT_ENROLL_MS 120000` (`firmware/include/config.h`).
+30000`, `BLE_TIMEOUT_ENROLL_MS 300000` (`firmware/include/config.h`).
+
+Write-then-read flow: the client writes the request JSON, waits ~400 ms,
+then reads. The device stages each request and executes it on its main
+loop, so the first reads may return
+`{"status":"busy","code":"processing"}` — keep reading until `status`
+is not `busy` (or the command timeout expires). A `busy` envelope is
+never a result; disconnected/unreachable hardware is reported with the
+documented error codes, never as success.
 
 `status` values: `ok`, `error`, `busy`, `unreachable`, `not_supported`
 (see Message envelope). Diagnostic `result` values: `PASS`, `FAIL`,

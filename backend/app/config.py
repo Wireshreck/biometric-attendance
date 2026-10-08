@@ -17,6 +17,7 @@ class Settings:
     admin_username: str
     admin_password: str
     max_clock_skew_seconds: int = 300
+    gemini_api_key: str = ""
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -27,6 +28,7 @@ class Settings:
             admin_username=os.getenv("ADMIN_USERNAME", ""),
             admin_password=os.getenv("ADMIN_PASSWORD", ""),
             max_clock_skew_seconds=int(os.getenv("MAX_CLOCK_SKEW_SECONDS", "300")),
+            gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
         )
 
     def validate(self) -> None:

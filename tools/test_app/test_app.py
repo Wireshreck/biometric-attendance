@@ -71,6 +71,9 @@ class DiagApp(tk.Tk):
         for c in ("test", "result", "reason"):
             self.table.heading(c, text=c)
         self.table.pack(fill=tk.X, padx=8, pady=6)
+        for tag, color in (("PASS", "#177245"), ("FAIL", "#b3261e"),
+                           ("WARN", "#9a6200"), ("SKIPPED", "#5b6b82")):
+            self.table.tag_configure(tag, foreground=color)
         self.logbox = scrolledtext.ScrolledText(self, height=14)
         self.logbox.pack(fill=tk.BOTH, padx=8, pady=6, expand=True)
 
@@ -86,16 +89,23 @@ class DiagApp(tk.Tk):
         for rid in self.table.get_children():
             if self.table.set(rid, "test") == test:
                 self.table.delete(rid)
-        self.table.insert("", tk.END, values=(test, result, reason))
+        self.table.insert("", tk.END, values=(test, result, reason), tags=(result,))
         self.log({"test": test, "result": result, "reason": reason})
 
     async def _send(self, cmd, params=None, timeout=20.0):
         if self.client is None or not self.client.is_connected:
             raise RuntimeError("not connected")
+        import time as _time
         uuid = char_uuid(P.CHAR_FOR_COMMAND[cmd])
         await self.client.write_gatt_char(uuid, P.build_request(cmd, params).encode(), response=True)
-        raw = await asyncio.wait_for(self.client.read_gatt_char(uuid), timeout)
-        return P.parse_response(bytes(raw).decode("utf-8"))
+        deadline = _time.monotonic() + timeout
+        await asyncio.sleep(0.4)
+        while True:
+            raw = await asyncio.wait_for(self.client.read_gatt_char(uuid), timeout)
+            msg = P.parse_response(bytes(raw).decode("utf-8"))
+            if msg.get("status") != "busy" or _time.monotonic() >= deadline:
+                return msg
+            await asyncio.sleep(0.5)
 
     def need(self):
         if self.client is None or not self.client.is_connected:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <freertos/semphr.h>
 
 struct AttendanceEvent {
     char uuid[37];
@@ -22,5 +23,6 @@ public:
     bool healthy() const { return healthy_; }
 private:
     bool healthy_ = false;
-    bool compact();
+    SemaphoreHandle_t mutex_ = nullptr;
+    bool compactLocked();
 };

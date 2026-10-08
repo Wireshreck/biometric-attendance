@@ -2,22 +2,41 @@
 
 from __future__ import annotations
 
+import asyncio
+import csv
+import io
 import logging
 import uuid
 from contextlib import asynccontextmanager
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
+from pathlib import Path
 from typing import Annotated
 
 import aiosqlite
-from fastapi import Depends, FastAPI, HTTPException, Query, Request
+import openpyxl
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
+from app import ai as AI
+from app import stats as STATS
 from app.auth import require_admin, require_device
 from app.config import Settings
 from app.database import SCHEMA_VERSION, connect_database, initialize_database
 from app.dependencies import get_connection, get_settings
-from app.schemas import AttendanceCreate, AttendanceResult, EnrollmentComplete, Student, StudentCreate, StudentList
+from app.events import BUS as EVENT_BUS
+from app.schemas import (
+    AIChatRequest,
+    AIChatResponse,
+    AttendanceCreate,
+    AttendanceResult,
+    EnrollmentComplete,
+    Student,
+    StudentCreate,
+    StudentList,
+    StudentUpdate,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +107,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         _actor: Annotated[str, Depends(require_admin)],
         connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
         grade_class: str | None = None,
+        section: str | None = None,
         status: str | None = None,
+        q: str | None = None,
         limit: int = Query(50, ge=1, le=100),
         offset: int = Query(0, ge=0),
     ):
@@ -98,12 +119,22 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if grade_class is not None:
             clauses.append("grade_class = ?")
             parameters.append(grade_class)
+        if section is not None:
+            clauses.append("section = ?")
+            parameters.append(section)
         if status is not None:
             clauses.append("status = ?")
             parameters.append(status)
+        if q is not None and q.strip():
+            like = f"%{q.strip()}%"
+            clauses.append(
+                "(first_name LIKE ? OR last_name LIKE ? OR roll_number LIKE ?"
+                " OR (first_name || ' ' || last_name) LIKE ?)"
+            )
+            parameters.extend([like, like, like, like])
         where = " WHERE " + " AND ".join(clauses) if clauses else ""
         async with connection.execute(
-            "SELECT student_uuid, roll_number, first_name, last_name, grade_class, status, fingerprint_slot_id "
+            "SELECT student_uuid, roll_number, first_name, last_name, grade_class, section, status, fingerprint_slot_id "
             f"FROM students{where} ORDER BY last_name, first_name, student_uuid LIMIT ? OFFSET ?",
             (*parameters, limit, offset),
         ) as cursor:
@@ -147,11 +178,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             student_uuid = str(uuid.uuid4())
             await connection.execute(
                 """INSERT INTO students
-                   (student_uuid, roll_number, first_name, last_name, grade_class,
+                   (student_uuid, roll_number, first_name, last_name, grade_class, section,
                     enrollment_device_id, fingerprint_slot_id, status, created_at_utc, updated_at_utc)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING_ENROLLMENT', ?, ?)""",
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PENDING_ENROLLMENT', ?, ?)""",
                 (student_uuid, body.roll_number, body.first_name, body.last_name,
-                 body.grade_class, device_id, slot, now, now),
+                 body.grade_class, body.section, device_id, slot, now, now),
             )
             await connection.execute(
                 "INSERT INTO admin_audit_log (occurred_at_utc, actor, action, target_type, target_id) VALUES (?, ?, 'STUDENT_CREATED', 'student', ?)",
@@ -163,6 +194,45 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(409, {"code": "student_conflict", "message": "Roll number or slot conflicts with an existing record"}) from exc
         return {**body.model_dump(), "student_uuid": student_uuid, "status": "PENDING_ENROLLMENT", "fingerprint_slot_id": slot}
 
+    @app.patch("/api/v1/students/{student_uuid}", response_model=Student)
+    async def update_student(
+        student_uuid: uuid.UUID,
+        body: StudentUpdate,
+        actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        updates = {k: v for k, v in body.model_dump().items() if v is not None}
+        if not updates:
+            raise HTTPException(422, {"code": "empty_update", "message": "No fields to update"})
+        now = _utc_text(datetime.now(UTC))
+        try:
+            await connection.execute("BEGIN IMMEDIATE")
+            async with connection.execute(
+                "SELECT id FROM students WHERE student_uuid = ?", (str(student_uuid),)
+            ) as cursor:
+                row = await cursor.fetchone()
+            if row is None:
+                await connection.rollback()
+                raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+            columns = ", ".join(f"{key} = ?" for key in updates)
+            await connection.execute(
+                f"UPDATE students SET {columns}, updated_at_utc = ? WHERE id = ?",
+                (*updates.values(), now, row["id"]),
+            )
+            await connection.execute(
+                "INSERT INTO admin_audit_log (occurred_at_utc, actor, action, target_type, target_id) VALUES (?, ?, 'STUDENT_UPDATED', 'student', ?)",
+                (now, actor, str(student_uuid)),
+            )
+            await connection.commit()
+        except aiosqlite.IntegrityError as exc:
+            await connection.rollback()
+            raise HTTPException(409, {"code": "student_conflict", "message": "Update conflicts with an existing record"}) from exc
+        async with connection.execute(
+            "SELECT student_uuid, roll_number, first_name, last_name, grade_class, section, status, fingerprint_slot_id FROM students WHERE id = ?",
+            (row["id"],),
+        ) as cursor:
+            return dict(await cursor.fetchone())
+
     @app.get("/api/v1/students/{student_uuid}", response_model=Student)
     async def get_student(
         student_uuid: uuid.UUID,
@@ -170,7 +240,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
     ):
         async with connection.execute(
-            "SELECT student_uuid, roll_number, first_name, last_name, grade_class, status, fingerprint_slot_id FROM students WHERE student_uuid=?",
+            "SELECT student_uuid, roll_number, first_name, last_name, grade_class, section, status, fingerprint_slot_id FROM students WHERE student_uuid=?",
             (str(student_uuid),),
         ) as cursor:
             row = await cursor.fetchone()
@@ -334,10 +404,212 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except aiosqlite.IntegrityError as exc:
             await connection.rollback()
             raise HTTPException(409, {"code": "event_conflict", "message": "Attendance event conflicts with stored data"}) from exc
+        EVENT_BUS.publish("attendance.recorded", {
+            "event_uuid": event_uuid, "outcome": outcome,
+            "captured_at_utc": captured_text, "fingerprint_slot_id": slot,
+            "device_uuid": device["device_uuid"],
+        })
         return JSONResponse(
             status_code=200 if duplicate else 201,
             content={"event_uuid": event_uuid, "outcome": outcome, "captured_at_utc": captured_text},
         )
+
+    @app.get("/api/v1/attendance")
+    async def list_attendance(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+        day: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
+        time_from: str | None = Query(default=None, pattern=r"^\d{2}:\d{2}$"),
+        time_to: str | None = Query(default=None, pattern=r"^\d{2}:\d{2}$"),
+        q: str | None = None,
+        grade_class: str | None = None,
+        section: str | None = None,
+        slot: int | None = Query(default=None, ge=1),
+        outcome: str | None = None,
+        sort: str = "captured_at_utc",
+        order: str = "desc",
+        limit: int = Query(50, ge=1, le=500),
+        offset: int = Query(0, ge=0),
+    ):
+        try:
+            parsed_day = date.fromisoformat(day) if day else None
+            parsed_from = date.fromisoformat(date_from) if date_from else None
+            parsed_to = date.fromisoformat(date_to) if date_to else None
+        except ValueError:
+            raise HTTPException(422, {"code": "invalid_date", "message": "Dates must be YYYY-MM-DD"}) from None
+        if sort not in ("captured_at_utc", "student", "class") or order not in ("asc", "desc"):
+            raise HTTPException(422, {"code": "invalid_sort", "message": "Unsupported sort"})
+        if outcome is not None and outcome not in ("RECORDED", "DUPLICATE_SUPPRESSED"):
+            raise HTTPException(422, {"code": "invalid_outcome", "message": "Unsupported outcome"})
+        rows, total = await STATS.attendance_list(
+            connection, day=parsed_day, date_from=parsed_from, date_to=parsed_to,
+            time_from=time_from, time_to=time_to, student_query=q,
+            grade_class=grade_class, section=section,
+            fingerprint_slot_id=slot, outcome=outcome,
+            sort=sort, order=order, limit=limit, offset=offset,
+            tz=settings.app_timezone,
+        )
+        return {"items": rows, "total": total, "limit": limit, "offset": offset}
+
+    @app.get("/api/v1/statistics/overview")
+    async def statistics_overview(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+        day: str | None = None,
+        trend_days: int = Query(7, ge=1, le=60),
+    ):
+        try:
+            ref = date.fromisoformat(day) if day else STATS.utc_day_of(datetime.now(UTC), settings.app_timezone)
+        except ValueError:
+            raise HTTPException(422, {"code": "invalid_date", "message": "Date must be YYYY-MM-DD"}) from None
+        return {
+            "overview": await STATS.overview(connection, today=ref, tz=settings.app_timezone),
+            "trend": await STATS.daily_trend(connection, days=trend_days, today=ref, tz=settings.app_timezone),
+            "classes": await STATS.class_comparison(connection, day=ref, tz=settings.app_timezone),
+            "busy_times": await STATS.busy_times(connection, day=ref, tz=settings.app_timezone),
+            "absent": await STATS.absent_students(connection, day=ref, tz=settings.app_timezone),
+        }
+
+    @app.get("/api/v1/students/{student_uuid}/summary")
+    async def student_summary(
+        student_uuid: uuid.UUID,
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+        days: int = Query(30, ge=1, le=365),
+    ):
+        summary = await STATS.student_summary(
+            connection, student_uuid=str(student_uuid), days=days, tz=settings.app_timezone)
+        if summary is None:
+            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+        return summary
+
+    @app.get("/api/v1/devices")
+    async def list_devices(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        async with connection.execute(
+            "SELECT device_uuid, device_name, location_name, status,"
+            " last_seen_at_utc, sensor_capacity, firmware_version, created_at_utc"
+            " FROM devices ORDER BY id"
+        ) as cursor:
+            return {"items": [dict(row) for row in await cursor.fetchall()]}
+
+    @app.get("/api/v1/export.csv")
+    async def export_csv(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+        day: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
+        grade_class: str | None = None,
+        section: str | None = None,
+        q: str | None = None,
+    ):
+        try:
+            parsed_day = date.fromisoformat(day) if day else None
+            parsed_from = date.fromisoformat(date_from) if date_from else None
+            parsed_to = date.fromisoformat(date_to) if date_to else None
+        except ValueError:
+            raise HTTPException(422, {"code": "invalid_date", "message": "Dates must be YYYY-MM-DD"}) from None
+        rows, _ = await STATS.attendance_list(
+            connection, day=parsed_day, date_from=parsed_from, date_to=parsed_to,
+            student_query=q, grade_class=grade_class, section=section,
+            limit=10000, offset=0, tz=settings.app_timezone)
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(["date", "time_utc", "student", "roll_number", "class",
+                         "section", "fingerprint_id", "status", "event_uuid"])
+        for row in rows:
+            writer.writerow([
+                row["captured_at_utc"][:10], row["captured_at_utc"][11:16],
+                f"{row['first_name'] or ''} {row['last_name'] or ''}".strip(),
+                row["roll_number"], row["grade_class"], row["section"],
+                row["fingerprint_slot_id"], row["outcome"], row["event_uuid"],
+            ])
+        return PlainTextResponse(output.getvalue(), media_type="text/csv",
+                                 headers={"Content-Disposition": "attachment; filename=attendance.csv"})
+
+    @app.get("/api/v1/export.xlsx")
+    async def export_xlsx(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+        day: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
+        grade_class: str | None = None,
+        section: str | None = None,
+        q: str | None = None,
+    ):
+        try:
+            parsed_day = date.fromisoformat(day) if day else None
+            parsed_from = date.fromisoformat(date_from) if date_from else None
+            parsed_to = date.fromisoformat(date_to) if date_to else None
+        except ValueError:
+            raise HTTPException(422, {"code": "invalid_date", "message": "Dates must be YYYY-MM-DD"}) from None
+        rows, _ = await STATS.attendance_list(
+            connection, day=parsed_day, date_from=parsed_from, date_to=parsed_to,
+            student_query=q, grade_class=grade_class, section=section,
+            limit=10000, offset=0, tz=settings.app_timezone)
+        book = openpyxl.Workbook()
+        sheet = book.active
+        sheet.title = "Attendance"
+        sheet.append(["Date", "Time (UTC)", "Student", "Roll number", "Class",
+                      "Section", "Fingerprint ID", "Status", "Event UUID"])
+        for row in rows:
+            sheet.append([
+                row["captured_at_utc"][:10], row["captured_at_utc"][11:16],
+                f"{row['first_name'] or ''} {row['last_name'] or ''}".strip(),
+                row["roll_number"], row["grade_class"], row["section"],
+                row["fingerprint_slot_id"], row["outcome"], row["event_uuid"],
+            ])
+        buffer = io.BytesIO()
+        book.save(buffer)
+        return Response(buffer.getvalue(),
+                        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        headers={"Content-Disposition": "attachment; filename=attendance.xlsx"})
+
+    @app.get("/api/v1/events")
+    async def event_stream(_actor: Annotated[str, Depends(require_admin)]):
+        queue = EVENT_BUS.subscribe()
+
+        async def generate():
+            try:
+                while True:
+                    try:
+                        message = await asyncio.wait_for(queue.get(), timeout=15.0)
+                        yield f"data: {message}\n\n"
+                    except asyncio.TimeoutError:
+                        yield ": heartbeat\n\n"
+            finally:
+                EVENT_BUS.unsubscribe(queue)
+
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    @app.post("/api/v1/ai/chat", response_model=AIChatResponse)
+    async def ai_chat(
+        body: AIChatRequest,
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+    ):
+        try:
+            result = await AI.answer(connection, body.question, settings.gemini_api_key, settings.app_timezone)
+        except ValueError as exc:
+            raise HTTPException(422, {"code": "bad_question", "message": str(exc)}) from exc
+        return {"tool": result["tool"], "answer": result["answer"],
+                "ai_available": result["ai_available"], "result": result["result"]}
+
+    web_dir = Path(__file__).resolve().parents[2] / "web"
+    if web_dir.is_dir():
+        app.mount("/", StaticFiles(directory=str(web_dir), html=True), name="web")
 
     return app
 

@@ -109,7 +109,7 @@ static void handleSerialCommand(char* line) {
     if (!network.enrollmentAssignment(studentUuid, slot)) { Serial.println("[FAIL] No valid pending enrollment assignment returned by backend."); return; }
     Serial.printf("[INFO] Enrolling pending student into sensor slot %u. Two captures required.\n", slot);
     fingerLatched = true;
-    if (!fingerprint.enroll(slot, enrollmentPrompt)) {
+    if (fingerprint.enroll(slot, enrollmentPrompt) != EnrollResult::OK) {
         indicators.failurePulse();
         if (!rtcService.valid()) transition(AttendanceState::ERROR, "RTC INVALID", "Enrollment failed; set time");
         else if (!store.healthy()) transition(AttendanceState::ERROR, "STORAGE ERROR", "Enrollment failed");
@@ -205,7 +205,7 @@ void attendance_app_setup() {
 }
 
 void attendance_app_loop() {
-    pollSerial(); network.pollReconnect();
+    pollSerial(); network.pollReconnect(); bleManager.poll();
     if (nextEnrollmentRetryMs && static_cast<int32_t>(millis() - nextEnrollmentRetryMs) >= 0) completePendingEnrollment();
     syncOne();
     const uint32_t now = millis();

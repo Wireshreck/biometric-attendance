@@ -67,7 +67,7 @@ def test_honesty_rule():
 
 
 def test_timeouts_and_pins():
-    assert P.TIMEOUTS_MS["ENROLL"] == 120000
+    assert P.TIMEOUTS_MS["ENROLL"] == 300000
     assert P.TIMEOUTS_MS["SEARCH"] == 30000
     assert P.PINS == {"DS3231_SDA": 25, "DS3231_SCL": 26,
                       "R307S_RX": 32, "R307S_TX": 33, "BUZZER": 27}
@@ -97,6 +97,13 @@ def test_protocol_doc_lists_commands():
     for cmd in EXPECTED_COMMANDS:
         assert cmd in doc, f"protocol.md missing {cmd}"
     assert "89ea2240-04cc-4e36-9356-c71647be1c8d" in doc
+
+
+def test_web_vendor_protocol_mirror():
+    import re
+    shared = _read("shared/ble_protocol.js")
+    classic = re.sub(r"(?m)^export ", "", shared)
+    assert _read("web/vendor/ble_protocol.js") == classic
 
 
 def test_firmware_pins_authoritative():

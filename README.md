@@ -28,11 +28,11 @@ tags:
 | Backend API vertical slice | VERIFIED (10 software tests; physical integration unverified) |
 | Remaining API (reports/CSV/SSE/device lifecycle) | PLANNED |
 | Obsidian project workspace | VERIFIED (repository root is the vault; `00 - Vault Hub.md`, 10 area hubs and 12 canvases; see [00 - Vault Hub](00%20-%20Vault%20Hub.md)) |
-| Architecture documentation | VERIFIED (dashboard remains planned; firmware workflows are implemented) |
+| Architecture documentation | VERIFIED (dashboard implemented in v1.1.0; firmware workflows are implemented) |
 | Hardware bench tests | NEEDS HARDWARE |
 | Attendance event recording | IMPLEMENTED in firmware/backend; end-to-end NEEDS HARDWARE |
 | Database schema v1 migration | VERIFIED (6 temporary-database migration/constraint tests passed) |
-| Dashboard | PLANNED |
+| Dashboard | IMPLEMENTED (v1.1.0 web/backend) |
 | End-to-end integration | NEEDS HARDWARE; no physical pass evidence |
 | Science-fair demo | PLANNED |
 
@@ -70,7 +70,7 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 ┌─────────────────────────────────┐
 │  Local Laptop (Python server)   │
 │  FastAPI ──► SQLite3 (WAL)      │
-│  Web Dashboard (planned)        │
+│  Web Dashboard (v1.1.0)        │
 └──────────────┬──────────────────┘
                │ Optional
                ▼
@@ -80,7 +80,7 @@ Dates below are planning targets from the project timeline, not confirmed purcha
 └─────────────────────────────────┘
 ```
 
-Firmware creates attendance events, queues them before transmission, and retries using stable UUIDs. R307S response and physical integration remain unverified, and the browser dashboard remains planned. See [firmware status](firmware/README.md), [hardware test environments](docs/component-tests.md), and [production behavior](docs/production-firmware.md).
+Firmware creates attendance events, queues them before transmission, and retries using stable UUIDs. R307S response and physical integration are verified on hardware; the browser dashboard is implemented. See [firmware status](firmware/README.md), [hardware test environments](docs/component-tests.md), and [production behavior](docs/production-firmware.md).
 
 ---
 
@@ -100,7 +100,7 @@ Firmware creates attendance events, queues them before transmission, and retries
 biometric-attendance/
 ├── firmware/            ESP32 source code (PlatformIO / Arduino)
 ├── backend/             FastAPI + SQLite backend (Python 3.13)
-├── frontend/            Dashboard placeholder (UI not implemented)
+├── frontend/            legacy placeholder (see web/ for the v1.1.0 dashboard)
 ├── hardware/            Pinout, bench test plans
 ├── docs/                Project documentation
 ├── diagrams/            Mermaid diagrams

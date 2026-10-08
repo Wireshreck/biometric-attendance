@@ -1,22 +1,20 @@
 # Mobile App (`mobile/`)
 
-Stack: Expo React Native + `react-native-ble-plx`. Chosen because it shares
-the exact same BLE protocol module as the web app
-(`../shared/ble_protocol.js` — no second protocol) and is maintainable with
-the standard Expo toolchain.
+Stack: Expo React Native + `react-native-ble-plx` for BLE, `fetch` for the
+backend REST API. Same BLE protocol module as web
+(`../shared/ble_protocol.js`); same REST contract as web/desktop.
 
-## Structure
+Tab screens (no navigation dependency, `useState` tabs):
 
-- `App.js` — screens: BLE scan/connect, device status, fingerprint
-  enrollment/search/deletion, RTC, attendance, diagnostics, help.
-- `bleClient.js` — `DeviceClient` transport: scan, connect/disconnect,
-  `send(cmd, params)` with JSON envelope; 16-bit characteristic UUIDs
-  0x1101–0x1108 expanded to the Bluetooth base UUID.
-- `package.json` — Expo dependencies.
-- `protocol.test.js` — software-only test: `node protocol.test.js` (or
-  `npm test`). No hardware required.
-
-## Develop
+- Home: today's overview, BLE scan/connect, quick actions.
+- Attendance: search, today list (server-side queries).
+- Students: search, profiles via summary endpoint.
+- Fingerprints: enroll/search/delete/count over BLE.
+- Device: BLE status, RTC read/set, disconnect.
+- Diagnostics: FULL_DIAGNOSTIC, BUZZER_TEST, PING.
+- AI Assistant: `/api/v1/ai/chat` with graceful missing-key message.
+- Settings: API host (default `http://192.168.137.1:8000`), admin
+  credentials, hardware reference.
 
 ```powershell
 cd mobile
@@ -25,8 +23,7 @@ node protocol.test.js
 npx expo start
 ```
 
-A full APK build requires the Flutter-free Expo/Android toolchain
-(`npx expo run:android` with Android SDK) and is not produced in this
-Windows-only CI-less environment; see Known Limitations in the release
-notes. Protocol behavior is identical to web/desktop/test.exe by
-construction (shared module + shared test vectors).
+A store/APK build needs the Android SDK (`npx expo run:android`) and is
+not produced in this environment. API credentials are kept in component
+state only, never persisted. The Gemini key never ships in the app —
+AI calls go through the backend.

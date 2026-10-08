@@ -63,10 +63,15 @@ export class DeviceClient {
     const charName = CHAR_FOR_COMMAND[cmd];
     const uuid = charUuid(charName);
     const body = buildRequest(cmd, params);
-    const w = await this.device.writeCharacteristicWithResponseForService(
+    const t0 = Date.now();
+    await this.device.writeCharacteristicWithResponseForService(
       BLE_SERVICE_UUID, uuid, Buffer.from(body, 'utf8').toString('base64'));
-    const raw = Buffer.from(w.value, 'base64').toString('utf8');
-    return parseResponse(raw);
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 400));
+      const w = await this.device.readCharacteristicForService(BLE_SERVICE_UUID, uuid);
+      const msg = parseResponse(Buffer.from(w.value, 'base64').toString('utf8'));
+      if (msg.status !== 'busy' || Date.now() - t0 > timeoutMs) return msg;
+    }
   }
 }
 

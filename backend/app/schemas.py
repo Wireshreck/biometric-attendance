@@ -13,6 +13,16 @@ class StudentCreate(BaseModel):
     first_name: str = Field(min_length=1, max_length=80)
     last_name: str = Field(min_length=1, max_length=80)
     grade_class: str = Field(min_length=1, max_length=40)
+    section: str = Field(default="", max_length=40)
+
+
+class StudentUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    roll_number: str | None = Field(default=None, min_length=1, max_length=40)
+    first_name: str | None = Field(default=None, min_length=1, max_length=80)
+    last_name: str | None = Field(default=None, min_length=1, max_length=80)
+    grade_class: str | None = Field(default=None, min_length=1, max_length=40)
+    section: str | None = Field(default=None, max_length=40)
 
 
 class Student(BaseModel):
@@ -21,8 +31,21 @@ class Student(BaseModel):
     first_name: str
     last_name: str
     grade_class: str
+    section: str = ""
     status: str
     fingerprint_slot_id: int | None
+
+
+class AIChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    question: str = Field(min_length=1, max_length=500)
+
+
+class AIChatResponse(BaseModel):
+    tool: str
+    answer: str
+    ai_available: bool
+    result: dict | None = None
 
 
 class StudentList(BaseModel):

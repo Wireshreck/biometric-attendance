@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <Adafruit_Fingerprint.h>
 #include <RTClib.h>
+#include <freertos/semphr.h>
 
 enum class FingerprintScan { NO_FINGER, MATCH, NO_MATCH, SENSOR_ERROR };
 
@@ -34,13 +35,30 @@ private:
     void (*report_)(const char*) = nullptr;
 };
 
+enum class EnrollResult {
+    OK,
+    NO_SENSOR,
+    BAD_SLOT,
+    STORAGE_FULL,
+    CANCELLED,
+    TIMEOUT_FIRST,
+    BAD_IMAGE_FIRST,
+    DUPLICATE,
+    TIMEOUT_REMOVAL,
+    TIMEOUT_SECOND,
+    BAD_IMAGE_SECOND,
+    MISMATCH,
+    STORE_FAILED
+};
+
 class FingerprintService {
 public:
     FingerprintService();
     bool begin();
     bool identify(uint16_t& slotId, uint16_t& confidence);
     FingerprintScan scan(uint16_t& slotId, uint16_t& confidence);
-    bool enroll(uint16_t slotId, void (*prompt)(const char*, const char*));
+    EnrollResult enroll(uint16_t slotId, void (*prompt)(const char*, const char*));
+    bool enrollLegacy(uint16_t slotId, void (*prompt)(const char*, const char*));
     void cancelEnroll();
     bool isEnrolling() const { return enrolling_; }
     bool readInventory(uint16_t& capacity, uint16_t& usedTemplates);
@@ -54,4 +72,6 @@ private:
     bool ready_ = false;
     volatile bool cancelEnroll_ = false;
     bool enrolling_ = false;
+    SemaphoreHandle_t mutex_ = nullptr;
+    uint8_t errStreak_ = 0;
 };

@@ -9,6 +9,7 @@
 #include "device_services.h"
 
 #ifdef ARDUINO_ARCH_ESP32
+#include <BLE2902.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -55,13 +56,32 @@ public:
         if (!gActive) return;
         std::string v = c->getValue();
         if (v.empty()) return;
-        char resp[2048];
-        if (!gActive->handleCommand(v.c_str(), resp, sizeof(resp))) return;
-        c->setValue(resp);
-        c->notify();
+        // Fast-path only: stage for the loop task. Heavy work (JSON,
+        // sensor UART, LittleFS) here overflows the BLE task stack and
+        // crashes the device. See BleService::poll().
+        if (!gActive->stageRequest(v.c_str(), v.size(), c)) {
+            c->setValue("{\"status\":\"busy\",\"code\":\"busy\"}");
+        } else {
+            c->setValue("{\"status\":\"busy\",\"code\":\"processing\"}");
+        }
+        // NOTE: no notify() here. Issuing a notification from inside the
+        // write callback breaks the ATT Write Response on some centrals
+        // (Windows WinRT cancels the transaction). Clients use the
+        // write-then-read pattern served by poll().
     }
 };
 CommandCallbacks gCallbacks;
+
+class ServerCallbacks : public BLEServerCallbacks {
+public:
+    // A central that drops without a clean disconnect (common with the
+    // Windows BLE stack) must not silence the device: resume advertising
+    // so the next client can always find it.
+    void onDisconnect(BLEServer* s) override {
+        if (s) s->getAdvertising()->start();
+    }
+};
+ServerCallbacks gServerCallbacks;
 #endif
 
 }  // namespace
@@ -233,17 +253,52 @@ bool BleService::handleCommand(const char* requestJson, char* responseOut, size_
             }
         }
         emit("{\"state\":\"ENROLL_PLACE_FINGER\"}");
-        bool enrolled = fp_->enroll((uint16_t)slot, [](const char* t, const char* d) {
-            (void)t; (void)d;
+        const EnrollResult outcome = fp_->enroll((uint16_t)slot, [](const char* t, const char* d) {
+            Serial.printf("[ENROLL] %s: %s\n", t ? t : "?", d ? d : "");
             if (gActive) gActive->emit("{\"state\":\"ENROLL_PROGRESS\"}");
         });
-        if (!enrolled) {
-            if (fp_->isEnrolling()) {
-                errResp(responseOut, responseSize, ERR_TIMEOUT, "Enrollment cancelled or timed out");
-            } else {
-                errResp(responseOut, responseSize, ERR_BAD_IMAGE,
-                        "Enrollment failed: no finger, bad image, mismatch, duplicate, or storage error");
-            }
+        switch (outcome) {
+            case EnrollResult::OK: break;
+            case EnrollResult::NO_SENSOR:
+                errResp(responseOut, responseSize, ERR_SENSOR_UNAVAILABLE, "Fingerprint sensor not connected");
+                return true;
+            case EnrollResult::BAD_SLOT:
+                errResp(responseOut, responseSize, ERR_INVALID_ID, "Invalid enrollment slot");
+                return true;
+            case EnrollResult::STORAGE_FULL:
+                errResp(responseOut, responseSize, ERR_STORAGE_FULL, "Fingerprint database is full");
+                return true;
+            case EnrollResult::CANCELLED:
+                errResp(responseOut, responseSize, ERR_TIMEOUT, "Enrollment cancelled");
+                return true;
+            case EnrollResult::TIMEOUT_FIRST:
+                errResp(responseOut, responseSize, ERR_NO_FINGER, "No finger detected within timeout");
+                return true;
+            case EnrollResult::BAD_IMAGE_FIRST:
+                errResp(responseOut, responseSize, ERR_BAD_IMAGE, "First capture was unreadable");
+                return true;
+            case EnrollResult::DUPLICATE:
+                errResp(responseOut, responseSize, ERR_DUPLICATE, "Fingerprint already enrolled");
+                return true;
+            case EnrollResult::TIMEOUT_REMOVAL:
+                errResp(responseOut, responseSize, ERR_TIMEOUT, "Finger was not removed in time");
+                return true;
+            case EnrollResult::TIMEOUT_SECOND:
+                errResp(responseOut, responseSize, ERR_NO_FINGER, "Second capture timed out waiting for finger");
+                return true;
+            case EnrollResult::BAD_IMAGE_SECOND:
+                errResp(responseOut, responseSize, ERR_BAD_IMAGE, "Second capture was unreadable");
+                return true;
+            case EnrollResult::MISMATCH:
+                errResp(responseOut, responseSize, ERR_IMAGE_MISMATCH, "Second impression did not match first");
+                return true;
+            case EnrollResult::STORE_FAILED:
+                errResp(responseOut, responseSize, ERR_WRITE_FAILED, "Template storage failed");
+                return true;
+        }
+        if (outcome != EnrollResult::OK) {
+            errResp(responseOut, responseSize, ERR_BAD_IMAGE,
+                    "Enrollment failed: no finger, bad image, mismatch, duplicate, or storage error");
             return true;
         }
         JsonDocument doc;
@@ -452,7 +507,9 @@ bool BleService::begin(const char* deviceName) {
     gActive = this;
     BLEDevice::init(deviceName ? deviceName : DEVICE_NAME);
     BLEServer* server = BLEDevice::createServer();
-    BLEService* svc = server->createService(BLE_SERVICE_UUID);
+    server->setCallbacks(&gServerCallbacks);
+    // 1 service decl + 8 characteristics x (decl + value + CCCD) + margin.
+    BLEService* svc = server->createService(BLEUUID(BLE_SERVICE_UUID), 40);
     for (int i = 0; i < 8; ++i) {
         BLECharacteristic* c = svc->createCharacteristic(
             kCharUuids[i], BLECharacteristic::PROPERTY_READ |
@@ -460,6 +517,7 @@ bool BleService::begin(const char* deviceName) {
                            BLECharacteristic::PROPERTY_NOTIFY);
         c->setCallbacks(&gCallbacks);
         c->setValue("{}");
+        c->addDescriptor(new BLE2902());
         gChars[i] = c;
     }
     svc->start();
@@ -473,5 +531,27 @@ bool BleService::begin(const char* deviceName) {
 }
 
 void BleService::poll() {
-    // GATT callbacks are interrupt-driven; nothing to poll on ESP32 Arduino.
+#ifdef ARDUINO_ARCH_ESP32
+    if (!stagedPending_) return;
+    stagedPending_ = false;
+    stagedReq_[stagedLen_] = '\0';
+    if (handleCommand(stagedReq_, respBuf_, sizeof(respBuf_))) {
+        BLECharacteristic* target = static_cast<BLECharacteristic*>(stagedTarget_);
+        if (target) target->setValue(respBuf_);
+    }
+    stagedTarget_ = nullptr;
+    stagedLen_ = 0;
+#else
+    (void)0;
+#endif
+}
+
+bool BleService::stageRequest(const char* requestJson, size_t length, void* target) {
+    if (!requestJson || !target || length == 0 || length >= REQ_MAX) return false;
+    if (stagedPending_) return false;
+    memcpy(stagedReq_, requestJson, length);
+    stagedLen_ = length;
+    stagedTarget_ = target;
+    stagedPending_ = true;
+    return true;
 }

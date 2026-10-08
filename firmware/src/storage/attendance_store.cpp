@@ -8,6 +8,17 @@
 namespace {
 struct Entry { AttendanceEvent event; bool acked; };
 static bool tailWasTruncated = false;
+// Serializes LittleFS access between the main loop task and the BLE task.
+// LittleFS is not thread-safe; concurrent opens from two tasks corrupt the
+// heap and crash the device (observed via BLE ATTENDANCE_* commands).
+struct StoreLock {
+    SemaphoreHandle_t m;
+    bool held = false;
+    explicit StoreLock(SemaphoreHandle_t mtx, uint32_t waitMs = 5000) : m(mtx) {
+        if (m) held = xSemaphoreTake(m, pdMS_TO_TICKS(waitMs)) == pdTRUE;
+    }
+    ~StoreLock() { if (held) xSemaphoreGive(m); }
+};
 static uint32_t crc32(const uint8_t* data, size_t size) {
     uint32_t crc = 0xFFFFFFFFu;
     while (size--) {
@@ -71,6 +82,9 @@ static bool loadEntries(std::vector<Entry>& entries) {
 }
 
 bool AttendanceStore::begin() {
+    if (!mutex_) mutex_ = xSemaphoreCreateMutex();
+    StoreLock lock(mutex_);
+    if (!lock.held) return false;
     if (!LittleFS.begin(false)) return false; // Never format automatically: unreadable data must be preserved.
     if (!LittleFS.exists(QUEUE_PATH) && LittleFS.exists("/attendance.bak")) LittleFS.rename("/attendance.bak", QUEUE_PATH);
     if (LittleFS.exists(QUEUE_PATH)) { LittleFS.remove("/attendance.tmp"); LittleFS.remove("/attendance.bak"); }
@@ -81,12 +95,23 @@ bool AttendanceStore::begin() {
     }
     std::vector<Entry> entries;
     healthy_ = loadEntries(entries) && entries.size() <= QUEUE_MAX_PENDING;
-    if (healthy_ && tailWasTruncated) healthy_ = compact(); // Rewrite only complete, CRC-valid pending events before further appends.
+    if (healthy_ && tailWasTruncated) healthy_ = compactLocked(); // Rewrite only complete, CRC-valid pending events before further appends.
     return healthy_;
 }
 
+namespace {
+size_t countPendingEntries(std::vector<Entry>& entries) {
+    size_t count = 0; for (const auto& item : entries) if (!item.acked) ++count;
+    return count;
+}
+}  // namespace
+
 bool AttendanceStore::append(const AttendanceEvent& event) {
-    if (!healthy_ || pendingCount() >= QUEUE_MAX_PENDING) return false;
+    StoreLock lock(mutex_);
+    if (!lock.held) return false;
+    std::vector<Entry> entries;
+    if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return false; }
+    if (countPendingEntries(entries) >= QUEUE_MAX_PENDING) return false;
     File file = LittleFS.open(QUEUE_PATH, "a");
     if (!file || file.size() >= QUEUE_MAX_BYTES) { if (file) file.close(); return false; }
     JsonDocument doc; doc["kind"] = "event"; doc["uuid"] = event.uuid; doc["slot"] = event.slot;
@@ -97,6 +122,8 @@ bool AttendanceStore::append(const AttendanceEvent& event) {
 }
 
 bool AttendanceStore::nextPending(AttendanceEvent& event) {
+    StoreLock lock(mutex_);
+    if (!lock.held) return false;
     std::vector<Entry> entries;
     if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return false; }
     for (const auto& item : entries) if (!item.acked) { event = item.event; return true; }
@@ -104,6 +131,8 @@ bool AttendanceStore::nextPending(AttendanceEvent& event) {
 }
 
 bool AttendanceStore::acknowledge(const char* uuid) {
+    StoreLock lock(mutex_);
+    if (!lock.held) return false;
     if (!healthy_) return false;
     File file = LittleFS.open(QUEUE_PATH, "a");
     if (!file || file.size() >= QUEUE_MAX_BYTES) { if (file) file.close(); return false; }
@@ -113,26 +142,30 @@ bool AttendanceStore::acknowledge(const char* uuid) {
         // Compaction removes only events that have an appended durable acknowledgement.
         std::vector<Entry> entries;
         if (!loadEntries(entries)) { healthy_ = false; return false; }
-        if (entries.size() > 0 && pendingCount() * 2 < entries.size()) compact();
+        if (!entries.empty() && countPendingEntries(entries) * 2 < entries.size()) compactLocked();
     } else healthy_ = false;
     return ok;
 }
 
 size_t AttendanceStore::pendingCount() {
+    StoreLock lock(mutex_);
+    if (!lock.held) return QUEUE_MAX_PENDING;
     std::vector<Entry> entries;
     if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return QUEUE_MAX_PENDING; }
-    size_t count = 0; for (const auto& item : entries) if (!item.acked) ++count;
-    return count;
+    return countPendingEntries(entries);
 }
 
 size_t AttendanceStore::totalCount() {
+    StoreLock lock(mutex_);
+    if (!lock.held) return 0;
     std::vector<Entry> entries;
     if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return 0; }
-    size_t count = 0; for (const auto& item : entries) if (!item.acked) ++count;
-    return count;
+    return countPendingEntries(entries);
 }
 
 bool AttendanceStore::readAll(AttendanceEvent* out, size_t capacity, size_t& count) {
+    StoreLock lock(mutex_);
+    if (!lock.held) return false;
     count = 0;
     std::vector<Entry> entries;
     if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return false; }
@@ -145,6 +178,8 @@ bool AttendanceStore::readAll(AttendanceEvent* out, size_t capacity, size_t& cou
 }
 
 bool AttendanceStore::clear() {
+    StoreLock lock(mutex_);
+    if (!lock.held) return false;
     if (!healthy_) return false;
     LittleFS.remove("/attendance.tmp");
     File file = LittleFS.open(QUEUE_PATH, "w");
@@ -153,7 +188,7 @@ bool AttendanceStore::clear() {
     return true;
 }
 
-bool AttendanceStore::compact() {
+bool AttendanceStore::compactLocked() {
     std::vector<Entry> entries;
     if (!loadEntries(entries)) { healthy_ = false; return false; }
     const char* temp = "/attendance.tmp"; const char* backup = "/attendance.bak";

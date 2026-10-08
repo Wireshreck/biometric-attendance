@@ -1,8 +1,8 @@
 // Shared BLE protocol constants. Mirrors firmware/include/ble_protocol.h
 // and docs/protocol.md. Web, mobile, desktop, and test.exe must import
 // this file instead of redefining commands.
-export const BLE_SERVICE_UUID = '89ea2240-04cc-4e36-9356-c71647be1c8d';
-export const BLE_CHARS = {
+const BLE_SERVICE_UUID = '89ea2240-04cc-4e36-9356-c71647be1c8d';
+const BLE_CHARS = {
   DEVICE_INFO: '1101',
   DEVICE_STATUS: '1102',
   PING: '1103',
@@ -13,7 +13,7 @@ export const BLE_CHARS = {
   ATTENDANCE: '1108',
 };
 
-export const COMMANDS = [
+const COMMANDS = [
   'DEVICE_INFO', 'DEVICE_STATUS', 'PING',
   'RTC_GET', 'RTC_SET',
   'FINGERPRINT_STATUS', 'FINGERPRINT_COUNT', 'FINGERPRINT_ENROLL',
@@ -22,7 +22,7 @@ export const COMMANDS = [
   'ATTENDANCE_STATUS', 'ATTENDANCE_READ', 'ATTENDANCE_CLEAR',
 ];
 
-export const CHAR_FOR_COMMAND = {
+const CHAR_FOR_COMMAND = {
   DEVICE_INFO: 'DEVICE_INFO',
   DEVICE_STATUS: 'DEVICE_STATUS',
   PING: 'PING',
@@ -41,31 +41,31 @@ export const CHAR_FOR_COMMAND = {
   ATTENDANCE_CLEAR: 'ATTENDANCE',
 };
 
-export const STATUS = ['ok', 'error', 'busy', 'unreachable', 'not_supported'];
-export const ERROR_CODES = [
+const STATUS = ['ok', 'error', 'busy', 'unreachable', 'not_supported'];
+const ERROR_CODES = [
   'UNKNOWN', 'SENSOR_UNAVAILABLE', 'NO_FINGER', 'BAD_IMAGE',
   'IMAGE_MISMATCH', 'DUPLICATE', 'INVALID_ID', 'STORAGE_FULL',
   'TIMEOUT', 'COMMUNICATION', 'WRITE_FAILED', 'RTC_INVALID',
   'RTC_LOST_POWER', 'NOT_IMPLEMENTED',
 ];
-export const ENROLL_STATES = [
+const ENROLL_STATES = [
   'ENROLL_PLACE_FINGER', 'ENROLL_REMOVE_FINGER',
   'ENROLL_PLACE_FINGER_AGAIN', 'ENROLL_SUCCESS', 'ENROLL_FAILED',
 ];
-export const DIAG_TESTS = [
+const DIAG_TESTS = [
   'ESP32', 'BLE', 'R307S_UART', 'R307S_SENSOR', 'FINGERPRINT_DB',
   'DS3231', 'RTC', 'BUZZER', 'STORAGE', 'ATTENDANCE',
 ];
-export const DIAG_RESULTS = ['PASS', 'FAIL', 'WARN', 'SKIPPED'];
+const DIAG_RESULTS = ['PASS', 'FAIL', 'WARN', 'SKIPPED'];
 
-export const TIMEOUTS_MS = { DEFAULT: 20000, ENROLL: 300000, SEARCH: 30000 };
+const TIMEOUTS_MS = { DEFAULT: 20000, ENROLL: 300000, SEARCH: 30000 };
 
-export function buildRequest(cmd, params = {}) {
+function buildRequest(cmd, params = {}) {
   if (!COMMANDS.includes(cmd)) throw new Error(`unknown command ${cmd}`);
   return JSON.stringify({ cmd, ...params });
 }
 
-export function parseResponse(text) {
+function parseResponse(text) {
   const msg = JSON.parse(text);
   if (typeof msg.status !== 'string') throw new Error('response missing status');
   return msg;
@@ -73,7 +73,7 @@ export function parseResponse(text) {
 
 // Returns true only for honest device semantics: PASS requires the device
 // to have actually run the test; disconnected hardware must not be PASS.
-export function isHonestDiagResult(entry, connected) {
+function isHonestDiagResult(entry, connected) {
   if (!entry || !DIAG_TESTS.includes(entry.test)) return false;
   if (!DIAG_RESULTS.includes(entry.result)) return false;
   if (!connected && entry.result === 'PASS' &&

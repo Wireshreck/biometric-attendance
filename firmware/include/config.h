@@ -34,7 +34,7 @@
 //   They are currently unused/reserved. Do not add new hardware here without updating this file and the docs.
 
 // Firmware identity
-#define FIRMWARE_VERSION "1.0.0"
+#define FIRMWARE_VERSION "1.1.0"
 #define DEVICE_NAME "biometric-attendance-esp32"
 #define HARDWARE_NAME "ESP32-WROOM-32"
 
@@ -51,7 +51,7 @@
 
 // BLE protocol timeouts (milliseconds, documented in docs/protocol.md)
 #define BLE_TIMEOUT_DEFAULT_MS 20000UL
-#define BLE_TIMEOUT_ENROLL_MS 120000UL
+#define BLE_TIMEOUT_ENROLL_MS 300000UL
 #define BLE_TIMEOUT_SEARCH_MS 30000UL
 
 // Wi-Fi & Backend Server Settings (Configurable for Exhibition)

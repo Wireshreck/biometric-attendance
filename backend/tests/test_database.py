@@ -122,7 +122,11 @@ async def test_attendance_event_uuid_and_foreign_keys(tmp_path: Path) -> None:
 async def test_migration_failure_rolls_back_schema_and_version(tmp_path: Path) -> None:
     migrations = tmp_path / "bad-migrations"
     migrations.mkdir()
-    (migrations / "001_broken.sql").write_text(
+    (migrations / "001_ok.sql").write_text(
+        "CREATE TABLE should_stay (id INTEGER PRIMARY KEY);\n",
+        encoding="utf-8",
+    )
+    (migrations / "002_broken.sql").write_text(
         "CREATE TABLE should_rollback (id INTEGER PRIMARY KEY);\nINVALID SQL;\n",
         encoding="utf-8",
     )
@@ -131,7 +135,10 @@ async def test_migration_failure_rolls_back_schema_and_version(tmp_path: Path) -
         await connect_database(db_path, migrations_dir=migrations)
 
     with sqlite3.connect(db_path) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 0
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='should_stay'"
+        ).fetchone() is not None
         assert connection.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='should_rollback'"
         ).fetchone() is None

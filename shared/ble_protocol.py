@@ -64,7 +64,7 @@ DIAG_TESTS = [
 
 DIAG_RESULTS = ["PASS", "FAIL", "WARN", "SKIPPED"]
 
-TIMEOUTS_MS = {"DEFAULT": 20000, "ENROLL": 120000, "SEARCH": 30000}
+TIMEOUTS_MS = {"DEFAULT": 20000, "ENROLL": 300000, "SEARCH": 30000}
 
 # Final hardware mapping (authoritative; matches firmware/include/config.h).
 PINS = {

@@ -10,7 +10,7 @@ from pathlib import Path
 import aiosqlite
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 MIGRATIONS_DIR = Path(__file__).resolve().parents[1] / "migrations"
 _MIGRATION_NAME = re.compile(r"^(?P<version>[0-9]{3,})_[a-z0-9_]+\.sql$")
 
