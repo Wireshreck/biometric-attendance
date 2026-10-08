@@ -1,22 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Button, ScrollView, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { client } from './bleClient';
 import { TIMEOUTS_MS } from '../shared/ble_protocol.js';
 
-const API_DEFAULT = 'http://192.168.137.1:8000';
+const STORE_KEY = 'biometric-attendance-settings-v1';
 
-function useApi(host, user, pass) {
-  const headers = { Authorization: 'Basic ' + btoa(`${user}:${pass}`), 'Content-Type': 'application/json' };
-  const get = async (p) => {
-    const r = await fetch(host + p, { headers });
-    if (!r.ok) throw new Error(`API ${r.status}`);
-    return r.json();
+function normalizeUrl(raw) {
+  const t = (raw || '').trim().replace(/\/+$/, '');
+  if (!/^https?:\/\/[^/]+/.test(t)) throw new Error('Use http(s)://host[:port], e.g. http://192.168.1.100:8000');
+  return t;
+}
+
+async function loadSettings() {
+  try {
+    const raw = await AsyncStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { host: '', user: '', pass: '', done: false };
+}
+
+function useApi(cfg) {
+  const headers = () => ({
+    Authorization: 'Basic ' + btoa(`${cfg.user}:${cfg.pass}`),
+    'Content-Type': 'application/json',
+  });
+  const get = async (p, opts = {}) => {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), opts.timeout || 12000);
+    try {
+      const r = await fetch(cfg.host + p, { headers: headers(), signal: ctl.signal });
+      if (r.status === 401) throw new Error('Sign-in rejected — check admin user/password in Settings.');
+      if (!r.ok) throw new Error(`Server error ${r.status}`);
+      return r.json();
+    } catch (e) {
+      if (e.name === 'AbortError') throw new Error(`Timed out reaching ${cfg.host}.`);
+      if (/Network request failed/i.test(e.message)) {
+        throw new Error(`Cannot reach ${cfg.host}. Same Wi-Fi? Server running?`);
+      }
+      throw e;
+    } finally { clearTimeout(timer); }
   };
   const post = async (p, body) => {
-    const r = await fetch(host + p, { method: 'POST', headers, body: JSON.stringify(body || {}) });
-    if (!r.ok) throw new Error(`API ${r.status}`);
-    return r.json();
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 15000);
+    try {
+      const r = await fetch(cfg.host + p, { method: 'POST', headers: headers(), body: JSON.stringify(body || {}), signal: ctl.signal });
+      if (r.status === 401) throw new Error('Sign-in rejected — check admin user/password in Settings.');
+      if (!r.ok) throw new Error(`Server error ${r.status}`);
+      return r.json();
+    } catch (e) {
+      if (e.name === 'AbortError') throw new Error(`Timed out reaching ${cfg.host}.`);
+      throw e;
+    } finally { clearTimeout(timer); }
   };
   return { get, post };
 }
@@ -25,23 +62,83 @@ function Section({ title, children }) {
   return <View style={styles.sec}><Text style={styles.h2}>{title}</Text>{children}</View>;
 }
 
+function Setup({ initial, onDone }) {
+  const [host, setHost] = useState(initial.host || '');
+  const [user, setUser] = useState(initial.user || '');
+  const [pass, setPass] = useState('');
+  const [state, setState] = useState({ phase: 'idle', msg: '' });
+  const test = async () => {
+    setState({ phase: 'busy', msg: 'Contacting server…' });
+    try {
+      const base = normalizeUrl(host);
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(), 10000);
+      const r = await fetch(base + '/health', { signal: ctl.signal });
+      clearTimeout(timer);
+      if (!r.ok) throw new Error(`Server replied ${r.status}`);
+      const h = await r.json();
+      setState({ phase: 'ok', msg: `Connected — schema v${h.schema_version}.`, base });
+    } catch (e) {
+      setState({ phase: 'fail', msg: e.name === 'AbortError' ? 'Timed out. Same Wi-Fi? Correct IP/port?' : String(e.message || e) });
+    }
+  };
+  const cont = async () => {
+    const base = state.base || normalizeUrl(host);
+    await AsyncStorage.setItem(STORE_KEY, JSON.stringify({ host: base, user, pass, done: true }));
+    onDone({ host: base, user, pass, done: true });
+  };
+  return (
+    <View style={styles.setup}>
+      <Text style={styles.h1}>Biometric Attendance</Text>
+      <Text>Connect to your self-hosted server. Nothing is hardcoded — the backend runs on your own machine.</Text>
+      <Text>Server URL</Text>
+      <TextInput style={styles.input} value={host} onChangeText={setHost} placeholder="http://192.168.1.100:8000" autoCapitalize="none" />
+      <Text>Admin user</Text>
+      <TextInput style={styles.input} value={user} onChangeText={setUser} autoCapitalize="none" />
+      <Text>Admin password</Text>
+      <TextInput style={styles.input} value={pass} onChangeText={setPass} secureTextEntry />
+      {state.phase === 'busy' && <ActivityIndicator />}
+      {!!state.msg && <Text style={state.phase === 'fail' ? styles.err : styles.ok}>{state.msg}</Text>}
+      <Button title="Test Connection" onPress={test} />
+      <Button title="Continue" disabled={state.phase !== 'ok'} onPress={cont} />
+    </View>
+  );
+}
+
 export default function App() {
+  const [cfg, setCfg] = useState(null);
   const [tab, setTab] = useState('home');
-  const [host, setHost] = useState(API_DEFAULT);
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
-  const [out, setOut] = useState(['Biometric Attendance v1.1.0']);
+  const [out, setOut] = useState(['Biometric Attendance']);
   const [busy, setBusy] = useState(false);
   const [slot, setSlot] = useState('1');
   const [query, setQuery] = useState('');
   const [devices, setDevices] = useState([]);
-  const api = useApi(host, user, pass);
+  const api = useApi(cfg || { host: '', user: '', pass: '' });
   const push = (o) => setOut((l) => [...l.slice(-40), typeof o === 'string' ? o : JSON.stringify(o)]);
+
+  useEffect(() => { loadSettings().then(setCfg); }, []);
+  useEffect(() => { if (cfg) { setUser(cfg.user || ''); } }, [cfg]);
+
+  if (!cfg) return <View style={styles.root}><ActivityIndicator size="large" /></View>;
+  if (!cfg.done) return <ScrollView style={styles.root}><Setup initial={cfg} onDone={setCfg} /><StatusBar style="auto" /></ScrollView>;
+
   const run = async (label, fn) => {
     setBusy(true);
     try { push(`> ${label}`); push(await fn()); }
     catch (e) { push(`${label} FAILED: ${e.message}`); }
     finally { setBusy(false); }
+  };
+  const saveCreds = async () => {
+    const next = { ...cfg, user, pass };
+    await AsyncStorage.setItem(STORE_KEY, JSON.stringify(next));
+    setCfg(next);
+    push('Credentials updated.');
+  };
+  const changeServer = async () => {
+    await AsyncStorage.setItem(STORE_KEY, JSON.stringify({ host: '', user, pass: '', done: false }));
+    setCfg({ host: '', user, pass: '', done: false });
   };
 
   const tabs = ['home', 'attend', 'students', 'finger', 'device', 'diag', 'ai', 'settings'];
@@ -54,6 +151,7 @@ export default function App() {
       ))}</View>
 
       {tab === 'home' && <Section title="Today">
+        <Text style={styles.mut}>Server: {cfg.host}</Text>
         <Button title="Load dashboard" onPress={() => run('overview', () => api.get('/api/v1/statistics/overview'))} />
         <Button title="Scan + connect BLE" onPress={() => run('scan', async () => {
           const found = [];
@@ -104,10 +202,15 @@ export default function App() {
       </Section>}
 
       {tab === 'settings' && <Section title="Settings">
-        <Text>API host</Text><TextInput style={styles.input} value={host} onChangeText={setHost} />
-        <Text>Admin user</Text><TextInput style={styles.input} value={user} onChangeText={setUser} />
+        <Text>Server: {cfg.host}</Text>
+        <Text>Admin user</Text><TextInput style={styles.input} value={user} onChangeText={setUser} autoCapitalize="none" />
         <Text>Admin password</Text><TextInput style={styles.input} value={pass} onChangeText={setPass} secureTextEntry />
-        <Text>Hardware: R307S yellow→GPIO32/green→GPIO33, DS3231 GPIO25/26, buzzer GPIO27.</Text>
+        <Button title="Save credentials" onPress={saveCreds} />
+        <Button title="Change server…" color="#c0392b" onPress={() =>
+          Alert.alert('Change server?', 'This clears the saved endpoint.', [
+            { text: 'Cancel' }, { text: 'Change', onPress: changeServer },
+          ])} />
+        <Text style={styles.mut}>Hardware: R307S yellow→GPIO32/green→GPIO33, DS3231 GPIO25/26, buzzer GPIO27. Gemini key lives on the server only.</Text>
       </Section>}
 
       <Text style={styles.log}>{out.slice(-30).join('\n')}</Text>
@@ -118,6 +221,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   root: { padding: 14, marginTop: 30 },
+  setup: { padding: 20, marginTop: 60, gap: 8 },
   h1: { fontSize: 22, fontWeight: 'bold' },
   h2: { fontSize: 16, fontWeight: 'bold', marginBottom: 6 },
   sec: { marginVertical: 8, gap: 6 },
@@ -125,5 +229,9 @@ const styles = StyleSheet.create({
   tab: { color: '#555', padding: 4 },
   tabOn: { color: '#000', fontWeight: 'bold', padding: 4, textDecorationLine: 'underline' },
   input: { borderWidth: 1, borderColor: '#888', padding: 7, marginVertical: 4 },
+  dev: { flex: 1 },
   log: { fontFamily: 'monospace', backgroundColor: '#111', color: '#eee', padding: 8, marginTop: 10 },
+  mut: { color: '#555' },
+  ok: { color: '#177245', fontWeight: 'bold' },
+  err: { color: '#b3261e' },
 });
