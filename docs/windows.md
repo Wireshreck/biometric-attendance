@@ -7,11 +7,15 @@ Build with PyInstaller; see `scripts/build_windows_apps.ps1`.
 
 ## Desktop manager v1.1.0 (`desktop/app.py`)
 
-Tabs: Dashboard (overview + recent), Attendance (search/filters/CSV
-export), Students (search/add/deactivate), Fingerprints (BLE
-count/enroll/search/delete), Device (scan/connect/status/RTC),
-Diagnostics (FULL_DIAGNOSTIC table, buzzer, ping), AI Assistant (chat),
-Settings (API host + admin credentials in memory only).
+Tabs: Home (SCAN button, READY indicator, stat cards, recent + absent),
+Attendance (search/filters/CSV export), Students (search/add/edit/
+deactivate/delete), Analytics (trend chart, class table, busy hours,
+month stats), Devices (provisioned-device table + BLE link),
+Fingerprints (scan states, count/enroll/search/delete/auto-scan), Device
+(scan/connect/status/RTC), Diagnostics (FULL_DIAGNOSTIC table, buzzer,
+ping), AI Assistant (chat + key setup), Settings (API host + admin
+credentials in memory only). Matches show a large overlay; new records
+arrive live via the SSE event stream.
 
 BLE reads use the write → busy-poll → result pattern from
 `docs/protocol.md`. Build: `pyinstaller --onefile --windowed --name

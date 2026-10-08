@@ -150,7 +150,7 @@ class BLE:
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Biometric Attendance v1.3.0")
+        self.title("Biometric Attendance v1.4.0")
         self.geometry("1000x720")
         self.loop = asyncio.new_event_loop()
         threading.Thread(target=self.loop.run_forever, daemon=True).start()
@@ -210,8 +210,9 @@ class App(tk.Tk):
         body = ttk.Frame(shell, padding=14)
         body.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self._pages = {}
-        for key, name in [("dash", "Dashboard"), ("att", "Attendance"),
-                          ("stu", "Students"), ("fp", "Fingerprints"),
+        for key, name in [("dash", "Home"), ("att", "Attendance"),
+                          ("stu", "Students"), ("ana", "Analytics"),
+                          ("devs", "Devices"), ("fp", "Fingerprints"),
                           ("dev", "Device"), ("diag", "Diagnostics"),
                           ("ai", "AI Assistant"), ("set", "Settings")]:
             page = ttk.Frame(body)
@@ -225,6 +226,7 @@ class App(tk.Tk):
         self._status.pack(side=tk.BOTTOM, fill=tk.X, padx=14, pady=10)
         self.pg_dash = self._pages["dash"]; self.pg_att = self._pages["att"]
         self.pg_stu = self._pages["stu"]; self.pg_fp = self._pages["fp"]
+        self.pg_ana = self._pages["ana"]; self.pg_devs = self._pages["devs"]
         self.pg_dev = self._pages["dev"]; self.pg_diag = self._pages["diag"]
         self.pg_ai = self._pages["ai"]; self.pg_set = self._pages["set"]
         self.show("dash")
@@ -238,9 +240,27 @@ class App(tk.Tk):
         self.scan_state = ttk.Label(scanrow, text="not connected", style="Muted.TLabel")
         self.scan_state.pack(side=tk.LEFT)
         ttk.Button(self.pg_dash, text="Refresh dashboard", command=self.on_dash).pack(anchor=tk.W)
-        self.dash_lbl = ttk.Label(self.pg_dash, text="—", justify=tk.LEFT)
+        self.dash_lbl = ttk.Label(self.pg_dash, text="—", justify=tk.LEFT,
+                                  font=("Segoe UI", 14, "bold"))
         self.dash_lbl.pack(anchor=tk.W, pady=4)
-        self.recent = self._table(self.pg_dash, ("time", "student", "class"), 8)
+        cardsrow = ttk.Frame(self.pg_dash)
+        cardsrow.pack(fill=tk.X, pady=4)
+        self.stat_cards = []
+        for _ in range(5):
+            lbl = ttk.Label(cardsrow, text="—", justify=tk.LEFT,
+                            font=("Segoe UI", 11, "bold"), width=20)
+            lbl.pack(side=tk.LEFT, padx=(0, 10))
+            self.stat_cards.append(lbl)
+        listsrow = ttk.Frame(self.pg_dash)
+        listsrow.pack(fill=tk.BOTH, expand=True)
+        leftcol = ttk.Frame(listsrow)
+        leftcol.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 6))
+        ttk.Label(leftcol, text="Recent check-ins").pack(anchor=tk.W)
+        self.recent = self._table(leftcol, ("time", "student", "class"), 8)
+        rightcol = ttk.Frame(listsrow)
+        rightcol.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        ttk.Label(rightcol, text="Absent today").pack(anchor=tk.W)
+        self.absent = self._table(rightcol, ("student", "class"), 8)
         self._sse_start()
 
         self._title(self.pg_att, "Attendance")
@@ -266,12 +286,14 @@ class App(tk.Tk):
 
         self._title(self.pg_fp, "Fingerprints")
         ttk.Label(self.pg_fp, text="BLE fingerprint management (slot 1-1000)").pack(anchor=tk.W)
+        self.fp_state = ttk.Label(self.pg_fp, text="IDLE", font=("Segoe UI", 11, "bold"))
+        self.fp_state.pack(anchor=tk.W, pady=2)
         row3 = ttk.Frame(self.pg_fp); row3.pack(fill=tk.X)
         self.slot = tk.StringVar(value="1")
         ttk.Entry(row3, textvariable=self.slot, width=8).pack(side=tk.LEFT)
         for label, fn in [("Count", lambda: self.ble_cmd("FINGERPRINT_COUNT")),
                           ("Enroll", self.on_enroll),
-                          ("Search", lambda: self.ble_cmd("FINGERPRINT_SEARCH", timeout=30)),
+                          ("Search", self.on_fp_search),
                           ("Delete", self.on_delete)]:
             ttk.Button(row3, text=label, command=fn).pack(side=tk.LEFT, padx=2)
         ttk.Button(row3, text="Delete ALL", command=self.on_delete_all).pack(side=tk.LEFT, padx=2)
@@ -297,6 +319,23 @@ class App(tk.Tk):
                           ("Ping", lambda: self.ble_cmd("PING"))]:
             ttk.Button(self.pg_diag, text=label, command=fn).pack(anchor=tk.W, pady=1)
         self.diagtable = self._table(self.pg_diag, ("test", "result", "reason"), 11)
+
+        self._title(self.pg_ana, "Analytics")
+        ttk.Button(self.pg_ana, text="Refresh analytics", command=self.on_analytics).pack(anchor=tk.W)
+        self.trend_canvas = tk.Canvas(self.pg_ana, height=180, bg="#ffffff", highlightthickness=1,
+                                     highlightbackground="#e2e7ee")
+        self.trend_canvas.pack(fill=tk.X, pady=4)
+        self.classtable = self._table(self.pg_ana, ("class", "sec", "present", "active", "%"), 8)
+        self.busy_lbl = ttk.Label(self.pg_ana, text="", justify=tk.LEFT)
+        self.busy_lbl.pack(anchor=tk.W, pady=4)
+        self.month_lbl = ttk.Label(self.pg_ana, text="", justify=tk.LEFT)
+        self.month_lbl.pack(anchor=tk.W)
+
+        self._title(self.pg_devs, "Devices")
+        ttk.Button(self.pg_devs, text="Refresh devices", command=self.on_devices).pack(anchor=tk.W)
+        self.devstable = self._table(self.pg_devs, ("name", "location", "status", "firmware", "capacity", "seen"), 10)
+        self.blelink_lbl = ttk.Label(self.pg_devs, text="BLE: disconnected", style="Muted.TLabel")
+        self.blelink_lbl.pack(anchor=tk.W, pady=4)
 
         self._title(self.pg_ai, "AI Assistant")
         self.ai_q = tk.StringVar()
@@ -341,20 +380,37 @@ class App(tk.Tk):
                 self.log(f"dashboard: {e}"); return
             o = r["overview"]
             self.dash_lbl.config(
-                text=f"Present {o['present_today']}/{o['total_students']} ({o['attendance_percentage']}%)"
-                     f"  Absent {o['absent_today']}  Check-ins {o['checkins_today']}")
+                text=f"{o['attendance_percentage']}% present today")
+            for lbl, val in zip(self.stat_cards, [
+                    f"{o['present_today']}\npresent",
+                    f"{o['absent_today']}\nabsent",
+                    f"{o['attendance_percentage']}%\nattendance",
+                    f"{o['total_students']}\nstudents",
+                    f"{o['checkins_today']}\ncheck-ins"]):
+                lbl.config(text=val)
             for row in self.recent.get_children():
                 self.recent.delete(row)
             for item in r["recent"]:
                 self.recent.insert("", tk.END, values=(
                     item["captured_at_utc"][11:16], f"{item['first_name']} {item['last_name']}",
                     item["grade_class"]))
+            for row in self.absent.get_children():
+                self.absent.delete(row)
+            for a in r["absent"]:
+                self.absent.insert("", tk.END, values=(
+                    f"{a['first_name']} {a['last_name']}", a["grade_class"]))
+            self._update_scan_state()
             self.log({"overview": o})
         def _go():
             stats = self.api.get("/api/v1/statistics/overview")
             recent = self.api.get("/api/v1/attendance?limit=8&offset=0")
-            return {"overview": stats["overview"], "recent": recent["items"]}
+            return {"overview": stats["overview"], "recent": recent["items"],
+                    "absent": stats["absent"]}
         self.api_bg(_go, _done)
+
+    def _update_scan_state(self):
+        self.scan_state.config(
+            text="READY FOR SCAN" if self.ble.connected else "not connected")
 
     def on_att(self):
         params = {"limit": 100, "offset": 0}
@@ -572,7 +628,26 @@ class App(tk.Tk):
                                  "hour": n.hour, "minute": n.minute, "second": n.second})
 
     def on_enroll(self):
+        self.fp_state.config(text="SCANNING — enroll: place finger…")
         self.ble_cmd("FINGERPRINT_ENROLL", {"slot": int(self.slot.get())}, 120)
+
+    def on_fp_search(self):
+        self.fp_state.config(text="SCANNING — place finger…")
+
+        def _done(r, e):
+            if e:
+                self.fp_state.config(text=f"scan failed")
+                self.log(f"FINGERPRINT_SEARCH FAILED: {e}")
+                return
+            if r.get("code") == "match":
+                self.fp_state.config(text=f"MATCH — slot {r['slot']}")
+            elif r.get("code") == "no_match":
+                self.fp_state.config(text="NO MATCH — unknown finger")
+            else:
+                self.fp_state.config(text=f"scan: {r.get('code')}")
+            self.log({"FINGERPRINT_SEARCH": r})
+
+        self.bg(self.ble._send("FINGERPRINT_SEARCH", timeout=30), _done)
 
     def on_delete(self):
         self.ble_cmd("FINGERPRINT_DELETE", {"slot": int(self.slot.get())})
@@ -593,6 +668,7 @@ class App(tk.Tk):
         self._auto_on = True
         self.auto_btn.config(text="Auto-scan: on")
         self.auto_lbl.config(text="Listening — place any enrolled finger anytime.")
+        self.fp_state.config(text="READY — place any finger")
         self._auto_tick()
 
     def _auto_tick(self):
@@ -618,6 +694,7 @@ class App(tk.Tk):
                 if r.get("code") == "match":
                     slot = r["slot"]
                     self.auto_lbl.config(text=f"Match: slot {slot} — recording…")
+                    self.fp_state.config(text=f"MATCH — slot {slot}")
                     self.api_bg(
                         lambda: self.api.post("/api/v1/assisted-checkin", {"fingerprint_slot_id": slot}),
                         lambda a2, e2: self._auto_recorded(a2, e2, slot))
@@ -649,6 +726,48 @@ class App(tk.Tk):
                                       tags=(t.get("result"),))
             self.log(r)
         self.bg(self.ble._send("FULL_DIAGNOSTIC"), _done)
+
+    def on_analytics(self):
+        def _done(r, e):
+            if e:
+                self.log(f"analytics: {e}"); return
+            trend = r["trend"]
+            self.trend_canvas.delete("all")
+            w = max(self.trend_canvas.winfo_width(), 400)
+            n = max(len(trend), 1)
+            mx = max([t["present"] for t in trend] + [1])
+            bw = w / n
+            for i, t in enumerate(trend):
+                h = 150 * t["present"] / mx
+                x0 = i * bw + bw * 0.2
+                self.trend_canvas.create_rectangle(x0, 160 - h, x0 + bw * 0.6, 160, fill="#2f5fd0", outline="")
+                self.trend_canvas.create_text(x0 + 2, 172, text=t["date"][5:], anchor="w", font=("Segoe UI", 8))
+            for row in self.classtable.get_children():
+                self.classtable.delete(row)
+            for c in r["classes"]:
+                self.classtable.insert("", tk.END, values=(
+                    c["class"], c["section"], c["present"], c["active"], f"{c['percentage']}%"))
+            self.busy_lbl.config(
+                text="Busiest hours: " + (", ".join(f"{b['hour']}:00 ({b['checkins']})" for b in r["busy"]) or "—"))
+            month = sum(t["present"] for t in trend)
+            self.month_lbl.config(
+                text=f"Check-ins (30d): {month}   Active days: {sum(1 for t in trend if t['present'] > 0)}")
+        self.api_bg(lambda: self.api.get("/api/v1/statistics/overview?trend_days=30"), _done)
+
+    def on_devices(self):
+        def _done(r, e):
+            if e:
+                self.log(f"devices: {e}"); return
+            for row in self.devstable.get_children():
+                self.devstable.delete(row)
+            for d in r["items"]:
+                self.devstable.insert("", tk.END, values=(
+                    d["device_name"], d["location_name"], d["status"],
+                    d.get("firmware_version") or "—", d.get("sensor_capacity") or "—",
+                    (d.get("last_seen_at_utc") or "never")[:16]))
+            self.blelink_lbl.config(
+                text="BLE: connected" if self.ble.connected else "BLE: disconnected")
+        self.api_bg(lambda: self.api.get("/api/v1/devices"), _done)
 
     def on_ai(self):
         q = self.ai_q.get().strip()

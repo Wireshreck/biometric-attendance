@@ -63,9 +63,11 @@ Tab screens (no navigation dependency, `useState` tabs):
 
 - Home: today's overview, BLE scan/connect, big SCAN button, new-record
   overlay card (polled), quick actions.
+- Attendance: search, today list (server-side queries).
+- Analytics: trends, class comparison, busy hours (same data as web).
+- Devices: provisioned-device list, BLE status, RTC read/set.
 - Fingerprints: enroll/search/delete/count plus auto-scan toggle (finger
   anytime → assisted check-in).
-- Attendance: search, today list (server-side queries).
 - Students: search, profiles via summary endpoint.
 - Fingerprints: enroll/search/delete/count over BLE.
 - Device: BLE status, RTC read/set, disconnect.

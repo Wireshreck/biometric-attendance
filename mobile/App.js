@@ -222,7 +222,7 @@ export default function App() {
     setCfg({ host: '', user, pass: '', done: false });
   };
 
-  const tabs = ['home', 'attend', 'students', 'finger', 'device', 'diag', 'ai', 'settings'];
+  const tabs = ['home', 'attend', 'students', 'analytics', 'devices', 'finger', 'diag', 'ai', 'settings'];
   return (
     <ScrollView style={styles.root}>
       <Text style={styles.h1}>Attendance</Text>
@@ -265,6 +265,22 @@ export default function App() {
       {tab === 'students' && <Section title="Students">
         <TextInput style={styles.input} value={query} onChangeText={setQuery} placeholder="Name or roll" />
         <Button title="Search students" onPress={() => run('students', () => api.get(`/api/v1/students?q=${encodeURIComponent(query)}&limit=25`))} />
+      </Section>}
+
+      {tab === 'analytics' && <Section title="Analytics">
+        <Button title="Load analytics" onPress={() => run('analytics', () => api.get('/api/v1/statistics/overview?trend_days=30'))} />
+      </Section>}
+
+      {tab === 'devices' && <Section title="Devices">
+        <Button title="Load devices" onPress={() => run('devices', () => api.get('/api/v1/devices'))} />
+        <Text style={styles.mut}>BLE link: {client.connected ? 'connected' : 'disconnected'} (see Fingerprints tab to connect)</Text>
+        <Button title="BLE status" onPress={() => run('status', () => client.send('DEVICE_STATUS'))} />
+        <Button title="RTC read" onPress={() => run('rtc', () => client.send('RTC_GET'))} />
+        <Button title="RTC set to now" onPress={() => run('rtc-set', () => {
+          const n = new Date();
+          return client.send('RTC_SET', { year: n.getFullYear(), month: n.getMonth() + 1, day: n.getDate(), hour: n.getHours(), minute: n.getMinutes(), second: n.getSeconds() });
+        })} />
+        <Button title="Disconnect BLE" onPress={() => client.disconnect().then(() => push('disconnected'))} />
       </Section>}
 
       {tab === 'finger' && <Section title="Fingerprints (BLE)">

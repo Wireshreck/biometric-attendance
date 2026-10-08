@@ -59,7 +59,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="Biometric Attendance API",
-        version="1.3.0",
+        version="1.4.0",
         lifespan=lifespan,
     )
     app.state.settings = actual_settings
