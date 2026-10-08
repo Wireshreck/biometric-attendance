@@ -112,3 +112,5 @@ scratch/
 
 # ─── Local assistant workspace metadata ───────────────────────────────────────
 .freebuff/
+mobile/android/
+mobile/ios/
