@@ -61,7 +61,10 @@ npx expo run:android      # on-device build (needs Android SDK)
 
 Tab screens (no navigation dependency, `useState` tabs):
 
-- Home: today's overview, BLE scan/connect, quick actions.
+- Home: today's overview, BLE scan/connect, big SCAN button, new-record
+  overlay card (polled), quick actions.
+- Fingerprints: enroll/search/delete/count plus auto-scan toggle (finger
+  anytime → assisted check-in).
 - Attendance: search, today list (server-side queries).
 - Students: search, profiles via summary endpoint.
 - Fingerprints: enroll/search/delete/count over BLE.

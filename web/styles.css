@@ -231,6 +231,29 @@ code { background: var(--line-soft); padding: 1px 6px; border-radius: 5px; font-
 .pass { color: var(--ok); font-weight: 650; } .fail { color: var(--bad); font-weight: 650; }
 .warnr { color: var(--warn); font-weight: 650; } .skip { color: var(--muted); }
 
+/* ---- scan CTA + overlay ---- */
+.scan-cta { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.scan-big { font-size: 20px; font-weight: 800; letter-spacing: .12em; padding: 16px 42px;
+  border-radius: 999px; background: var(--accent); color: var(--accent-ink); border: 0;
+  box-shadow: var(--shadow-2); transition: transform var(--dur-2) var(--ease-spring), box-shadow var(--dur-2); }
+.scan-big:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); }
+.scan-big:active:not(:disabled) { transform: scale(.96); }
+.overlay { position: fixed; inset: 0; background: rgba(10, 15, 28, .55); display: flex;
+  align-items: center; justify-content: center; z-index: 150; opacity: 0; transition: opacity var(--dur-3) var(--ease-out); }
+.overlay.show { opacity: 1; }
+.overlay-card { background: var(--panel); color: var(--ink); border-radius: 20px; padding: 34px 48px;
+  text-align: center; box-shadow: var(--shadow-2); max-width: min(440px, 90vw);
+  transform: scale(.92) translateY(12px); transition: transform var(--dur-4) var(--ease-spring); }
+.overlay.show .overlay-card { transform: none; }
+.ov-kicker { font-size: 13px; letter-spacing: .22em; color: var(--muted); font-weight: 700; }
+.ov-check { font-size: 54px; line-height: 1.1; color: var(--ok); }
+.ov-name { font-size: 26px; font-weight: 750; letter-spacing: -.01em; margin-top: 4px; }
+.ov-class { color: var(--muted); font-size: 15px; }
+.ov-status { font-size: 19px; font-weight: 800; letter-spacing: .08em; margin-top: 10px; }
+.ov-status.ok { color: var(--ok); } .ov-status.warn { color: var(--warn); } .ov-status.bad { color: var(--bad); }
+.ov-time { font-variant-numeric: tabular-nums; font-size: 15px; margin-top: 6px; }
+.ov-fp { color: var(--faint); font-size: 13px; margin-top: 2px; }
+
 @media (max-width: 860px) {
   .shell { grid-template-columns: 1fr; }
   .side { flex-direction: row; align-items: center; flex-wrap: wrap; position: static; height: auto; }

@@ -129,16 +129,39 @@ export default function App() {
   const [pass, setPass] = useState('');
   const [out, setOut] = useState(['Biometric Attendance']);
   const [busy, setBusy] = useState(false);
+  const [auto, setAuto] = useState(false);
   const [keyInput, setKeyInput] = useState('');
   const [keyStatus, setKeyStatus] = useState('unknown');
   const [slot, setSlot] = useState('1');
   const [query, setQuery] = useState('');
   const [devices, setDevices] = useState([]);
+  const [lastEvent, setLastEvent] = useState(null);
   const api = useApi(cfg || { host: '', user: '', pass: '' });
   const push = (o) => setOut((l) => [...l.slice(-40), typeof o === 'string' ? o : JSON.stringify(o)]);
 
   useEffect(() => { loadSettings().then(setCfg); }, []);
   useEffect(() => { if (cfg) { setUser(cfg.user || ''); } }, [cfg]);
+  const seenRef = React.useRef('');
+  const seenInit = React.useRef(false);
+  useEffect(() => {
+    if (!cfg || !cfg.done || tab !== 'home') return;
+    let alive = true;
+    const tick = async () => {
+      try {
+        const r = await api.get('/api/v1/attendance?limit=1&offset=0');
+        const cur = r.items[0];
+        if (!alive || !cur) return;
+        if (!seenInit.current) { seenInit.current = true; seenRef.current = cur.event_uuid; return; }
+        if (cur.event_uuid !== seenRef.current) {
+          seenRef.current = cur.event_uuid;
+          setLastEvent(cur);
+        }
+      } catch (e) {}
+    };
+    tick();
+    const id = setInterval(tick, 5000);
+    return () => { alive = false; clearInterval(id); };
+  }, [tab, cfg]);
   useEffect(() => {
     if (!cfg || !cfg.done) return;
     api.get('/api/v1/settings/ai').then(
@@ -155,6 +178,33 @@ export default function App() {
     catch (e) { push(`${label} FAILED: ${e.message}`); }
     finally { setBusy(false); }
   };
+  const autoRef = React.useRef({ on: false, busy: false });
+  const startAuto = async () => {
+    if (!client.connected) { push('Connect BLE first.'); return; }
+    autoRef.current.on = true; setAuto(true);
+    push('Auto-scan on — place any enrolled finger anytime.');
+    while (autoRef.current.on) {
+      if (!client.connected) { push('Auto-scan stopped (disconnected).'); break; }
+      if (autoRef.current.busy) { await new Promise((r) => setTimeout(r, 2500)); continue; }
+      autoRef.current.busy = true;
+      try {
+        const r = await client.send('FINGERPRINT_SEARCH', {}, TIMEOUTS_MS.SEARCH);
+        if (r.code === 'match') {
+          push(`Match slot ${r.slot} — recording…`);
+          try {
+            const a = await api.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+            push(`Check-in: ${a.outcome}`);
+          } catch (e) { push(`Check-in FAILED: ${e.message}`); }
+          await new Promise((r2) => setTimeout(r2, 4000));
+        }
+      } catch (e) {
+        if (/not connected/i.test(e.message || '')) break;
+      } finally { autoRef.current.busy = false; }
+      await new Promise((r) => setTimeout(r, 2500));
+    }
+    autoRef.current.on = false; setAuto(false);
+  };
+  const stopAuto = () => { autoRef.current.on = false; setAuto(false); push('Auto-scan stopped.'); };
   const saveCreds = async () => {
     const next = { ...cfg, user, pass };
     await AsyncStorage.setItem(STORE_KEY, JSON.stringify(next));
@@ -183,6 +233,20 @@ export default function App() {
 
       {tab === 'home' && <Section title="Today">
         <Text style={styles.mut}>Server: {cfg.host}</Text>
+        <Text style={styles.mut}>{client.connected ? 'READY FOR SCAN' : 'BLE not connected'}</Text>
+        <Button title="SCAN — place finger" color="#2f5fd0" onPress={() => run('scan-now', async () => {
+          const r = await client.send('FINGERPRINT_SEARCH', {}, TIMEOUTS_MS.SEARCH);
+          if (r.code !== 'match') return r;
+          const a = await api.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+          setLastEvent({ ...a, confidence: r.confidence });
+          return { match: r.slot, outcome: a.outcome };
+        })} />
+        {lastEvent && <View style={styles.overlay}>
+          <Text style={styles.h2}>{lastEvent.outcome === 'RECORDED' ? '✓ PRESENT' : '⧗ ALREADY RECORDED'}</Text>
+          <Text style={styles.big}>{lastEvent.first_name} {lastEvent.last_name}</Text>
+          <Text>Class {lastEvent.grade_class}{lastEvent.section} · {(lastEvent.captured_at_utc || '').slice(11, 16)} UTC</Text>
+          <Text style={styles.mut}>Fingerprint #{lastEvent.fingerprint_slot_id}{lastEvent.confidence != null ? ` · conf ${lastEvent.confidence}` : ''}</Text>
+        </View>}
         <Button title="Load dashboard" onPress={() => run('overview', () => api.get('/api/v1/statistics/overview'))} />
         <Button title="Scan + connect BLE" onPress={() => run('scan', async () => {
           const found = [];
@@ -208,6 +272,7 @@ export default function App() {
         <Button title="Count" onPress={() => run('count', () => client.send('FINGERPRINT_COUNT'))} />
         <Button title="Enroll slot" onPress={() => run('enroll', () => client.send('FINGERPRINT_ENROLL', { slot: parseInt(slot, 10) }, TIMEOUTS_MS.ENROLL))} />
         <Button title="Search" onPress={() => run('search', () => client.send('FINGERPRINT_SEARCH', {}, TIMEOUTS_MS.SEARCH))} />
+        <Button title={auto ? 'Stop auto-scan' : 'Auto-scan (finger anytime)'} onPress={() => (auto ? stopAuto() : startAuto())} />
         <Button title="Delete slot" onPress={() => run('delete', () => client.send('FINGERPRINT_DELETE', { slot: parseInt(slot, 10) }))} />
       </Section>}
 
@@ -265,6 +330,8 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#888', padding: 7, marginVertical: 4 },
   dev: { flex: 1 },
   log: { fontFamily: 'monospace', backgroundColor: '#111', color: '#eee', padding: 8, marginTop: 10 },
+  overlay: { backgroundColor: '#e9effe', borderRadius: 12, padding: 14, marginVertical: 8, gap: 2 },
+  big: { fontSize: 20, fontWeight: 'bold' },
   mut: { color: '#555' },
   ok: { color: '#177245', fontWeight: 'bold' },
   err: { color: '#b3261e' },

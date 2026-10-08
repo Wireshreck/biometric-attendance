@@ -31,6 +31,7 @@ from app.schemas import (
     AIChatRequest,
     AIChatResponse,
     AIKeyUpdate,
+    AssistedCheckin,
     AttendanceCreate,
     AttendanceResult,
     EnrollmentComplete,
@@ -58,7 +59,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="Biometric Attendance API",
-        version="1.2.0",
+        version="1.3.0",
         lifespan=lifespan,
     )
     app.state.settings = actual_settings
@@ -366,6 +367,114 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         })
         return {"student_uuid": str(student_uuid), "status": "ACTIVE"}
 
+    @app.delete("/api/v1/students/{student_uuid}")
+    async def delete_student(
+        student_uuid: uuid.UUID,
+        actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        """Permanently remove a student (e.g. test/duplicate records).
+
+        Attendance rows are preserved but lose the student link (their
+        student_id becomes NULL); the response reports how many rows were
+        orphaned so the admin can confirm with full knowledge.
+        """
+        now = _utc_text(datetime.now(UTC))
+        await connection.execute("BEGIN IMMEDIATE")
+        async with connection.execute(
+            "SELECT id FROM students WHERE student_uuid=?", (str(student_uuid),)
+        ) as cursor:
+            row = await cursor.fetchone()
+        if row is None:
+            await connection.rollback()
+            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+        async with connection.execute(
+            "SELECT COUNT(*) FROM attendance_events WHERE student_id=?", (row["id"],)
+        ) as cursor:
+            affected = int((await cursor.fetchone())[0])
+        await connection.execute("DELETE FROM students WHERE id=?", (row["id"],))
+        await connection.execute(
+            "INSERT INTO admin_audit_log (occurred_at_utc, actor, action, target_type, target_id) VALUES (?, ?, 'STUDENT_DELETED', 'student', ?)",
+            (now, actor, str(student_uuid)),
+        )
+        await connection.commit()
+        EVENT_BUS.publish("student.deleted", {"student_uuid": str(student_uuid)})
+        return {"student_uuid": str(student_uuid), "deleted": True,
+                "orphaned_attendance_records": affected}
+
+    @app.post("/api/v1/assisted-checkin")
+    async def assisted_checkin(
+        body: AssistedCheckin,
+        actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        """Record attendance for a fingerprint slot just matched by a client.
+
+        Used by auto-scan flows: the app polls FINGERPRINT_SEARCH over BLE,
+        and on a match calls this (admin-authenticated) endpoint, which
+        resolves the slot to the active student, applies the same 60-second
+        debounce as device ingest, and stores a RECORDED event.
+        """
+        now = datetime.now(UTC)
+        captured_text, received_text = _utc_text(now), _utc_text(now)
+        event_uuid = str(uuid.uuid4())
+        await connection.execute("BEGIN IMMEDIATE")
+        async with connection.execute(
+            "SELECT id FROM devices WHERE status='ACTIVE' ORDER BY id"
+        ) as cursor:
+            devices = await cursor.fetchall()
+        if len(devices) != 1:
+            await connection.rollback()
+            raise HTTPException(409, {"code": "device_configuration", "message": "Exactly one active device is required"})
+        device_id = devices[0]["id"]
+        async with connection.execute(
+            """SELECT s.id, s.student_uuid, s.first_name, s.last_name,
+                      s.roll_number, s.grade_class, s.section FROM students s
+               WHERE s.enrollment_device_id=? AND s.fingerprint_slot_id=? AND s.status='ACTIVE'""",
+            (device_id, body.fingerprint_slot_id),
+        ) as cursor:
+            student = await cursor.fetchone()
+        if student is None:
+            await connection.rollback()
+            raise HTTPException(409, {"code": "unknown_slot", "message": "Slot has no active student assignment"})
+        async with connection.execute(
+            "SELECT captured_at_utc FROM attendance_events WHERE student_id=? AND outcome='RECORDED'",
+            (student["id"],),
+        ) as cursor:
+            accepted = await cursor.fetchall()
+        duplicate = any(
+            abs((now - datetime.fromisoformat(r[0].replace("Z", "+00:00")).astimezone(UTC)).total_seconds()) <= 60
+            for r in accepted
+        )
+        outcome = "DUPLICATE_SUPPRESSED" if duplicate else "RECORDED"
+        await connection.execute(
+            """INSERT INTO attendance_events
+               (event_uuid, student_id, device_id, fingerprint_slot_id, captured_at_utc,
+                received_at_utc, sync_status, outcome)
+               VALUES (?, ?, ?, ?, ?, ?, 'LIVE', ?)""",
+            (event_uuid, student["id"], device_id, body.fingerprint_slot_id,
+             captured_text, received_text, outcome),
+        )
+        await connection.execute("UPDATE devices SET last_seen_at_utc=? WHERE id=?", (received_text, device_id))
+        await connection.commit()
+        EVENT_BUS.publish("attendance.recorded", {
+            "event_uuid": event_uuid, "outcome": outcome,
+            "captured_at_utc": captured_text,
+            "fingerprint_slot_id": body.fingerprint_slot_id,
+            "student_uuid": student["student_uuid"],
+            "first_name": student["first_name"], "last_name": student["last_name"],
+            "roll_number": student["roll_number"], "grade_class": student["grade_class"],
+            "section": student["section"],
+        })
+        status_code = 200 if duplicate else 201
+        return JSONResponse(status_code=status_code, content={
+            "event_uuid": event_uuid, "outcome": outcome,
+            "captured_at_utc": captured_text, "student_uuid": student["student_uuid"],
+            "first_name": student["first_name"], "last_name": student["last_name"],
+            "roll_number": student["roll_number"], "grade_class": student["grade_class"],
+            "section": student["section"],
+            "fingerprint_slot_id": body.fingerprint_slot_id})
+
     @app.post("/api/v1/students/{student_uuid}/deactivate")
     async def deactivate_student(
         student_uuid: uuid.UUID,
@@ -427,7 +536,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 await connection.rollback()
                 raise HTTPException(409, {"code": "invalid_slot", "message": "Slot is outside the reported sensor capacity"})
             async with connection.execute(
-                """SELECT s.id FROM students s JOIN devices d ON d.id=s.enrollment_device_id
+                """SELECT s.id, s.student_uuid, s.first_name, s.last_name,
+                          s.roll_number, s.grade_class, s.section FROM students s
+                   JOIN devices d ON d.id=s.enrollment_device_id
                    WHERE d.id=? AND s.fingerprint_slot_id=? AND s.status='ACTIVE'""",
                 (device["id"], slot),
             ) as cursor:
@@ -464,6 +575,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "event_uuid": event_uuid, "outcome": outcome,
             "captured_at_utc": captured_text, "fingerprint_slot_id": slot,
             "device_uuid": device["device_uuid"],
+            "student_uuid": student["student_uuid"],
+            "first_name": student["first_name"], "last_name": student["last_name"],
+            "roll_number": student["roll_number"], "grade_class": student["grade_class"],
+            "section": student["section"],
         })
         return JSONResponse(
             status_code=200 if duplicate else 201,

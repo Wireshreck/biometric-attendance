@@ -53,6 +53,16 @@ class AIKeyUpdate(BaseModel):
     gemini_api_key: str = Field(default="", max_length=200)
 
 
+class AssistedCheckin(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    fingerprint_slot_id: int = Field(ge=1)
+
+
+class AssistedCheckin(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    fingerprint_slot_id: int = Field(ge=1)
+
+
 class StudentList(BaseModel):
     items: list[Student]
     limit: int

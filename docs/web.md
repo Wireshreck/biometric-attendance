@@ -33,10 +33,13 @@ Accessible: skip link, labeled controls, focus states, live regions.
 - Students: search, class/status filters, add/edit/deactivate, 30-day
   profile with percentage and first/last attendance.
 - Device: BLE connect, DEVICE_INFO/STATUS refresh, FULL_DIAGNOSTIC table,
-  fingerprint enroll/search/delete, RTC read/set. Uses the single shared
+  fingerprint enroll/search/delete, auto-scan toggle (finger anytime →
+  assisted check-in), RTC read/set. Uses the single shared
   protocol (`web/vendor/ble_protocol.js`, generated from
   `shared/ble_protocol.js` by stripping `export` for classic-script
   loading — enforced by test).
+- Attendance overlay: new records (3 s poll) pop a large
+  present/duplicate/no-match card with student, class, time, fingerprint.
 - AI Assistant: chat with suggested questions, structured mini-tables,
   honest missing-key notice.
 - Help: setup, demo flow, AI key setup.

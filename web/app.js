@@ -46,6 +46,8 @@
     if (view === 'dash') loadDash();
     if (view === 'att') loadAtt();
     if (view === 'stu') loadStu();
+    if (view === 'ana') loadAnalytics();
+    if (view === 'devs') loadDevices();
   }
   document.querySelectorAll('#nav button').forEach((b) => { b.onclick = () => goto(b.dataset.view); });
 
@@ -135,7 +137,7 @@
     el.innerHTML = Array.from({ length: rows }, () => '<div class="skel" style="height:18px;margin:6px 0">&nbsp;</div>').join('');
   }
 
-  // ---- dashboard ----
+  // ---- dashboard (home) ----
   let dashFirst = true;
   async function loadDash() {
     if (dashFirst) skeleton($('statCards'), 1);
@@ -155,15 +157,13 @@
         if (String(raw).endsWith('%')) countUp(el, parseFloat(raw), '%');
         else countUp(el, parseFloat(raw));
       });
-      line($('chTrend'), s.trend.map((t) => t.date), s.trend.map((t) => t.present));
-      $('classTable').innerHTML = s.classes.length ? '<table><thead><tr><th>Class</th><th>Sec</th><th>Present</th><th>Active</th><th>%</th></tr></thead><tbody>' +
-        s.classes.map((c) => `<tr><td>${esc(c.class)}</td><td>${esc(c.section)}</td><td>${c.present}</td><td>${c.active}</td><td>${c.percentage}%</td></tr>`).join('') + '</tbody></table>'
-        : '<div class="empty"><span class="glyph">▦</span>No classes yet — add students first.</div>';
-      bars($('chBusy'), s.busy_times.map((t) => 'xx' + t.hour), s.busy_times.map((t) => t.checkins));
       const recent = await API.get('/api/v1/attendance?limit=8&offset=0');
       $('recentList').innerHTML = recent.items.length ? recent.items.map((r) =>
         `<div>${esc(r.captured_at_utc.slice(11, 16))} — ${esc(r.first_name)} ${esc(r.last_name)} <span style="color:var(--muted)">(${esc(r.grade_class)}${esc(r.section)})</span></div>`).join('')
         : '<div class="empty"><span class="glyph">○</span>No check-ins yet today.</div>';
+      $('absentList').innerHTML = s.absent.length ? s.absent.slice(0, 8).map((a) =>
+        `<div>${esc(a.first_name)} ${esc(a.last_name)} <span style="color:var(--muted)">(${esc(a.grade_class)}${esc(a.section)})</span></div>`).join('')
+        : '<div class="empty"><span class="glyph">✓</span>Everyone present.</div>';
       dashFirst = false;
     } catch (e) {
       setApi(false, e.message);
@@ -172,10 +172,101 @@
     }
   }
   $('btnDashRefresh').onclick = (e) => { busy(e.target, loadDash)(); };
-  API.pollRecent(() => { if ($('view-dash').classList.contains('on')) loadDash(); });
+  API.pollRecent((ev) => {
+    showOverlay(ev.data, ev.data.outcome === 'RECORDED' ? 'match' : 'duplicate');
+    if ($('view-dash').classList.contains('on')) loadDash();
+    if ($('view-att').classList.contains('on')) loadAtt();
+  });
   async function busy(btn, fn) {
     return async () => { btn.classList.add('btn-busy'); try { await fn(); } finally { btn.classList.remove('btn-busy'); } };
   }
+
+  // ---- analytics ----
+  let anaFirst = true;
+  async function loadAnalytics() {
+    try {
+      const s = await API.get('/api/v1/statistics/overview?trend_days=30');
+      line($('chTrend'), s.trend.map((t) => t.date), s.trend.map((t) => t.present));
+      $('classTable').innerHTML = s.classes.length ? '<table><thead><tr><th>Class</th><th>Sec</th><th>Present</th><th>Active</th><th>%</th></tr></thead><tbody>' +
+        s.classes.map((c) => `<tr><td>${esc(c.class)}</td><td>${esc(c.section)}</td><td>${c.present}</td><td>${c.active}</td><td>${c.percentage}%</td></tr>`).join('') + '</tbody></table>'
+        : '<div class="empty"><span class="glyph">▦</span>No classes yet — add students first.</div>';
+      bars($('chBusy'), s.busy_times.map((t) => 'xx' + t.hour), s.busy_times.map((t) => t.checkins));
+      const month = s.trend.reduce((a, t) => a + t.present, 0);
+      $('monthTable').innerHTML = `<table><tbody><tr><td>Check-ins (30d)</td><td><b>${month}</b></td></tr><tr><td>Active days</td><td><b>${s.trend.filter((t) => t.present > 0).length}</b></td></tr></tbody></table>`;
+      anaFirst = false;
+    } catch (e) { toast(e.message, 'err'); }
+  }
+  $('btnAnaRefresh').onclick = (e) => { busy(e.target, loadAnalytics)(); };
+
+  // ---- devices ----
+  async function loadDevices() {
+    try {
+      const r = await API.get('/api/v1/devices');
+      $('devsTable').querySelector('tbody').innerHTML = r.items.map((d) =>
+        `<tr><td>${esc(d.device_name)}</td><td>${esc(d.location_name)}</td><td>${d.status}</td><td>${esc(d.firmware_version || '—')}</td><td>${d.sensor_capacity ?? '—'}</td><td>${esc(d.last_seen_at_utc || 'never')}</td></tr>`).join('')
+        || '<tr><td colspan="6"><div class="empty">No devices provisioned.</div></td></tr>';
+      $('bleLinkInfo').innerHTML = `<dt>BLE</dt><dd>${window.BLE && window.BLE.connected ? 'connected' : 'disconnected'}</dd>`;
+    } catch (e) { toast(e.message, 'err'); }
+  }
+  $('btnDevsRefresh').onclick = (e) => { busy(e.target, loadDevices)(); };
+  $('btnBle2').onclick = () => { goto('dev'); $('btnBle').click(); };
+
+  // ---- big overlay ----
+  let overlayTimer = null;
+  function showOverlay(rec, kind) {
+    const ov = $('overlay');
+    const name = `${rec.first_name || ''} ${rec.last_name || ''}`.trim() || 'Unknown fingerprint';
+    $('ovName').textContent = name;
+    $('ovClass').textContent = rec.grade_class ? `Class ${rec.grade_class}${rec.section || ''}` : `Slot ${rec.fingerprint_slot_id ?? '—'}`;
+    const dup = rec.outcome === 'DUPLICATE_SUPPRESSED' || kind === 'duplicate';
+    $('ovKicker').textContent = kind === 'nomatch' ? 'NO MATCH' : kind === 'error' ? 'SENSOR' : 'ATTENDANCE';
+    $('ovCheck').textContent = kind === 'nomatch' ? '?' : dup ? '⧗' : '✓';
+    $('ovStatus').textContent = kind === 'nomatch' ? 'NOT ENROLLED' : dup ? 'ALREADY RECORDED' : 'PRESENT';
+    $('ovStatus').className = 'ov-status ' + (kind === 'nomatch' || kind === 'error' ? 'bad' : dup ? 'warn' : 'ok');
+    const ts = rec.captured_at_utc || rec.captured_at || '';
+    $('ovTime').textContent = ts ? ts.slice(0, 10) + '  ' + ts.slice(11, 16) + ' UTC' : new Date().toLocaleString();
+    $('ovFp').textContent = `Fingerprint #${rec.fingerprint_slot_id ?? '—'}` + (rec.confidence != null ? ` · confidence ${rec.confidence}` : '');
+    ov.hidden = false;
+    ov.classList.remove('show');
+    void ov.offsetWidth;
+    ov.classList.add('show');
+    clearTimeout(overlayTimer);
+    overlayTimer = setTimeout(() => { ov.classList.remove('show'); setTimeout(() => { ov.hidden = true; }, 300); }, 6000);
+  }
+  window.showOverlay = showOverlay;
+  $('overlay').addEventListener('click', () => { clearTimeout(overlayTimer); $('overlay').classList.remove('show'); $('overlay').hidden = true; });
+
+  // ---- hero scan ----
+  $('btnHeroScan').onclick = async (e) => {
+    if (!window.BLE || !window.BLE.connected) {
+      toast('Connect BLE first (Devices page)', 'warn');
+      goto('dev');
+      return;
+    }
+    e.target.classList.add('btn-busy');
+    ScanUI.set('SCANNING', 'Place your finger on the sensor…');
+    try {
+      const r = await window.BLE.send('FINGERPRINT_SEARCH', {}, 30000);
+      if (r.code === 'match') {
+        showOverlay({ ...r, first_name: '', last_name: '' }, 'match');
+        try {
+          const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+          showOverlay({ ...a, confidence: r.confidence }, a.outcome === 'RECORDED' ? 'match' : 'duplicate');
+          loadDash();
+        } catch (err) { toast('Check-in: ' + err.message, 'err'); }
+      } else if (r.code === 'no_match') {
+        showOverlay({ fingerprint_slot_id: null }, 'nomatch');
+      } else {
+        showOverlay({}, 'error');
+      }
+    } catch (err) { toast('Scan: ' + err.message, 'err'); }
+    finally { e.target.classList.remove('btn-busy'); }
+  };
+  setInterval(() => {
+    const ok = window.BLE && window.BLE.connected;
+    $('scanReady').textContent = ok ? 'READY FOR SCAN' : 'not connected';
+    $('scanReady').style.color = ok ? 'var(--ok)' : 'var(--muted)';
+  }, 2000);
 
   // ---- attendance ----
   let attPage = 0; const attLimit = 25;
@@ -260,9 +351,17 @@
       d.innerHTML = `<h2>${esc(s.first_name)} ${esc(s.last_name)} <span style="color:var(--muted)">(${esc(s.roll_number)} · ${esc(s.grade_class)}${esc(s.section)} · ${s.status})</span></h2>
         <div class="progress"><i style="width:${s.attendance_percentage}%"></i></div>
         <p>30-day attendance: <b>${s.attendance_percentage}%</b> · days present: ${s.days_present}/${s.window_days} · first: ${s.first || '—'} · last: ${s.last || '—'}</p>
-        <div class="row"><button id="btnStuEdit">Edit</button>${s.status === 'PENDING_ENROLLMENT' ? '<button id="btnStuActivate">Mark enrolled</button>' : ''}<button id="btnStuDeact">Deactivate</button></div>`;
+        <div class="row"><button id="btnStuEdit">Edit</button>${s.status === 'PENDING_ENROLLMENT' ? '<button id="btnStuActivate">Mark enrolled</button>' : ''}<button id="btnStuDeact">Deactivate</button><button id="btnStuDel">Delete</button></div>`;
       $('btnStuEdit').onclick = () => { editing = id; $('stuDlgTitle').textContent = 'Edit student'; $('stuRoll').value = s.roll_number; $('stuFirst').value = s.first_name; $('stuLast').value = s.last_name; $('stuClass').value = s.grade_class; $('stuSection').value = s.section; $('stuDlg').showModal(); };
       $('btnStuDeact').onclick = async () => { if (confirm('Deactivate this student?')) { await API.post(`/api/v1/students/${id}/deactivate`); toast('Deactivated', 'ok'); loadStu(); d.hidden = true; } };
+      $('btnStuDel').onclick = async () => {
+        if (!confirm(`Permanently DELETE ${s.first_name} ${s.last_name}? Their attendance rows stay but lose the name link.`)) return;
+        try {
+          const r = await API.del(`/api/v1/students/${id}`);
+          toast(`Deleted (${r.orphaned_attendance_records} orphaned record(s))`, 'ok');
+          loadStu(); d.hidden = true;
+        } catch (err) { toast(err.message, 'err'); }
+      };
       const act = $('btnStuActivate');
       if (act) act.onclick = async () => {
         if (!confirm(`Confirm the finger template is stored in slot ${s.fingerprint_slot_id}, then activate?`)) return;
@@ -330,8 +429,9 @@
 
   // ---- command palette ----
   const CMDS = [
-    ['Go to Dashboard', 'nav', () => goto('dash')], ['Go to Attendance', 'nav', () => goto('att')],
-    ['Go to Students', 'nav', () => goto('stu')], ['Go to Device', 'nav', () => goto('dev')],
+    ['Go to Home', 'nav', () => goto('dash')], ['Go to Attendance', 'nav', () => goto('att')],
+    ['Go to Students', 'nav', () => goto('stu')], ['Go to Analytics', 'nav', () => goto('ana')],
+    ['Go to Devices', 'nav', () => goto('devs')], ['Go to Fingerprints', 'nav', () => goto('dev')],
     ['Go to AI Assistant', 'nav', () => goto('ai')], ['Refresh dashboard', 'data', () => loadDash()],
     ['Export attendance CSV', 'data', () => $('btnCsv').click()], ['Connect BLE device', 'device', () => $('btnBle').click()],
     ['Run full diagnostic', 'device', () => { goto('dev'); $('btnDiag').click(); }],

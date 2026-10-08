@@ -7,7 +7,7 @@ tags:
   - entry-point
 ---
 
-# Biometric Attendance System v1.2.0
+# Biometric Attendance System v1.3.0
 
 Local-first fingerprint attendance: ESP32 + R307S sensor + DS3231 RTC, a
 FastAPI/SQLite backend, a web dashboard, an Expo mobile app, Windows tools,
@@ -37,8 +37,10 @@ Backend PC: FastAPI + SQLite (uvicorn 127.0.0.1:8000)
 ## 3. Features
 
 Dashboard, attendance explorer (search/filter/sort/paginate/export),
-students (CRUD/deactivate/profiles), analytics, CSV+XLSX export, BLE device
+students (CRUD/deactivate/delete/profiles), analytics, CSV+XLSX export, BLE device
 management (17 commands), AI assistant, diagnostics, installer, test utility.
+The ESP32 scans autonomously at boot — no client needs to be open. Connected
+clients get real-time attendance overlays plus an assisted check-in flow.
 
 ## 4. Hardware
 
@@ -208,8 +210,14 @@ overwrite occupied slots (check count first).
 
 ## 26. Attendance workflow
 
-Scan → slot → student lookup → RTC timestamp → SQLite `RECORDED` (60 s
-debounce suppresses duplicates) → dashboard/statistics/SSE update.
+The device scans on its own from boot: match → RTC timestamp → LittleFS
+record → Wi-Fi sync when configured (offline queue otherwise, same UUID —
+no duplicates on reconnect). With any client open, place a finger anytime:
+Home SCAN button, auto-scan toggle, or the guide — match resolves the
+student, assisted check-in stores the event (60 s debounce), and every open
+client shows a large attendance overlay within seconds. Scan → Open →
+Mark enrolled activates new students; Delete removes them (orphan count
+reported).
 
 ## 27. Analytics
 

@@ -38,7 +38,7 @@ ESP32_HINTS = ("cp210", "ch340", "ch910", "usb serial", "silicon labs", "wch", "
 class Wizard(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Biometric Attendance — Setup Wizard v1.2.0")
+        self.title("Biometric Attendance — Setup Wizard v1.3.0")
         self.geometry("860x640")
         self.root = repo_root()
         self.port = tk.StringVar()

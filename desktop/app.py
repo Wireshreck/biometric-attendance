@@ -73,6 +73,9 @@ class API:
     def put(self, path, body):
         return self._req("PUT", path, body)
 
+    def delete(self, path):
+        return self._req("DELETE", path)
+
     def patch(self, path, body):
         return self._req("PATCH", path, body)
 
@@ -147,7 +150,7 @@ class BLE:
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Biometric Attendance v1.2.0")
+        self.title("Biometric Attendance v1.3.0")
         self.geometry("1000x720")
         self.loop = asyncio.new_event_loop()
         threading.Thread(target=self.loop.run_forever, daemon=True).start()
@@ -226,12 +229,19 @@ class App(tk.Tk):
         self.pg_ai = self._pages["ai"]; self.pg_set = self._pages["set"]
         self.show("dash")
 
-        title = ttk.Label(self.pg_dash, text="Dashboard", style="Title.TLabel")
+        title = ttk.Label(self.pg_dash, text="Home", style="Title.TLabel")
         title.pack(anchor=tk.W, pady=(0, 6))
-        ttk.Button(self.pg_dash, text="Refresh dashboard", command=self.on_dash, style="Accent.TButton").pack(anchor=tk.W)
+        scanrow = ttk.Frame(self.pg_dash)
+        scanrow.pack(fill=tk.X, pady=(0, 6))
+        ttk.Button(scanrow, text="SCAN", command=self.on_hero_scan,
+                   style="Accent.TButton").pack(side=tk.LEFT, padx=(0, 8))
+        self.scan_state = ttk.Label(scanrow, text="not connected", style="Muted.TLabel")
+        self.scan_state.pack(side=tk.LEFT)
+        ttk.Button(self.pg_dash, text="Refresh dashboard", command=self.on_dash).pack(anchor=tk.W)
         self.dash_lbl = ttk.Label(self.pg_dash, text="—", justify=tk.LEFT)
         self.dash_lbl.pack(anchor=tk.W, pady=4)
         self.recent = self._table(self.pg_dash, ("time", "student", "class"), 8)
+        self._sse_start()
 
         self._title(self.pg_att, "Attendance")
         row = ttk.Frame(self.pg_att); row.pack(fill=tk.X)
@@ -265,6 +275,12 @@ class App(tk.Tk):
                           ("Delete", self.on_delete)]:
             ttk.Button(row3, text=label, command=fn).pack(side=tk.LEFT, padx=2)
         ttk.Button(row3, text="Delete ALL", command=self.on_delete_all).pack(side=tk.LEFT, padx=2)
+        self.auto_btn = ttk.Button(row3, text="Auto-scan: off", command=self.on_auto)
+        self.auto_btn.pack(side=tk.LEFT, padx=2)
+        self.auto_lbl = ttk.Label(self.pg_fp, text="Auto-scan places no demands — put any enrolled finger on the sensor anytime.")
+        self.auto_lbl.pack(anchor=tk.W)
+        self._auto_on = False
+        self._auto_busy = False
 
         self._title(self.pg_dev, "Device")
         ttk.Button(self.pg_dev, text="Scan + connect", command=self.on_scan_connect).pack(anchor=tk.W)
@@ -395,7 +411,16 @@ class App(tk.Tk):
         if not sel:
             return
         s = self._students[sel[0]]
-        if messagebox.askyesno("Student", f"Deactivate {s['first_name']} {s['last_name']}?"):
+        resp = messagebox.askyesno(
+            "Student",
+            f"{s['first_name']} {s['last_name']}:\nYES = permanently DELETE (attendance rows lose the name link)\nNO = deactivate (keeps everything)")
+        if resp is None:
+            return
+        if resp:
+            self.api_bg(lambda: self.api.delete(f"/api/v1/students/{sel[0]}"),
+                        lambda r, e: (self.log(f"delete: {e}") if e
+                                      else (self.log(f"deleted, {r['orphaned_attendance_records']} orphaned"), self.on_stu())))
+        else:
             self.api_bg(lambda: self.api.post(f"/api/v1/students/{sel[0]}/deactivate"),
                         lambda r, e: (self.log(f"deactivate: {e}") if e else self.on_stu()))
 
@@ -417,6 +442,105 @@ class App(tk.Tk):
     def ble_cmd(self, cmd, params=None, timeout=20):
         self.bg(self.ble._send(cmd, params, timeout),
                 lambda r, e: self.log(f"{cmd} FAILED: {e}") if e else self.log({cmd: r}))
+
+    def on_hero_scan(self):
+        if not self.ble.connected:
+            self.scan_state.config(text="BLE not connected — use Device tab")
+            self.show("dev")
+            return
+        self.scan_state.config(text="SCANNING — place finger…")
+
+        def _done(r, e):
+            if e:
+                self.scan_state.config(text=f"scan failed: {e}")
+                return
+            if r.get("code") == "match":
+                slot = r["slot"]
+                self.scan_state.config(text=f"match slot {slot} — recording…")
+                self.api_bg(
+                    lambda: self.api.post("/api/v1/assisted-checkin", {"fingerprint_slot_id": slot}),
+                    lambda a, e2: self._scan_recorded(a, e2, r))
+            elif r.get("code") == "no_match":
+                self.scan_state.config(text="no match — unknown finger")
+                self._overlay("NO MATCH", "Unknown fingerprint", "", "NOT ENROLLED", "", "")
+            else:
+                self.scan_state.config(text=f"scan: {r.get('code')}")
+        self.bg(self.ble._send("FINGERPRINT_SEARCH", timeout=30), _done)
+
+    def _scan_recorded(self, r, e, match):
+        if e:
+            self.scan_state.config(text=f"check-in failed: {e}")
+            return
+        dup = r.get("outcome") == "DUPLICATE_SUPPRESSED"
+        self.scan_state.config(text="READY FOR SCAN" if not dup else "already recorded")
+        self._overlay("ATTENDANCE",
+                      f"{r.get('first_name', '')} {r.get('last_name', '')}".strip() or f"Slot {match.get('slot')}",
+                      f"Class {r.get('grade_class', '')}{r.get('section', '')}",
+                      "ALREADY RECORDED" if dup else "PRESENT",
+                      (r.get("captured_at_utc", "")[:10] + "  " + r.get("captured_at_utc", "")[11:16]),
+                      f"Fingerprint #{match.get('slot')} · confidence {match.get('confidence', '—')}")
+        self.on_dash()
+
+    def _overlay(self, kicker, name, cls, status, when, fp):
+        top = tk.Toplevel(self)
+        top.title("Attendance")
+        top.geometry("420x360")
+        top.attributes("-topmost", True)
+        frm = ttk.Frame(top, padding=24)
+        frm.pack(fill=tk.BOTH, expand=True)
+        ttk.Label(frm, text=kicker, style="Muted.TLabel").pack()
+        ttk.Label(frm, text="✓" if status == "PRESENT" else ("⧗" if "ALREADY" in status else "?"),
+                  font=("Segoe UI", 40)).pack()
+        ttk.Label(frm, text=name, font=("Segoe UI", 18, "bold")).pack()
+        ttk.Label(frm, text=cls, style="Muted.TLabel").pack()
+        color = "#177245" if status == "PRESENT" else ("#9a6200" if "ALREADY" in status else "#b3261e")
+        lbl = tk.Label(frm, text=status, font=("Segoe UI", 14, "bold"), fg=color, bg="#ffffff")
+        lbl.pack(pady=6)
+        ttk.Label(frm, text=when).pack()
+        ttk.Label(frm, text=fp, style="Muted.TLabel").pack()
+        self.after(6000, top.destroy)
+
+    def _sse_start(self):
+        def _run():
+            import time as _time
+            while True:
+                try:
+                    if not self.api.user:
+                        _time.sleep(5)
+                        continue
+                    token = base64.b64encode(f"{self.api.user}:{self.api.password}".encode()).decode()
+                    req = urllib.request.Request(
+                        self.api.host + "/api/v1/events",
+                        headers={"Authorization": "Basic " + token})
+                    with urllib.request.urlopen(req, timeout=65) as r:
+                        buf = b""
+                        for chunk in r:
+                            buf += chunk
+                            while b"\n\n" in buf:
+                                frame, buf = buf.split(b"\n\n", 1)
+                                for line in frame.split(b"\n"):
+                                    if line.startswith(b"data: "):
+                                        try:
+                                            msg = json.loads(line[6:].decode())
+                                        except Exception:
+                                            continue
+                                        if msg.get("type") == "attendance.recorded":
+                                            d = msg["data"]
+                                            self.after(0, lambda d=d: self._sse_event(d))
+                except Exception:
+                    _time.sleep(5)
+        threading.Thread(target=_run, daemon=True).start()
+
+    def _sse_event(self, d):
+        dup = d.get("outcome") == "DUPLICATE_SUPPRESSED"
+        name = f"{d.get('first_name', '')} {d.get('last_name', '')}".strip() or "Unknown"
+        self._overlay("ATTENDANCE", name,
+                      f"Class {d.get('grade_class', '')}{d.get('section', '')}",
+                      "ALREADY RECORDED" if dup else "PRESENT",
+                      (d.get("captured_at_utc", "")[:10] + "  " + d.get("captured_at_utc", "")[11:16]),
+                      f"Fingerprint #{d.get('fingerprint_slot_id', '—')}")
+        self.on_dash()
+        self.log({"live-event": d.get("event_uuid")})
 
     def on_scan_connect(self):
         if not HAVE_BLEAK:
@@ -456,6 +580,63 @@ class App(tk.Tk):
     def on_delete_all(self):
         if messagebox.askyesno("Confirm", "Delete ALL fingerprint templates?"):
             self.ble_cmd("FINGERPRINT_DELETE_ALL")
+
+    def on_auto(self):
+        if self._auto_on:
+            self._auto_on = False
+            self.auto_btn.config(text="Auto-scan: off")
+            self.auto_lbl.config(text="Auto-scan stopped.")
+            return
+        if not self.ble.connected:
+            self.log("auto-scan: connect BLE first")
+            return
+        self._auto_on = True
+        self.auto_btn.config(text="Auto-scan: on")
+        self.auto_lbl.config(text="Listening — place any enrolled finger anytime.")
+        self._auto_tick()
+
+    def _auto_tick(self):
+        if not self._auto_on:
+            return
+        if not self.ble.connected:
+            self._auto_on = False
+            self.auto_btn.config(text="Auto-scan: off")
+            self.auto_lbl.config(text="Auto-scan stopped (disconnected).")
+            return
+        if self._auto_busy:
+            self.after(2500, self._auto_tick)
+            return
+        self._auto_busy = True
+
+        def _searched(r, e):
+            try:
+                if e:
+                    if "not connected" in str(e).lower():
+                        self._auto_on = False
+                        self.auto_btn.config(text="Auto-scan: off")
+                    return
+                if r.get("code") == "match":
+                    slot = r["slot"]
+                    self.auto_lbl.config(text=f"Match: slot {slot} — recording…")
+                    self.api_bg(
+                        lambda: self.api.post("/api/v1/assisted-checkin", {"fingerprint_slot_id": slot}),
+                        lambda a2, e2: self._auto_recorded(a2, e2, slot))
+                else:
+                    self.after(2500, self._auto_tick)
+            finally:
+                self._auto_busy = False
+
+        self.bg(self.ble._send("FINGERPRINT_SEARCH", timeout=30), _searched)
+
+    def _auto_recorded(self, r, e, slot):
+        if e:
+            self.log(f"auto check-in: {e}")
+        else:
+            outcome = r.get("outcome")
+            self.auto_lbl.config(text=f"Slot {slot}: {outcome}")
+            self.log(f"auto check-in slot {slot}: {outcome}")
+            self.on_dash()
+        self.after(4000, self._auto_tick)
 
     def on_diag(self):
         def _done(r, e):

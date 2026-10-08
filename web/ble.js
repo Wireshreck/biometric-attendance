@@ -139,6 +139,61 @@
     try { say($('fpMsg'), await send('FINGERPRINT_DELETE', { slot: parseInt($('fpSlot').value, 10) })); toast('Delete sent', 'ok'); }
     catch (e) { say($('fpMsg'), e.message); toast(e.message, 'err'); }
   };
+  let autoTimer = null;
+  $('btnAuto').onclick = async (e) => {
+    if (autoTimer) {
+      clearInterval(autoTimer); autoTimer = null;
+      e.target.textContent = 'Auto-scan: off';
+      ScanUI.set('IDLE', 'Auto-scan stopped.');
+      return;
+    }
+    if (!ble.server) { toast('Connect BLE first', 'warn'); return; }
+    try {
+      await API.get('/api/v1/devices');
+    } catch (err) {
+      toast('Sign in to the backend first (API tab will prompt), then start auto-scan', 'warn');
+      return;
+    }
+    e.target.textContent = 'Auto-scan: on';
+    ScanUI.set('READY', 'Place any enrolled finger anytime…');
+    toast('Auto-scan on — place a finger anytime', 'ok');
+    let autoBusy = false;
+    const stamp = () => new Date().toLocaleTimeString();
+    autoTimer = setInterval(async () => {
+      if (!ble.server) {
+        clearInterval(autoTimer); autoTimer = null;
+        e.target.textContent = 'Auto-scan: off';
+        ScanUI.set('IDLE', 'Stopped (BLE disconnected).');
+        say($('fpMsg'), 'Auto-scan stopped: BLE disconnected. Reconnect and restart it.');
+        return;
+      }
+      if (autoBusy) return;
+      autoBusy = true;
+      say($('fpMsg'), `Listening… (last check ${stamp()})`);
+      try {
+        ScanUI.set('SCANNING', 'Waiting for finger…');
+        const r = await send('FINGERPRINT_SEARCH', {}, P.TIMEOUTS_MS.SEARCH);
+        if (r.code === 'match') {
+          ScanUI.set('MATCH FOUND', `Slot ${r.slot} · confidence ${r.confidence}`);
+          say($('fpMsg'), r);
+          try {
+            const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+            toast(`Attendance: ${a.outcome === 'RECORDED' ? 'recorded' : 'duplicate (60s window)'}`, a.outcome === 'RECORDED' ? 'ok' : 'warn');
+          } catch (err) { toast('Check-in: ' + err.message, 'err'); }
+          await new Promise((res) => setTimeout(res, 4000));
+          if (autoTimer) ScanUI.set('READY', 'Place any enrolled finger anytime…');
+        } else if (r.code === 'no_match') {
+          ScanUI.set('NO MATCH', 'Unknown finger.');
+        }
+      } catch (err) {
+        if (/not connected|unavailable/i.test(err.message || '')) {
+          clearInterval(autoTimer); autoTimer = null;
+          $('btnAuto').textContent = 'Auto-scan: off';
+          ScanUI.set('IDLE', 'Stopped.');
+        }
+      } finally { autoBusy = false; }
+    }, 2500);
+  };
   $('btnRtcGet').onclick = async () => { try { say($('rtcMsg'), await send('RTC_GET')); } catch (e) { say($('rtcMsg'), e.message); } };
   $('btnRtcSet').onclick = async () => {
     const n = new Date();

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Attendance Console</title>
-<link rel="stylesheet" href="styles.css?v=113">
+<link rel="stylesheet" href="styles.css?v=114">
 <script>try { document.documentElement.dataset.theme = localStorage.getItem('att-theme') || 'light'; } catch (e) {}</script>
 </head>
 <body>
@@ -13,10 +13,12 @@
   <aside class="side" aria-label="Primary">
     <div class="brand"><span class="mark" aria-hidden="true"></span>Attendance Console</div>
     <nav id="nav" aria-label="Sections">
-      <button data-view="dash" class="on" aria-current="page">Dashboard</button>
+      <button data-view="dash" class="on" aria-current="page">Home</button>
       <button data-view="att">Attendance</button>
       <button data-view="stu">Students</button>
-      <button data-view="dev">Device</button>
+      <button data-view="ana">Analytics</button>
+      <button data-view="devs">Devices</button>
+      <button data-view="dev">Fingerprints</button>
       <button data-view="ai">AI Assistant</button>
       <button data-view="help">Help</button>
     </nav>
@@ -30,24 +32,43 @@
       <button id="btnTheme" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
       <span class="searchhint">Press <kbd>Ctrl K</kbd> for commands</span>
     </div>
-    <section id="view-dash" class="view on" aria-label="Dashboard">
+    <section id="view-dash" class="view on" aria-label="Home">
       <div class="hero" aria-live="polite">
         <div class="hero-row">
           <div><div class="big"><span id="heroPct">–</span></div><div class="sub">present today · <span id="heroCount">–</span></div></div>
+          <div class="scan-cta">
+            <button id="btnHeroScan" class="scan-big">SCAN</button>
+            <div class="sub" id="scanReady">not connected</div>
+          </div>
           <div class="statusline"><span class="dot" id="devDot"></span><span id="devTxt">device unknown</span></div>
           <div class="clock"><b id="clock">--:--:--</b><div class="sub" id="dateLine">–</div></div>
         </div>
       </div>
-      <header class="pagehead"><h1>Dashboard</h1><div class="actions"><button id="btnDashRefresh">Refresh</button></div></header>
+      <header class="pagehead"><h1>Today</h1><div class="actions"><button id="btnDashRefresh">Refresh</button></div></header>
       <div class="cards" id="statCards" aria-live="polite"></div>
+      <div class="panels">
+        <div class="panel"><h2>Recent check-ins</h2><div id="recentList"></div></div>
+        <div class="panel"><h2>Absent today</h2><div id="absentList"></div></div>
+      </div>
+    </section>
+    <section id="view-ana" class="view" aria-label="Analytics">
+      <header class="pagehead"><h1>Analytics</h1><div class="actions"><button id="btnAnaRefresh">Refresh</button></div></header>
       <div class="panels">
         <div class="panel"><h2>7-day trend</h2><canvas id="chTrend" width="640" height="220" role="img" aria-label="Daily present counts"></canvas></div>
         <div class="panel"><h2>Today by class</h2><div id="classTable"></div></div>
       </div>
       <div class="panels">
         <div class="panel"><h2>Busiest check-in hours</h2><canvas id="chBusy" width="640" height="180" role="img" aria-label="Check-ins per hour"></canvas></div>
-        <div class="panel"><h2>Recent check-ins</h2><div id="recentList"></div></div>
+        <div class="panel"><h2>Month overview</h2><div id="monthTable"></div></div>
       </div>
+    </section>
+    <section id="view-devs" class="view" aria-label="Devices">
+      <header class="pagehead"><h1>Devices</h1><div class="actions"><button id="btnDevsRefresh">Refresh</button></div></header>
+      <div class="tablewrap"><table id="devsTable">
+        <thead><tr><th>Name</th><th>Location</th><th>Status</th><th>Firmware</th><th>Capacity</th><th>Last seen</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div class="panel"><h2>BLE link</h2><div id="bleLinkInfo" class="kv"></div><div class="row"><button id="btnBle2">Connect BLE</button></div></div>
     </section>
     <section id="view-att" class="view" aria-label="Attendance">
       <header class="pagehead"><h1>Attendance</h1></header>
@@ -114,7 +135,7 @@
             <div><div class="scanstage" id="scanStage">IDLE</div><div class="sub" id="scanSub">Enroll or search to begin.</div></div>
           </div>
           <div class="row"><button id="btnFpCount">Count</button><label>Slot <input id="fpSlot" type="number" min="1" max="1000" value="1"></label></div>
-          <div class="row"><button id="btnEnroll">Enroll</button><button id="btnSearch">Search</button><button id="btnDel">Delete</button></div>
+          <div class="row"><button id="btnEnroll">Enroll</button><button id="btnSearch">Search</button><button id="btnAuto">Auto-scan: off</button><button id="btnDel">Delete</button></div>
           <div id="fpMsg" aria-live="polite"></div>
         </div>
         <div class="panel"><h2>RTC (DS3231 · GPIO25/26)</h2><div class="row"><button id="btnRtcGet">Read time</button><button id="btnRtcSet">Set to browser time</button></div><div id="rtcMsg" aria-live="polite"></div></div>
@@ -154,9 +175,20 @@
   <div class="box"><input id="palInput" placeholder="Type a command…" aria-label="Commands"><ul id="palList"></ul></div>
 </div>
 <div id="toasts" aria-live="polite"></div>
-<script src="api.js?v=113"></script>
-<script src="vendor/ble_protocol.js?v=113"></script>
-<script src="ble.js?v=113"></script>
-<script src="app.js?v=113"></script>
+<div id="overlay" class="overlay" hidden>
+  <div class="overlay-card" role="alert" aria-live="assertive">
+    <div class="ov-kicker" id="ovKicker">ATTENDANCE</div>
+    <div class="ov-check" id="ovCheck">✓</div>
+    <div class="ov-name" id="ovName">—</div>
+    <div class="ov-class" id="ovClass">—</div>
+    <div class="ov-status" id="ovStatus">PRESENT</div>
+    <div class="ov-time" id="ovTime">—</div>
+    <div class="ov-fp" id="ovFp">—</div>
+  </div>
+</div>
+<script src="api.js?v=114"></script>
+<script src="vendor/ble_protocol.js?v=114"></script>
+<script src="ble.js?v=114"></script>
+<script src="app.js?v=114"></script>
 </body>
 </html>

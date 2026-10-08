@@ -55,6 +55,7 @@
   const get = (path, silent = false) => req(path, {}, silent);
   const post = (path, body) => req(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
   const put = (path, body) => req(path, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const del = (path) => req(path, { method: 'DELETE' });
   const patch = (path, body) => req(path, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const download = (path, name) => req(path).then((blob) => {
     const a = document.createElement('a');
@@ -66,7 +67,7 @@
   // the recent-attendance endpoint every few seconds instead (the SSE
   // /api/v1/events stream is used by first-party clients that can set
   // headers, e.g. the desktop app). Polling stops when the tab hides.
-  function pollRecent(onMsg, ms = 5000) {
+  function pollRecent(onMsg, ms = 3000) {
     let last = '';
     const tick = async () => {
       if (document.hidden) return;
@@ -81,5 +82,5 @@
     return () => clearInterval(id);
   }
 
-  window.API = { get, post, put, patch, download, pollRecent, state, forget };
+  window.API = { get, post, put, del, patch, download, pollRecent, state, forget };
 })();

@@ -273,6 +273,37 @@ def test_duplicate_protection_counts_once(client: TestClient):
     assert listing["total"] == 1
 
 
+def test_delete_student_and_assisted_checkin(client: TestClient):
+    seed_device(client)
+    student = make_student(client, "R-801", "Del", "Ete", "10A", "A")
+    activate(client, student)
+    slot = student["fingerprint_slot_id"]
+    moment = datetime.now(UTC) - timedelta(seconds=30)
+    assert checkin(client, slot, moment, live=False).status_code == 201
+    removed = client.delete(f"/api/v1/students/{student['student_uuid']}", auth=ADMIN)
+    assert removed.status_code == 200
+    assert removed.json()["orphaned_attendance_records"] == 1
+    assert removed.json()["deleted"] is True
+    assert client.delete(f"/api/v1/students/{student['student_uuid']}", auth=ADMIN).status_code == 404
+    assert client.delete(f"/api/v1/students/{student['student_uuid']}").status_code == 401
+    # Slot now unassigned: assisted check-in must refuse honestly.
+    refused = client.post("/api/v1/assisted-checkin", auth=ADMIN, json={"fingerprint_slot_id": slot})
+    assert refused.status_code == 409
+    student2 = make_student(client, "R-802", "Auto", "Scan", "10A", "A")
+    activate(client, student2)
+    good = client.post("/api/v1/assisted-checkin", auth=ADMIN,
+                       json={"fingerprint_slot_id": student2["fingerprint_slot_id"]})
+    assert good.status_code == 201
+    assert good.json()["outcome"] == "RECORDED"
+    assert good.json()["student_uuid"] == student2["student_uuid"]
+    dup = client.post("/api/v1/assisted-checkin", auth=ADMIN,
+                      json={"fingerprint_slot_id": student2["fingerprint_slot_id"]})
+    assert dup.status_code == 200
+    assert dup.json()["outcome"] == "DUPLICATE_SUPPRESSED"
+    assert client.post("/api/v1/assisted-checkin", auth=ADMIN, json={"fingerprint_slot_id": 0}).status_code == 422
+    assert client.post("/api/v1/assisted-checkin").status_code == 401
+
+
 def test_ai_key_settings_never_leaks_key(client: TestClient):
     seed_device(client)
     assert client.get("/api/v1/settings/ai", auth=ADMIN).json() == {"gemini_configured": False}
