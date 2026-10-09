@@ -39,7 +39,9 @@ async def attendance_list(
     time_to: str | None = None,
     student_query: str | None = None,
     grade_class: str | None = None,
+    department: str | None = None,
     section: str | None = None,
+    team: str | None = None,
     fingerprint_slot_id: int | None = None,
     outcome: str | None = None,
     sort: str = "captured_at_utc",
@@ -50,6 +52,8 @@ async def attendance_list(
 ) -> tuple[list[dict], int]:
     clauses = ["e.outcome = 'RECORDED'"]
     params: list[object] = []
+    resolved_class = grade_class if grade_class is not None else department
+    resolved_section = section if section is not None else team
     if day is not None:
         start, end = local_day_bounds(day, tz)
         clauses.append("e.captured_at_utc >= ? AND e.captured_at_utc < ?")
@@ -69,12 +73,12 @@ async def attendance_list(
             " OR (s.first_name || ' ' || s.last_name) LIKE ?)"
         )
         params.extend([like, like, like, like])
-    if grade_class:
+    if resolved_class:
         clauses.append("s.grade_class = ?")
-        params.append(grade_class)
-    if section:
+        params.append(resolved_class)
+    if resolved_section:
         clauses.append("s.section = ?")
-        params.append(section)
+        params.append(resolved_section)
     if time_from:
         clauses.append("substr(e.captured_at_utc, 12, 5) >= ?")
         params.append(time_from)
@@ -108,6 +112,14 @@ async def attendance_list(
     )
     async with connection.execute(query, (*params, limit, offset)) as cursor:
         rows = [dict(r) for r in await cursor.fetchall()]
+    # Enterprise mirrors: keep legacy keys AND expose department/team and
+    # employee_code/employee_uuid so new clients never need school terms.
+    for row in rows:
+        row["employee_uuid"] = row.get("student_uuid")
+        row["employee_code"] = row.get("roll_number")
+        row["department"] = row.get("grade_class")
+        row["team"] = row.get("section", "")
+        row["employee_name"] = f"{row.get('first_name') or ''} {row.get('last_name') or ''}".strip()
     return rows, total
 
 
@@ -139,6 +151,7 @@ async def overview(
     return {
         "date": today.isoformat(),
         "total_students": total_active,
+        "total_employees": total_active,
         "present_today": present,
         "absent_today": max(total_active - present, 0),
         "attendance_percentage": pct,
@@ -192,6 +205,7 @@ async def class_comparison(
         active = row["active"] or 0
         result.append({
             "class": row["grade_class"], "section": row["section"],
+            "department": row["grade_class"], "team": row["section"],
             "total": row["total"], "active": active, "present": present,
             "percentage": round(100.0 * present / active, 1) if active else 0.0,
         })
@@ -238,7 +252,12 @@ async def student_summary(
         times = [r[0] for r in await cursor.fetchall()]
     pct = round(100.0 * len({t[:10] for t in times}) / days, 1)
     return {
-        **student, "days_present": len({t[:10] for t in times}),
+        **student,
+        "employee_uuid": student.get("student_uuid"),
+        "employee_code": student.get("roll_number"),
+        "department": student.get("grade_class"),
+        "team": student.get("section", ""),
+        "days_present": len({t[:10] for t in times}),
         "window_days": days, "attendance_percentage": pct,
         "recent": times[-10:], "first": times[0] if times else None,
         "last": times[-1] if times else None,
@@ -261,4 +280,10 @@ async def absent_students(
            ORDER BY s.grade_class, s.section, s.last_name, s.first_name""",
         (start, end),
     ) as cursor:
-        return [dict(r) for r in await cursor.fetchall()]
+        rows = [dict(r) for r in await cursor.fetchall()]
+    for row in rows:
+        row["employee_uuid"] = row.get("student_uuid")
+        row["employee_code"] = row.get("roll_number")
+        row["department"] = row.get("grade_class")
+        row["team"] = row.get("section", "")
+    return rows

@@ -32,6 +32,7 @@ from app.schemas import (
     AIChatResponse,
     AIKeyUpdate,
     AssistedCheckin,
+    AttendanceBatchRequest,
     AttendanceCreate,
     AttendanceResult,
     EnrollmentComplete,
@@ -39,6 +40,7 @@ from app.schemas import (
     StudentCreate,
     StudentList,
     StudentUpdate,
+    _enterprise_student_dict,
 )
 
 logger = logging.getLogger(__name__)
@@ -58,8 +60,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         yield
 
     app = FastAPI(
-        title="Biometric Attendance API",
-        version="1.4.0",
+        title="Employee Attendance API",
+        version="1.5.0",
         lifespan=lifespan,
     )
     app.state.settings = actual_settings
@@ -71,7 +73,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             CORSMiddleware,
             allow_origins=origins,
             allow_credentials=True,
-            allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
+            allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
             allow_headers=["Authorization", "Content-Type"],
             max_age=600,
         )
@@ -122,21 +124,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         _actor: Annotated[str, Depends(require_admin)],
         connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
         grade_class: str | None = None,
+        department: str | None = None,
         section: str | None = None,
+        team: str | None = None,
         status: str | None = None,
         q: str | None = None,
         limit: int = Query(50, ge=1, le=100),
         offset: int = Query(0, ge=0),
     ):
         if status is not None and status not in {"PENDING_ENROLLMENT", "ACTIVE", "INACTIVE"}:
-            raise HTTPException(422, {"code": "invalid_status", "message": "Unsupported student status"})
+            raise HTTPException(422, {"code": "invalid_status", "message": "Unsupported employee status"})
+        resolved_class = grade_class if grade_class is not None else department
+        resolved_section = section if section is not None else team
         clauses, parameters = [], []
-        if grade_class is not None:
+        if resolved_class is not None:
             clauses.append("grade_class = ?")
-            parameters.append(grade_class)
-        if section is not None:
+            parameters.append(resolved_class)
+        if resolved_section is not None:
             clauses.append("section = ?")
-            parameters.append(section)
+            parameters.append(resolved_section)
         if status is not None:
             clauses.append("status = ?")
             parameters.append(status)
@@ -154,7 +160,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             (*parameters, limit, offset),
         ) as cursor:
             rows = await cursor.fetchall()
-        return {"items": [dict(row) for row in rows], "limit": limit, "offset": offset}
+        return {"items": [_enterprise_student_dict(dict(row)) for row in rows], "limit": limit, "offset": offset}
 
     @app.post("/api/v1/students", status_code=201, response_model=Student)
     async def create_student(
@@ -207,7 +213,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except aiosqlite.IntegrityError as exc:
             await connection.rollback()
             raise HTTPException(409, {"code": "student_conflict", "message": "Roll number or slot conflicts with an existing record"}) from exc
-        return {**body.model_dump(), "student_uuid": student_uuid, "status": "PENDING_ENROLLMENT", "fingerprint_slot_id": slot}
+        created = {"roll_number": body.roll_number, "first_name": body.first_name,
+                   "last_name": body.last_name, "grade_class": body.grade_class,
+                   "section": body.section,
+                   "student_uuid": student_uuid, "status": "PENDING_ENROLLMENT",
+                   "fingerprint_slot_id": slot}
+        return _enterprise_student_dict(created)
 
     @app.patch("/api/v1/students/{student_uuid}", response_model=Student)
     async def update_student(
@@ -216,7 +227,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         actor: Annotated[str, Depends(require_admin)],
         connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
     ):
-        updates = {k: v for k, v in body.model_dump().items() if v is not None}
+        updates = body.resolved()
         if not updates:
             raise HTTPException(422, {"code": "empty_update", "message": "No fields to update"})
         now = _utc_text(datetime.now(UTC))
@@ -228,7 +239,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 row = await cursor.fetchone()
             if row is None:
                 await connection.rollback()
-                raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+                raise HTTPException(404, {"code": "not_found", "message": "Employee was not found"})
             columns = ", ".join(f"{key} = ?" for key in updates)
             await connection.execute(
                 f"UPDATE students SET {columns}, updated_at_utc = ? WHERE id = ?",
@@ -246,7 +257,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "SELECT student_uuid, roll_number, first_name, last_name, grade_class, section, status, fingerprint_slot_id FROM students WHERE id = ?",
             (row["id"],),
         ) as cursor:
-            return dict(await cursor.fetchone())
+            fetched = dict(await cursor.fetchone())
+        return _enterprise_student_dict(fetched)
 
     @app.get("/api/v1/students/{student_uuid}", response_model=Student)
     async def get_student(
@@ -260,8 +272,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ) as cursor:
             row = await cursor.fetchone()
         if row is None:
-            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
-        return dict(row)
+            raise HTTPException(404, {"code": "not_found", "message": "Employee was not found"})
+        return _enterprise_student_dict(dict(row))
 
     @app.get("/api/v1/devices/{device_uuid}/enrollment/{student_uuid}")
     async def enrollment_assignment(
@@ -345,13 +357,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             row = await cursor.fetchone()
         if row is None:
             await connection.rollback()
-            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+            raise HTTPException(404, {"code": "not_found", "message": "Employee was not found"})
         if row["status"] == "ACTIVE":
             await connection.rollback()
-            return {"student_uuid": str(student_uuid), "status": "ACTIVE"}
+            return {"student_uuid": str(student_uuid), "employee_uuid": str(student_uuid), "status": "ACTIVE"}
         if row["status"] != "PENDING_ENROLLMENT":
             await connection.rollback()
-            raise HTTPException(409, {"code": "invalid_state", "message": "Only pending students can be activated"})
+            raise HTTPException(409, {"code": "invalid_state", "message": "Only pending employees can be activated"})
         await connection.execute(
             "UPDATE students SET status='ACTIVE', updated_at_utc=? WHERE id=?",
             (now, row["id"]),
@@ -373,9 +385,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         actor: Annotated[str, Depends(require_admin)],
         connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
     ):
-        """Permanently remove a student (e.g. test/duplicate records).
+        """Permanently remove an employee (e.g. test/duplicate records).
 
-        Attendance rows are preserved but lose the student link (their
+        Attendance rows are preserved but lose the employee link (their
         student_id becomes NULL); the response reports how many rows were
         orphaned so the admin can confirm with full knowledge.
         """
@@ -387,7 +399,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             row = await cursor.fetchone()
         if row is None:
             await connection.rollback()
-            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+            raise HTTPException(404, {"code": "not_found", "message": "Employee was not found"})
         async with connection.execute(
             "SELECT COUNT(*) FROM attendance_events WHERE student_id=?", (row["id"],)
         ) as cursor:
@@ -412,13 +424,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         Used by auto-scan flows: the app polls FINGERPRINT_SEARCH over BLE,
         and on a match calls this (admin-authenticated) endpoint, which
-        resolves the slot to the active student, applies the same 60-second
+        resolves the slot to the active employee, applies the same 60-second
         debounce as device ingest, and stores a RECORDED event.
+
+        Offline support: clients SHOULD supply a stable ``event_uuid`` (and
+        optional ``client_seq``). Replays of the same UUID return the stored
+        outcome with HTTP 200 instead of creating a duplicate — the same
+        idempotency contract as ``POST /api/v1/attendance``.
         """
         now = datetime.now(UTC)
         captured_text, received_text = _utc_text(now), _utc_text(now)
-        event_uuid = str(uuid.uuid4())
+        event_uuid = str(body.event_uuid) if body.event_uuid else str(uuid.uuid4())
         await connection.execute("BEGIN IMMEDIATE")
+        # Idempotent replay: same UUID already stored -> return it verbatim
+        # with the full employee payload so retries see the same shape.
+        async with connection.execute(
+            """SELECT e.event_uuid, e.outcome, e.captured_at_utc, e.fingerprint_slot_id,
+                      s.student_uuid, s.first_name, s.last_name, s.roll_number,
+                      s.grade_class, s.section
+               FROM attendance_events e LEFT JOIN students s ON s.id = e.student_id
+               WHERE e.event_uuid=?""",
+            (event_uuid,),
+        ) as cursor:
+            prior = await cursor.fetchone()
+        if prior is not None:
+            await connection.commit()
+            return JSONResponse(status_code=200, content={
+                "event_uuid": prior["event_uuid"], "outcome": prior["outcome"],
+                "captured_at_utc": prior["captured_at_utc"],
+                "student_uuid": prior["student_uuid"], "employee_uuid": prior["student_uuid"],
+                "first_name": prior["first_name"], "last_name": prior["last_name"],
+                "roll_number": prior["roll_number"], "employee_code": prior["roll_number"],
+                "grade_class": prior["grade_class"], "department": prior["grade_class"],
+                "section": prior["section"], "team": prior["section"],
+                "fingerprint_slot_id": prior["fingerprint_slot_id"]})
         async with connection.execute(
             "SELECT id FROM devices WHERE status='ACTIVE' ORDER BY id"
         ) as cursor:
@@ -436,7 +475,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             student = await cursor.fetchone()
         if student is None:
             await connection.rollback()
-            raise HTTPException(409, {"code": "unknown_slot", "message": "Slot has no active student assignment"})
+            raise HTTPException(409, {"code": "unknown_slot", "message": "Slot has no active employee assignment"})
         async with connection.execute(
             "SELECT captured_at_utc FROM attendance_events WHERE student_id=? AND outcome='RECORDED'",
             (student["id"],),
@@ -450,10 +489,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         await connection.execute(
             """INSERT INTO attendance_events
                (event_uuid, student_id, device_id, fingerprint_slot_id, captured_at_utc,
-                received_at_utc, sync_status, outcome)
-               VALUES (?, ?, ?, ?, ?, ?, 'LIVE', ?)""",
+                received_at_utc, sync_status, outcome, client_seq, clock_uncertain)
+               VALUES (?, ?, ?, ?, ?, ?, 'LIVE', ?, ?, ?)""",
             (event_uuid, student["id"], device_id, body.fingerprint_slot_id,
-             captured_text, received_text, outcome),
+             captured_text, received_text, outcome,
+             body.client_seq, 1 if body.clock_uncertain else 0),
         )
         await connection.execute("UPDATE devices SET last_seen_at_utc=? WHERE id=?", (received_text, device_id))
         await connection.commit()
@@ -462,18 +502,166 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "captured_at_utc": captured_text,
             "fingerprint_slot_id": body.fingerprint_slot_id,
             "student_uuid": student["student_uuid"],
+            "employee_uuid": student["student_uuid"],
             "first_name": student["first_name"], "last_name": student["last_name"],
-            "roll_number": student["roll_number"], "grade_class": student["grade_class"],
-            "section": student["section"],
+            "roll_number": student["roll_number"], "employee_code": student["roll_number"],
+            "grade_class": student["grade_class"], "department": student["grade_class"],
+            "section": student["section"], "team": student["section"],
         })
         status_code = 200 if duplicate else 201
         return JSONResponse(status_code=status_code, content={
             "event_uuid": event_uuid, "outcome": outcome,
             "captured_at_utc": captured_text, "student_uuid": student["student_uuid"],
+            "employee_uuid": student["student_uuid"],
             "first_name": student["first_name"], "last_name": student["last_name"],
-            "roll_number": student["roll_number"], "grade_class": student["grade_class"],
-            "section": student["section"],
+            "roll_number": student["roll_number"], "employee_code": student["roll_number"],
+            "grade_class": student["grade_class"], "department": student["grade_class"],
+            "section": student["section"], "team": student["section"],
             "fingerprint_slot_id": body.fingerprint_slot_id})
+
+    @app.post("/api/v1/attendance/batch")
+    async def batch_sync(
+        body: AttendanceBatchRequest,
+        actor: Annotated[str, Depends(require_admin)],
+        settings: Annotated[Settings, Depends(get_settings)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        """Synchronize a batch of offline-queued attendance events.
+
+        Contract for the web offline queue and other store-and-forward
+        clients:
+        - At most 100 events per request (bounded batches).
+        - Each event carries its client-generated ``event_uuid``; replays
+          are idempotent and return the stored outcome.
+        - Events are committed individually: one malformed/unknown event
+          does not roll back the rest (partial-batch failure handling).
+        - The 60-second debounce applies per employee, identical to live
+          ingest, so reconnect bursts cannot double-count presence.
+        - ``captured_at`` is the SOURCE timestamp; the server never
+          overwrites it with receive time (it is preserved in
+          ``captured_at_utc``).
+        Response: ``{"accepted": n, "failed": m, "items": [...]}`` where
+        each item is ``{"event_uuid", "status": "ok", "outcome",
+        "captured_at_utc"}`` or ``{"event_uuid", "status": "error",
+        "code", "message"}``. HTTP status is always 200 unless the whole
+        request is malformed (422) or unauthorized (401).
+        """
+        now = datetime.now(UTC)
+        received_text = _utc_text(now)
+        async with connection.execute(
+            "SELECT id FROM devices WHERE status='ACTIVE' ORDER BY id"
+        ) as cursor:
+            devices = await cursor.fetchall()
+        if len(devices) != 1:
+            raise HTTPException(409, {"code": "device_configuration", "message": "Exactly one active device is required"})
+        device_id = devices[0]["id"]
+        items: list[dict] = []
+        accepted = 0
+        for item in body.events:
+            event_uuid = str(item.event_uuid)
+            captured = item.captured_at.astimezone(UTC)
+            # Offline replays may legitimately be old; only reject events
+            # from the future beyond the skew window (device clock drift).
+            if captured - now > timedelta(seconds=settings.max_clock_skew_seconds):
+                items.append({"event_uuid": event_uuid, "status": "error",
+                              "code": "future_timestamp",
+                              "message": "Event timestamp is too far in the future"})
+                continue
+            try:
+                await connection.execute("BEGIN IMMEDIATE")
+                async with connection.execute(
+                    "SELECT event_uuid, outcome, captured_at_utc FROM attendance_events WHERE event_uuid=?",
+                    (event_uuid,),
+                ) as cursor:
+                    prior = await cursor.fetchone()
+                if prior is not None:
+                    await connection.commit()
+                    items.append({"event_uuid": prior["event_uuid"], "status": "ok",
+                                  "outcome": prior["outcome"],
+                                  "captured_at_utc": prior["captured_at_utc"],
+                                  "duplicate": True})
+                    accepted += 1
+                    continue
+                async with connection.execute(
+                    """SELECT s.id FROM students s
+                       WHERE s.enrollment_device_id=? AND s.fingerprint_slot_id=? AND s.status='ACTIVE'""",
+                    (device_id, item.fingerprint_slot_id),
+                ) as cursor:
+                    student = await cursor.fetchone()
+                if student is None:
+                    await connection.rollback()
+                    items.append({"event_uuid": event_uuid, "status": "error",
+                                  "code": "unknown_slot",
+                                  "message": "Slot has no active employee assignment"})
+                    continue
+                async with connection.execute(
+                    "SELECT captured_at_utc FROM attendance_events WHERE student_id=? AND outcome='RECORDED'",
+                    (student["id"],),
+                ) as cursor:
+                    accepted_rows = await cursor.fetchall()
+                duplicate = any(
+                    abs((captured - datetime.fromisoformat(r[0].replace("Z", "+00:00")).astimezone(UTC)).total_seconds()) <= 60
+                    for r in accepted_rows
+                )
+                outcome = "DUPLICATE_SUPPRESSED" if duplicate else "RECORDED"
+                captured_text = captured.isoformat(timespec="microseconds").replace("+00:00", "Z")
+                await connection.execute(
+                    """INSERT INTO attendance_events
+                       (event_uuid, student_id, device_id, fingerprint_slot_id, captured_at_utc,
+                        received_at_utc, sync_status, outcome, client_seq, clock_uncertain)
+                       VALUES (?, ?, ?, ?, ?, ?, 'REPLAYED_OFFLINE', ?, ?, ?)""",
+                    (event_uuid, student["id"], device_id, item.fingerprint_slot_id,
+                     captured_text, received_text, outcome,
+                     item.client_seq, 1 if item.clock_uncertain else 0),
+                )
+                await connection.execute("UPDATE devices SET last_seen_at_utc=? WHERE id=?", (received_text, device_id))
+                await connection.commit()
+                EVENT_BUS.publish("attendance.recorded", {
+                    "event_uuid": event_uuid, "outcome": outcome,
+                    "captured_at_utc": captured_text,
+                    "fingerprint_slot_id": item.fingerprint_slot_id,
+                })
+                items.append({"event_uuid": event_uuid, "status": "ok",
+                              "outcome": outcome, "captured_at_utc": captured_text})
+                accepted += 1
+            except aiosqlite.IntegrityError as exc:
+                try:
+                    await connection.rollback()
+                except aiosqlite.Error:
+                    pass
+                items.append({"event_uuid": event_uuid, "status": "error",
+                              "code": "event_conflict",
+                              "message": "Attendance event conflicts with stored data"})
+        return {"accepted": accepted, "failed": len(items) - accepted, "items": items}
+
+    @app.get("/api/v1/sync/snapshot")
+    async def sync_snapshot(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+        settings: Annotated[Settings, Depends(get_settings)],
+    ):
+        """Minimal dataset an offline client needs to keep working.
+
+        Returns server time, active employees (id + name + slot only — no
+        excess PII), and the single active device. The web app caches this
+        in IndexedDB so attendance can be recorded and displayed while the
+        server is unreachable.
+        """
+        async with connection.execute(
+            "SELECT student_uuid, roll_number, first_name, last_name, grade_class, section,"
+            " status, fingerprint_slot_id FROM students WHERE status='ACTIVE'"
+            " ORDER BY last_name, first_name LIMIT 2000",
+        ) as cursor:
+            employees = [_enterprise_student_dict(dict(r)) for r in await cursor.fetchall()]
+        async with connection.execute(
+            "SELECT device_uuid, device_name, location_name, status,"
+            " last_seen_at_utc, sensor_capacity, firmware_version FROM devices WHERE status='ACTIVE' LIMIT 1",
+        ) as cursor:
+            row = await cursor.fetchone()
+            device = dict(row) if row else None
+        return {"server_time_utc": _utc_text(datetime.now(UTC)),
+                "timezone": settings.app_timezone,
+                "employees": employees, "device": device}
 
     @app.post("/api/v1/students/{student_uuid}/deactivate")
     async def deactivate_student(
@@ -487,10 +675,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             row = await cursor.fetchone()
         if row is None:
             await connection.rollback()
-            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+            raise HTTPException(404, {"code": "not_found", "message": "Employee was not found"})
         if row["status"] == "INACTIVE":
             await connection.rollback()
-            raise HTTPException(409, {"code": "invalid_state", "message": "Student is already inactive"})
+            raise HTTPException(409, {"code": "invalid_state", "message": "Employee is already inactive"})
         await connection.execute("UPDATE students SET status='INACTIVE', updated_at_utc=? WHERE id=?", (now, row["id"]))
         await connection.execute(
             "INSERT INTO admin_audit_log (occurred_at_utc, actor, action, target_type, target_id) VALUES (?, ?, 'STUDENT_DEACTIVATED', 'student', ?)",
@@ -562,9 +750,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             await connection.execute(
                 """INSERT INTO attendance_events
                    (event_uuid, student_id, device_id, fingerprint_slot_id, captured_at_utc,
-                    received_at_utc, sync_status, outcome)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                (event_uuid, student_id, device["id"], slot, captured_text, received_text, body.sync_status, outcome),
+                    received_at_utc, sync_status, outcome, client_seq, clock_uncertain)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (event_uuid, student_id, device["id"], slot, captured_text, received_text, body.sync_status, outcome,
+                 body.client_seq, 1 if body.clock_uncertain else 0),
             )
             await connection.execute("UPDATE devices SET last_seen_at_utc=? WHERE id=?", (received_text, device["id"]))
             await connection.commit()
@@ -575,10 +764,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "event_uuid": event_uuid, "outcome": outcome,
             "captured_at_utc": captured_text, "fingerprint_slot_id": slot,
             "device_uuid": device["device_uuid"],
-            "student_uuid": student["student_uuid"],
+            "student_uuid": student["student_uuid"], "employee_uuid": student["student_uuid"],
             "first_name": student["first_name"], "last_name": student["last_name"],
-            "roll_number": student["roll_number"], "grade_class": student["grade_class"],
-            "section": student["section"],
+            "roll_number": student["roll_number"], "employee_code": student["roll_number"],
+            "grade_class": student["grade_class"], "department": student["grade_class"],
+            "section": student["section"], "team": student["section"],
         })
         return JSONResponse(
             status_code=200 if duplicate else 201,
@@ -597,7 +787,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         time_to: str | None = Query(default=None, pattern=r"^\d{2}:\d{2}$"),
         q: str | None = None,
         grade_class: str | None = None,
+        department: str | None = None,
         section: str | None = None,
+        team: str | None = None,
         slot: int | None = Query(default=None, ge=1),
         outcome: str | None = None,
         sort: str = "captured_at_utc",
@@ -611,16 +803,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             parsed_to = date.fromisoformat(date_to) if date_to else None
         except ValueError:
             raise HTTPException(422, {"code": "invalid_date", "message": "Dates must be YYYY-MM-DD"}) from None
-        if sort not in ("captured_at_utc", "student", "class") or order not in ("asc", "desc"):
+        if sort not in ("captured_at_utc", "student", "class", "employee", "department") or order not in ("asc", "desc"):
             raise HTTPException(422, {"code": "invalid_sort", "message": "Unsupported sort"})
+        # Enterprise sort aliases map onto the legacy sort columns.
+        resolved_sort = {"employee": "student", "department": "class"}.get(sort, sort)
         if outcome is not None and outcome not in ("RECORDED", "DUPLICATE_SUPPRESSED"):
             raise HTTPException(422, {"code": "invalid_outcome", "message": "Unsupported outcome"})
         rows, total = await STATS.attendance_list(
             connection, day=parsed_day, date_from=parsed_from, date_to=parsed_to,
             time_from=time_from, time_to=time_to, student_query=q,
-            grade_class=grade_class, section=section,
+            grade_class=grade_class, department=department,
+            section=section, team=team,
             fingerprint_slot_id=slot, outcome=outcome,
-            sort=sort, order=order, limit=limit, offset=offset,
+            sort=resolved_sort, order=order, limit=limit, offset=offset,
             tz=settings.app_timezone,
         )
         return {"items": rows, "total": total, "limit": limit, "offset": offset}
@@ -656,7 +851,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         summary = await STATS.student_summary(
             connection, student_uuid=str(student_uuid), days=days, tz=settings.app_timezone)
         if summary is None:
-            raise HTTPException(404, {"code": "not_found", "message": "Student was not found"})
+            raise HTTPException(404, {"code": "not_found", "message": "Employee was not found"})
         return summary
 
     @app.get("/api/v1/devices")
@@ -680,7 +875,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         date_from: str | None = None,
         date_to: str | None = None,
         grade_class: str | None = None,
+        department: str | None = None,
         section: str | None = None,
+        team: str | None = None,
         q: str | None = None,
     ):
         try:
@@ -691,12 +888,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(422, {"code": "invalid_date", "message": "Dates must be YYYY-MM-DD"}) from None
         rows, _ = await STATS.attendance_list(
             connection, day=parsed_day, date_from=parsed_from, date_to=parsed_to,
-            student_query=q, grade_class=grade_class, section=section,
+            student_query=q, grade_class=grade_class, department=department,
+            section=section, team=team,
             limit=10000, offset=0, tz=settings.app_timezone)
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow(["date", "time_utc", "student", "roll_number", "class",
-                         "section", "fingerprint_id", "status", "event_uuid"])
+        writer.writerow(["date", "time_utc", "employee", "employee_id", "department",
+                         "team", "fingerprint_id", "status", "event_uuid"])
         for row in rows:
             writer.writerow([
                 row["captured_at_utc"][:10], row["captured_at_utc"][11:16],
@@ -716,7 +914,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         date_from: str | None = None,
         date_to: str | None = None,
         grade_class: str | None = None,
+        department: str | None = None,
         section: str | None = None,
+        team: str | None = None,
         q: str | None = None,
     ):
         try:
@@ -727,13 +927,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(422, {"code": "invalid_date", "message": "Dates must be YYYY-MM-DD"}) from None
         rows, _ = await STATS.attendance_list(
             connection, day=parsed_day, date_from=parsed_from, date_to=parsed_to,
-            student_query=q, grade_class=grade_class, section=section,
+            student_query=q, grade_class=grade_class, department=department,
+            section=section, team=team,
             limit=10000, offset=0, tz=settings.app_timezone)
         book = openpyxl.Workbook()
         sheet = book.active
         sheet.title = "Attendance"
-        sheet.append(["Date", "Time (UTC)", "Student", "Roll number", "Class",
-                      "Section", "Fingerprint ID", "Status", "Event UUID"])
+        sheet.append(["Date", "Time (UTC)", "Employee", "Employee ID", "Department",
+                      "Team", "Fingerprint ID", "Status", "Event UUID"])
         for row in rows:
             sheet.append([
                 row["captured_at_utc"][:10], row["captured_at_utc"][11:16],
@@ -763,6 +964,57 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 EVENT_BUS.unsubscribe(queue)
 
         return StreamingResponse(generate(), media_type="text/event-stream")
+
+    @app.get("/api/v1/settings/company")
+    async def company_settings(
+        _actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        """Configurable company name, retention, and sync policy."""
+        async with connection.execute("SELECT key, value FROM company_settings") as cursor:
+            settings_map = {row[0]: row[1] for row in await cursor.fetchall()}
+        return {"company_name": settings_map.get("company_name", "Acme Company"),
+                "retention_days": int(settings_map.get("retention_days", "365")),
+                "sync_retry_max": int(settings_map.get("sync_retry_max", "8"))}
+
+    @app.put("/api/v1/settings/company")
+    async def update_company_settings(
+        body: dict,
+        actor: Annotated[str, Depends(require_admin)],
+        connection: Annotated[aiosqlite.Connection, Depends(get_connection)],
+    ):
+        now = _utc_text(datetime.now(UTC))
+        allowed = {"company_name", "retention_days", "sync_retry_max"}
+        updates = {k: str(v)[:120] for k, v in body.items() if k in allowed}
+        if not updates:
+            raise HTTPException(422, {"code": "empty_update", "message": "No company settings to update"})
+        if "company_name" in updates and not updates["company_name"].strip():
+            raise HTTPException(422, {"code": "invalid_company", "message": "Company name must not be empty"})
+        for key in ("retention_days", "sync_retry_max"):
+            if key in updates:
+                try:
+                    value = int(updates[key])
+                except ValueError:
+                    raise HTTPException(422, {"code": "invalid_setting", "message": f"{key} must be an integer"}) from None
+                if value < 1 or value > 3650:
+                    raise HTTPException(422, {"code": "invalid_setting", "message": f"{key} is out of range"}) from None
+                updates[key] = str(value)
+        for key, value in updates.items():
+            await connection.execute(
+                "INSERT INTO company_settings (key, value, updated_at_utc) VALUES (?, ?, ?)"
+                " ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at_utc=excluded.updated_at_utc",
+                (key, value, now),
+            )
+        await connection.execute(
+            "INSERT INTO admin_audit_log (occurred_at_utc, actor, action, target_type, target_id) VALUES (?, ?, 'COMPANY_SETTINGS_UPDATED', 'settings', 'company')",
+            (now, actor),
+        )
+        await connection.commit()
+        async with connection.execute("SELECT key, value FROM company_settings") as cursor:
+            settings_map = {row[0]: row[1] for row in await cursor.fetchall()}
+        return {"company_name": settings_map.get("company_name", "Acme Company"),
+                "retention_days": int(settings_map.get("retention_days", "365")),
+                "sync_retry_max": int(settings_map.get("sync_retry_max", "8"))}
 
     @app.post("/api/v1/ai/chat", response_model=AIChatResponse)
     async def ai_chat(

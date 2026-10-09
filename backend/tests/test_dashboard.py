@@ -107,12 +107,13 @@ def test_migration_upgrade_preserves_v1_data(tmp_path: Path):
         asyncio.run(upgraded.close())
     check = sqlite3.connect(db_path)
     try:
-        assert check.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION == 2
+        assert check.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION == 3
         row = check.execute("SELECT roll_number, section FROM students").fetchone()
         assert row == ("R-1", "")
+        assert check.execute("SELECT COUNT(*) FROM company_settings").fetchone()[0] >= 3
     finally:
         check.close()
-    assert sorted(_migration_files(MIGRATIONS_DIR)) == [1, 2]
+    assert sorted(_migration_files(MIGRATIONS_DIR)) == [1, 2, 3]
 
 
 def test_student_edit_search_section(client: TestClient):

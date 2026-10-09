@@ -10,7 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import Settings
-from app.database import connect_database
+from app.database import SCHEMA_VERSION, connect_database
 from app.main import create_app
 from app.provision_device import provision
 
@@ -45,7 +45,7 @@ def seed_device(client: TestClient, *, capacity: int | None = 20, device_uuid: s
 
 
 def test_health_and_admin_student_lifecycle(client: TestClient):
-    assert client.get("/health").json() == {"status": "ok", "schema_version": 2}
+    assert client.get("/health").json() == {"status": "ok", "schema_version": SCHEMA_VERSION}
     assert client.get("/api/v1/students").status_code == 401
 
     seed_device(client)
