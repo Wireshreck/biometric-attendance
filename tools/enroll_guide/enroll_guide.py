@@ -104,7 +104,7 @@ async def enroll(client):
     print("=" * 60)
     print("RESULT:", json.dumps(result, indent=1))
     if result.get("code") == "enroll_success":
-        print("Enrolled. Note the slot: it must match the backend student record.")
+        print("Enrolled. Note the slot: it must match the backend employee record.")
 
 
 async def search(client):

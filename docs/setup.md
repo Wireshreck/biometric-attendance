@@ -18,9 +18,10 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 SQLite lives at `backend/data/attendance.db` (WAL mode, migrations
-`backend/migrations/`). Schema v2 adds student sections, device firmware
-tracking, and search/filter indexes. Never delete a real database to
-"fix" it — migrations preserve data; see `docs/testing.md`.
+`backend/migrations/`). Schema v2 added employee-team columns, device firmware
+tracking, and search/filter indexes; v3 adds offline-sync metadata
+(`client_seq`, `clock_uncertain`) and `company_settings`. Never delete a real
+database to "fix" it — migrations preserve data; see `docs/testing.md`.
 
 ## Firmware
 
