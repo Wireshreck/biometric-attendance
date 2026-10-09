@@ -96,14 +96,40 @@ def ensure_env(backend_dir):
 
 
 def start_backend(backend_dir):
-    env = dict(os.environ)
-    proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "app.main:app",
-         "--host", HOST, "--port", str(PORT)],
-        cwd=backend_dir, env=env,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
-    return proc
+    """Launch the backend server, returning the Popen handle or None.
+
+    Frozen (PyInstaller) executables cannot run ``-m uvicorn`` through
+    ``sys.executable`` — that path is this launcher itself, not Python, so
+    doing so would relaunch the GUI instead of the server. In frozen mode
+    locate a real system Python with uvicorn installed and use it; if none
+    exists, return None so main() can report the honest error instead of
+    recursing or pretending the backend started.
+    """
+    candidates: list[list[str]] = []
+    if getattr(sys, "frozen", False):
+        for probe in (["python"], ["py", "-3"], ["python3"]):
+            exe = shutil.which(probe[0])
+            if exe and os.path.abspath(exe) != os.path.abspath(sys.executable):
+                candidates.append([exe, *probe[1:]])
+    else:
+        candidates.append([sys.executable])
+    for base in candidates:
+        try:
+            check = subprocess.run(
+                [*base, "-c", "import uvicorn, fastapi, aiosqlite"],
+                capture_output=True, timeout=30,
+            )
+            if check.returncode != 0:
+                continue
+            return subprocess.Popen(
+                [*base, "-m", "uvicorn", "app.main:app",
+                 "--host", HOST, "--port", str(PORT)],
+                cwd=backend_dir, env=dict(os.environ),
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+    return None
 
 
 def main():
@@ -126,6 +152,14 @@ def main():
                                  f"Port {PORT} is taken by something that is not this backend.")
             return 1
         backend_proc = start_backend(backend_dir)
+        if backend_proc is None:
+            messagebox.showerror(
+                "Backend unavailable",
+                "The backend is not running and no system Python with uvicorn "
+                "was found to start it.\n\nStart it manually:\n"
+                "  cd backend\n"
+                "  python -m uvicorn app.main:app --host 127.0.0.1 --port 8000")
+            return 1
         owned = True
         for _ in range(30):
             time.sleep(1)

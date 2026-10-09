@@ -36,7 +36,7 @@ def char_uuid(name):
 class DiagApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Biometric Attendance — System Test v1.4.0")
+        self.title("Biometric Attendance — System Test v1.5.0")
         self.geometry("860x680")
         self.loop = asyncio.new_event_loop()
         threading.Thread(target=self.loop.run_forever, daemon=True).start()

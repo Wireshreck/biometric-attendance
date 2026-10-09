@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-& $Python -m pip install --quiet pyinstaller bleak pyserial
+& $Python -m pip install --quiet pyinstaller pywebview bleak pyserial
 & $Python -m PyInstaller --noconfirm --onefile --windowed `
   --name BiometricDesktop `
   --paths shared `

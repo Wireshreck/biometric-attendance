@@ -20,6 +20,9 @@ build/
 *.egg-info/
 *.egg
 .eggs/
+# Root-level installer copy: build outputs live in dist/ (also ignored).
+# install.exe must be rebuilt via scripts/build_windows_apps.ps1, never committed.
+/install.exe
 
 # Test artifacts
 .pytest_cache/

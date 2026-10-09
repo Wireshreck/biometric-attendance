@@ -98,5 +98,80 @@ const { randomUUID } = require('crypto');
 
   // 9. queue bound enforced
   await O.markResult('nope', true); // unknown id: no-op, must not throw
-  console.log('offline.test.js: all 9 checks passed (backend=' + kind + ')');
+
+  // ---- sync engine with stubbed transport ----
+  // (Node >=21 exposes a read-only global navigator; override onLine only.)
+  try {
+    Object.defineProperty(globalThis, 'navigator', { value: { onLine: true }, configurable: true, writable: true });
+  } catch (e) { globalThis.navigator.onLine = true; }
+  const setOnline = (v) => { try { globalThis.navigator.onLine = v; } catch (e) {
+    Object.defineProperty(globalThis, 'navigator', { value: { onLine: v }, configurable: true, writable: true }); } };
+  const calls = { batch: 0 };
+  let behavior = 'ok';
+  window.API = {
+    ping: async () => ({ status: 'ok' }),
+    get: async () => ({ employees: [] }),
+    batchSync: async (batch) => {
+      calls.batch += 1;
+      if (behavior === 'down') throw new Error('backend unreachable: refused');
+      if (behavior === 'partial') {
+        return { accepted: 1, failed: batch.length - 1, items: batch.map((b, i) => (i === 0
+          ? { event_uuid: b.event_uuid, status: 'ok', outcome: 'RECORDED', captured_at_utc: b.captured_at_utc }
+          : { event_uuid: b.event_uuid, status: 'error', code: 'unknown_slot', message: 'Slot has no active employee assignment' })) };
+      }
+      if (behavior === 'garbage') return { accepted: 0, failed: batch.length, items: [] };
+      return { accepted: batch.length, failed: 0,
+        items: batch.map((b) => ({ event_uuid: b.event_uuid, status: 'ok', outcome: 'RECORDED', captured_at_utc: b.captured_at_utc })) };
+    },
+  };
+
+  // 10. transport down: queue retained, state honest
+  const q1 = await O.enqueueCheckin({ fingerprint_slot_id: 7 });
+  behavior = 'down';
+  let st = await Sync.syncNow();
+  assert.strictEqual(st.state, 'offline', 'failed sync must report offline, got ' + st.state);
+  assert.strictEqual((await O.counts()).total, 1, 'failed events must stay queued');
+
+  // 11. partial batch: ok removed, error kept visible with reason
+  await O.markResult(q1.event_uuid, true); // isolate: q1 drained
+  const q2a = await O.enqueueCheckin({ fingerprint_slot_id: 8 });
+  const q2b = await O.enqueueCheckin({ fingerprint_slot_id: 9 });
+  behavior = 'partial';
+  st = await Sync.syncNow();
+  const remaining = await O.listQueue();
+  assert.strictEqual(remaining.length, 1, 'exactly the failed event must remain');
+  assert.strictEqual(remaining[0].event_uuid, q2b.event_uuid);
+  assert.ok(remaining[0].last_error.includes('active employee'), 'rejection reason recorded, got: ' + remaining[0].last_error);
+  assert.strictEqual(st.failed, 1, 'UI failed count must match queue');
+
+  // 12. invalid ack (no items): nothing dropped
+  behavior = 'garbage';
+  await Sync.syncNow();
+  assert.strictEqual((await O.counts()).total, 1, 'unacknowledged events must be retained');
+
+  // 13. recovery: success drains queue; replay finds nothing (idempotent)
+  // (simulate elapsed backoff by clearing the recent attempt timestamp)
+  const qkey = 'attendance-offline-v1:queue';
+  const qraw = JSON.parse(localStorage.getItem(qkey));
+  qraw.forEach((r) => { r.attempts = 0; r.last_attempt_utc = null; r.sync_state = 'pending'; });
+  localStorage.setItem(qkey, JSON.stringify(qraw));
+  behavior = 'ok';
+  st = await Sync.syncNow();
+  assert.strictEqual((await O.counts()).total, 0, 'acked events must be removed');
+  const before = calls.batch;
+  await Sync.syncNow();
+  assert.strictEqual(calls.batch, before, 'empty queue must not send batches');
+
+  // 14. browser-offline short-circuit sends nothing
+  await O.enqueueCheckin({ fingerprint_slot_id: 9 });
+  setOnline(false);
+  const b2 = calls.batch;
+  st = await Sync.syncNow();
+  assert.strictEqual(calls.batch, b2, 'browser-offline must not attempt transport');
+  assert.strictEqual(st.state, 'offline');
+  setOnline(true);
+  await Sync.syncNow();
+  assert.strictEqual((await O.counts()).total, 0);
+
+  console.log('offline.test.js: all 14 checks passed (backend=' + kind + ')');
 })().catch((e) => { console.error('offline.test.js FAILED:', e); process.exit(1); });
