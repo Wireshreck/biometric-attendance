@@ -7,41 +7,181 @@
   "showOrphans": true,
   "collapse-color-groups": false,
   "colorGroups": [
-    { "query": "path:00 - Vault Hub",           "color": { "a": 1, "rgb": 2914383 } },
-    { "query": "tag:#project",                   "color": { "a": 1, "rgb": 2914383 } },
-    { "query": "tag:#hub",                       "color": { "a": 1, "rgb": 2914383 } },
-
-    { "query": "tag:#hardware",                  "color": { "a": 1, "rgb": 12746764 } },
-    { "query": "path:02 - Hardware Lab",         "color": { "a": 1, "rgb": 12746764 } },
-
-    { "query": "tag:#firmware",                  "color": { "a": 1, "rgb": 1414652 } },
-    { "query": "path:03 - Firmware Lab",         "color": { "a": 1, "rgb": 1414652 } },
-
-    { "query": "tag:#backend",                   "color": { "a": 1, "rgb": 7164311 } },
-    { "query": "path:04 - Backend Server Room",  "color": { "a": 1, "rgb": 7164311 } },
-
-    { "query": "tag:#testing",                   "color": { "a": 1, "rgb": 9913972 } },
-    { "query": "path:05 - Testing Lab",          "color": { "a": 1, "rgb": 9913972 } },
-
-    { "query": "tag:#research",                  "color": { "a": 1, "rgb": 10542887 } },
-    { "query": "path:06 - Research Archive",     "color": { "a": 1, "rgb": 10542887 } },
-
-    { "query": "tag:#science-fair",              "color": { "a": 1, "rgb": 12466493 } },
-    { "query": "path:07 - Science Fair",         "color": { "a": 1, "rgb": 12466493 } },
-
-    { "query": "tag:#documentation",             "color": { "a": 1, "rgb": 4665495 } },
-    { "query": "path:08 - Documentation Library","color": { "a": 1, "rgb": 4665495 } },
-
-    { "query": "tag:#decisions",                 "color": { "a": 1, "rgb": 12109788 } },
-    { "query": "path:09 - Decision Room",        "color": { "a": 1, "rgb": 12109788 } },
-
-    { "query": "tag:#workshop",                  "color": { "a": 1, "rgb": 352148 } },
-    { "query": "path:10 - Workshop",             "color": { "a": 1, "rgb": 352148 } },
-
-    { "query": "tag:#verified",                  "color": { "a": 1, "rgb": 1414652 } },
-    { "query": "tag:#unverified",                "color": { "a": 1, "rgb": 9568250 } },
-    { "query": "tag:#blocked",                   "color": { "a": 1, "rgb": 12109788 } },
-    { "query": "path:docs/VAULT-AUDIT.md",       "color": { "a": 1, "rgb": 9568250 } }
+    {
+      "query": "path:00 - Vault Hub",
+      "color": {
+        "a": 1,
+        "rgb": 2914383
+      }
+    },
+    {
+      "query": "tag:#project",
+      "color": {
+        "a": 1,
+        "rgb": 2914383
+      }
+    },
+    {
+      "query": "tag:#hub",
+      "color": {
+        "a": 1,
+        "rgb": 2914383
+      }
+    },
+    {
+      "query": "tag:#hardware",
+      "color": {
+        "a": 1,
+        "rgb": 12746764
+      }
+    },
+    {
+      "query": "path:02 - Hardware Lab",
+      "color": {
+        "a": 1,
+        "rgb": 12746764
+      }
+    },
+    {
+      "query": "tag:#firmware",
+      "color": {
+        "a": 1,
+        "rgb": 1414652
+      }
+    },
+    {
+      "query": "path:03 - Firmware Lab",
+      "color": {
+        "a": 1,
+        "rgb": 1414652
+      }
+    },
+    {
+      "query": "tag:#backend",
+      "color": {
+        "a": 1,
+        "rgb": 7164311
+      }
+    },
+    {
+      "query": "path:04 - Backend Server Room",
+      "color": {
+        "a": 1,
+        "rgb": 7164311
+      }
+    },
+    {
+      "query": "tag:#testing",
+      "color": {
+        "a": 1,
+        "rgb": 9913972
+      }
+    },
+    {
+      "query": "path:05 - Testing Lab",
+      "color": {
+        "a": 1,
+        "rgb": 9913972
+      }
+    },
+    {
+      "query": "tag:#research",
+      "color": {
+        "a": 1,
+        "rgb": 10542887
+      }
+    },
+    {
+      "query": "path:06 - Research Archive",
+      "color": {
+        "a": 1,
+        "rgb": 10542887
+      }
+    },
+    {
+      "query": "tag:#science-fair",
+      "color": {
+        "a": 1,
+        "rgb": 12466493
+      }
+    },
+    {
+      "query": "path:07 - Science Fair",
+      "color": {
+        "a": 1,
+        "rgb": 12466493
+      }
+    },
+    {
+      "query": "tag:#documentation",
+      "color": {
+        "a": 1,
+        "rgb": 4665495
+      }
+    },
+    {
+      "query": "path:08 - Documentation Library",
+      "color": {
+        "a": 1,
+        "rgb": 4665495
+      }
+    },
+    {
+      "query": "tag:#decisions",
+      "color": {
+        "a": 1,
+        "rgb": 12109788
+      }
+    },
+    {
+      "query": "path:09 - Decision Room",
+      "color": {
+        "a": 1,
+        "rgb": 12109788
+      }
+    },
+    {
+      "query": "tag:#workshop",
+      "color": {
+        "a": 1,
+        "rgb": 352148
+      }
+    },
+    {
+      "query": "path:10 - Workshop",
+      "color": {
+        "a": 1,
+        "rgb": 352148
+      }
+    },
+    {
+      "query": "tag:#verified",
+      "color": {
+        "a": 1,
+        "rgb": 1414652
+      }
+    },
+    {
+      "query": "tag:#unverified",
+      "color": {
+        "a": 1,
+        "rgb": 9568250
+      }
+    },
+    {
+      "query": "tag:#blocked",
+      "color": {
+        "a": 1,
+        "rgb": 12109788
+      }
+    },
+    {
+      "query": "path:docs/VAULT-AUDIT.md",
+      "color": {
+        "a": 1,
+        "rgb": 9568250
+      }
+    }
   ],
   "collapse-display": true,
   "showArrow": true,
@@ -53,6 +193,6 @@
   "repelStrength": 11,
   "linkStrength": 0.9,
   "linkDistance": 260,
-  "scale": 0.8,
+  "scale": 0.1802414844546451,
   "close": true
 }

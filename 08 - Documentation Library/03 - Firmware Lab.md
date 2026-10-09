@@ -1,0 +1,1 @@
+> [!NOTE] **Current hardware change:** The SSD1306 OLED, the green/red LEDs, and their series resistors were removed from this project (OLED damaged; no resistors available). The remaining intended hardware is ESP32, R307S, DS3231 RTC, and buzzer. GPIO18 and GPIO19 are now unused/reserved. The authoritative pin map is [[docs/final-pin-map.md]].

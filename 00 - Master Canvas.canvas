@@ -1,339 +1,44 @@
 {
-  "nodes": [
-    {
-      "id": "t001",
-      "type": "text",
-      "text": "# BIOMETRIC ATTENDANCE LAB — facility map\nEnter at the CENTRAL HUB, open a room, follow the arrows, come back. Colour = area. Read [[08 - Documentation Library/Documentation Library]] for the legend.",
-      "x": -1340,
-      "y": -1180,
-      "width": 900,
-      "height": 120,
-      "color": "#1d3557",
-      "textSize": 1
-    },
-    {
-      "id": "t002",
-      "type": "text",
-      "text": "## CENTRAL HUB\n\n[[00 - Vault Hub]]\n\nIdentity · status · blockers · navigation\n\n**R307S = UNVERIFIED**\nBuild pass ≠ hardware pass",
-      "x": -1010,
-      "y": -40,
-      "width": 560,
-      "height": 230,
-      "color": "#1d3557"
-    },
-    {
-      "id": "t003",
-      "type": "text",
-      "text": "## 06 · RESEARCH ARCHIVE\nWhat we know, how, how confident\n[[06 - Research Archive]]",
-      "x": -1800,
-      "y": -1000,
-      "width": 420,
-      "height": 150,
-      "color": "#a16207"
-    },
-    {
-      "id": "t004",
-      "type": "text",
-      "text": "## 08 · DOCUMENTATION LIBRARY\nWhich file is authoritative\n[[08 - Documentation Library]]",
-      "x": -1100,
-      "y": -1000,
-      "width": 420,
-      "height": 150,
-      "color": "#475569"
-    },
-    {
-      "id": "t005",
-      "type": "text",
-      "text": "## 09 · DECISION ROOM\nADR-001…ADR-017 + this restructure\n[[09 - Decision Room]]",
-      "x": -400,
-      "y": -1000,
-      "width": 420,
-      "height": 150,
-      "color": "#b91c1c"
-    },
-    {
-      "id": "t006",
-      "type": "text",
-      "text": "## 02 · HARDWARE LAB\nParts, buses, breadboard, safety\n[[02 - Hardware Lab]]",
-      "x": -1800,
-      "y": -640,
-      "width": 420,
-      "height": 150,
-      "color": "#c2410c"
-    },
-    {
-      "id": "t007",
-      "type": "text",
-      "text": "## 03 · FIRMWARE LAB\nTerminal runtime, state machine\n[[03 - Firmware Lab]]",
-      "x": -1100,
-      "y": -640,
-      "width": 420,
-      "height": 150,
-      "color": "#15803d"
-    },
-    {
-      "id": "t008",
-      "type": "text",
-      "text": "## 05 · TESTING LAB\n27 environments · 0 physical results\n[[05 - Testing Lab]]",
-      "x": -400,
-      "y": -640,
-      "width": 420,
-      "height": 150,
-      "color": "#0f766e"
-    },
-    {
-      "id": "t009",
-      "type": "text",
-      "text": "## 01 · PROJECT HQ\nMission, scope, non-negotiables\n[[01 - Project HQ]]",
-      "x": -1800,
-      "y": 40,
-      "width": 420,
-      "height": 150,
-      "color": "#1d3557"
-    },
-    {
-      "id": "t010",
-      "type": "text",
-      "text": "## 04 · BACKEND SERVER ROOM\nFastAPI · SQLite · auth\n[[04 - Backend Server Room]]",
-      "x": -400,
-      "y": 40,
-      "width": 420,
-      "height": 150,
-      "color": "#6d28d9"
-    },
-    {
-      "id": "t011",
-      "type": "text",
-      "text": "## 07 · SCIENCE FAIR\nDemo, judges, honest fallbacks\n[[07 - Science Fair]]",
-      "x": -1800,
-      "y": 640,
-      "width": 420,
-      "height": 150,
-      "color": "#be185d"
-    },
-    {
-      "id": "t012",
-      "type": "text",
-      "text": "## 10 · WORKSHOP\nTasks, milestones, THE blocker\n[[10 - Workshop]]",
-      "x": -1100,
-      "y": 640,
-      "width": 420,
-      "height": 150,
-      "color": "#0891b2"
-    },
-    {
-      "id": "t013",
-      "type": "text",
-      "text": "## ⚠ EVIDENCE GATE\n**[VERIFIED]** evidence observed\n**[UNVERIFIED]** mapped, not measured\n**[NOT EXECUTED]** never run\n**[BLOCKED]** prerequisite missing\n**[BUILD PASS]** compiles only",
-      "x": -400,
-      "y": 640,
-      "width": 420,
-      "height": 200,
-      "color": "#92400e"
-    }
-  ],
-  "edges": [
-    {
-      "id": "e001",
-      "fromNode": "t002",
-      "toNode": "t003",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e002",
-      "fromNode": "t002",
-      "toNode": "t004",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e003",
-      "fromNode": "t002",
-      "toNode": "t005",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e004",
-      "fromNode": "t002",
-      "toNode": "t006",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e005",
-      "fromNode": "t002",
-      "toNode": "t007",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e006",
-      "fromNode": "t002",
-      "toNode": "t008",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e007",
-      "fromNode": "t002",
-      "toNode": "t009",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e008",
-      "fromNode": "t002",
-      "toNode": "t010",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e009",
-      "fromNode": "t002",
-      "toNode": "t011",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e010",
-      "fromNode": "t002",
-      "toNode": "t012",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "color": "#1d3557"
-    },
-    {
-      "id": "e011",
-      "fromNode": "t006",
-      "toNode": "t007",
-      "label": "pin map drives config.h",
-      "color": "#c2410c",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e012",
-      "fromNode": "t006",
-      "toNode": "t008",
-      "label": "devices under test",
-      "color": "#c2410c",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e013",
-      "fromNode": "t003",
-      "toNode": "t006",
-      "label": "sensor evidence",
-      "color": "#a16207",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e014",
-      "fromNode": "t003",
-      "toNode": "t005",
-      "label": "informs ADR-013/014",
-      "color": "#a16207",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e015",
-      "fromNode": "t007",
-      "toNode": "t010",
-      "label": "HTTP contract both sides",
-      "color": "#15803d",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e016",
-      "fromNode": "t007",
-      "toNode": "t008",
-      "label": "production = INT-10",
-      "color": "#15803d",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e017",
-      "fromNode": "t010",
-      "toNode": "t008",
-      "label": "10 pytest tests",
-      "color": "#6d28d9",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e018",
-      "fromNode": "t009",
-      "toNode": "t004",
-      "label": "canonical registry",
-      "color": "#1d3557",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e019",
-      "fromNode": "t005",
-      "toNode": "t004",
-      "label": "history retained",
-      "color": "#b91c1c",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e020",
-      "fromNode": "t011",
-      "toNode": "t009",
-      "label": "demo = the system",
-      "color": "#be185d",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e021",
-      "fromNode": "t011",
-      "toNode": "t004",
-      "label": "claims gate",
-      "color": "#be185d",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e022",
-      "fromNode": "t012",
-      "toNode": "t008",
-      "label": "run the env, record evidence",
-      "color": "#0891b2",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e023",
-      "fromNode": "t012",
-      "toNode": "t006",
-      "label": "measure before assuming",
-      "color": "#0891b2",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e024",
-      "fromNode": "t008",
-      "toNode": "t005",
-      "label": "evidence closes decisions",
-      "color": "#0f766e",
-      "toEnd": "arrow"
-    },
-    {
-      "id": "e025",
-      "fromNode": "t013",
-      "toNode": "t012",
-      "fromSide": "left",
-      "toSide": "right",
-      "label": "the blocker lives here",
-      "color": "#92400e",
-      "toEnd": "arrow"
-    }
-  ]
+	"nodes":[
+		{"id":"t001","type":"text","text":"# BIOMETRIC ATTENDANCE LAB — facility map\nEnter at the CENTRAL HUB, open a room, follow the arrows, come back. Colour = area. Read [[08 - Documentation Library/Documentation Library]] for the legend.","x":-1340,"y":-1180,"width":900,"height":120,"color":"#1d3557","textSize":1},
+		{"id":"t002","type":"text","text":"## CENTRAL HUB\n\n[[00 - Vault Hub]]\n\nIdentity · status · blockers · navigation\n\n**R307S = UNVERIFIED**\nBuild pass ≠ hardware pass","x":-1010,"y":-40,"width":560,"height":230,"color":"#1d3557"},
+		{"id":"t003","type":"text","text":"## 06 · RESEARCH ARCHIVE\nWhat we know, how, how confident\n[[06 - Research Archive]]","x":-1800,"y":-1000,"width":420,"height":150,"color":"#a16207"},
+		{"id":"t004","type":"text","text":"## 08 · DOCUMENTATION LIBRARY\nWhich file is authoritative\n[[08 - Documentation Library]]","x":-1100,"y":-1000,"width":420,"height":150,"color":"#475569"},
+		{"id":"t005","type":"text","text":"## 09 · DECISION ROOM\nADR-001…ADR-017 + this restructure\n[[09 - Decision Room]]","x":-400,"y":-1000,"width":420,"height":150,"color":"#b91c1c"},
+		{"id":"t006","type":"text","text":"## 02 · HARDWARE LAB\nParts, buses, breadboard, safety\n[[02 - Hardware Lab]]","x":-1800,"y":-640,"width":420,"height":150,"color":"#c2410c"},
+		{"id":"t007","type":"text","text":"## 03 · FIRMWARE LAB\nTerminal runtime, state machine\n[[03 - Firmware Lab]]","x":-1100,"y":-640,"width":420,"height":150,"color":"#15803d"},
+		{"id":"t008","type":"text","text":"## 05 · TESTING LAB\n27 environments · 0 physical results\n[[05 - Testing Lab]]","x":-400,"y":-640,"width":420,"height":150,"color":"#0f766e"},
+		{"id":"t009","type":"text","text":"## 01 · PROJECT HQ\nMission, scope, non-negotiables\n[[01 - Project HQ]]","x":-1800,"y":40,"width":420,"height":150,"color":"#1d3557"},
+		{"id":"t010","type":"text","text":"## 04 · BACKEND SERVER ROOM\nFastAPI · SQLite · auth\n[[04 - Backend Server Room]]","x":-400,"y":40,"width":420,"height":150,"color":"#6d28d9"},
+		{"id":"t011","type":"text","text":"## 07 · SCIENCE FAIR\nDemo, judges, honest fallbacks\n[[07 - Science Fair]]","x":-1800,"y":640,"width":420,"height":150,"color":"#be185d"},
+		{"id":"t012","type":"text","text":"## 10 · WORKSHOP\nTasks, milestones, THE blocker\n[[10 - Workshop]]","x":-1100,"y":640,"width":420,"height":150,"color":"#0891b2"},
+		{"id":"t013","type":"text","text":"## ⚠ EVIDENCE GATE\n**[VERIFIED]** evidence observed\n**[UNVERIFIED]** mapped, not measured\n**[NOT EXECUTED]** never run\n**[BLOCKED]** prerequisite missing\n**[BUILD PASS]** compiles only","x":-400,"y":640,"width":420,"height":200,"color":"#92400e"}
+	],
+	"edges":[
+		{"id":"e001","fromNode":"t002","toNode":"t003","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e002","fromNode":"t002","toNode":"t004","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e003","fromNode":"t002","toNode":"t005","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e004","fromNode":"t002","toNode":"t006","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e005","fromNode":"t002","toNode":"t007","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e006","fromNode":"t002","toNode":"t008","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e007","fromNode":"t002","toNode":"t009","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e008","fromNode":"t002","toNode":"t010","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e009","fromNode":"t002","toNode":"t011","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e010","fromNode":"t002","toNode":"t012","fromSide":"bottom","toSide":"top","color":"#1d3557"},
+		{"id":"e011","fromNode":"t006","toNode":"t007","label":"pin map drives config.h","color":"#c2410c","toEnd":"arrow","fromSide":"right","toSide":"left"},
+		{"id":"e012","fromNode":"t006","toNode":"t008","label":"devices under test","color":"#c2410c","toEnd":"arrow","fromSide":"right","toSide":"left"},
+		{"id":"e013","fromNode":"t003","toNode":"t006","label":"sensor evidence","color":"#a16207","toEnd":"arrow","fromSide":"bottom","toSide":"top"},
+		{"id":"e014","fromNode":"t003","toNode":"t005","label":"informs ADR-013/014","color":"#a16207","toEnd":"arrow","fromSide":"right","toSide":"left"},
+		{"id":"e015","fromNode":"t007","toNode":"t010","label":"HTTP contract both sides","color":"#15803d","toEnd":"arrow","fromSide":"bottom","toSide":"top"},
+		{"id":"e016","fromNode":"t007","toNode":"t008","label":"production = INT-10","color":"#15803d","toEnd":"arrow","fromSide":"right","toSide":"left"},
+		{"id":"e017","fromNode":"t010","toNode":"t008","label":"10 pytest tests","color":"#6d28d9","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e018","fromNode":"t009","toNode":"t004","label":"canonical registry","color":"#1d3557","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e019","fromNode":"t005","toNode":"t004","label":"history retained","color":"#b91c1c","toEnd":"arrow","fromSide":"left","toSide":"right"},
+		{"id":"e020","fromNode":"t011","toNode":"t009","label":"demo = the system","color":"#be185d","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e021","fromNode":"t011","toNode":"t004","label":"claims gate","color":"#be185d","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e022","fromNode":"t012","toNode":"t008","label":"run the env, record evidence","color":"#0891b2","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e023","fromNode":"t012","toNode":"t006","label":"measure before assuming","color":"#0891b2","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e024","fromNode":"t008","toNode":"t005","label":"evidence closes decisions","color":"#0f766e","toEnd":"arrow","fromSide":"top","toSide":"bottom"},
+		{"id":"e025","fromNode":"t013","toNode":"t012","fromSide":"left","toSide":"right","label":"the blocker lives here","color":"#92400e","toEnd":"arrow"}
+	]
 }

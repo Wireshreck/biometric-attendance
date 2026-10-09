@@ -107,6 +107,15 @@
         <thead><tr><th>Name</th><th>Roll</th><th>Class</th><th>Sec</th><th>Status</th><th>FP</th><th></th></tr></thead>
         <tbody></tbody>
       </table></div>
+      <div class="panel" id="stuDetail" hidden>
+        <h2 id="stuDetailName">—</h2>
+        <div class="row">
+          <button id="btnStuEdit">Edit</button>
+          <button id="btnStuActivate" hidden>Mark enrolled</button>
+          <button id="btnStuDeact">Deactivate</button>
+          <button id="btnStuDel">Delete</button>
+        </div>
+      </div>
       <dialog id="stuDlg" aria-label="Student editor">
         <form method="dialog" id="stuForm">
           <h2 id="stuDlgTitle">Add student</h2>

@@ -58,9 +58,6 @@ class AssistedCheckin(BaseModel):
     fingerprint_slot_id: int = Field(ge=1)
 
 
-class AssistedCheckin(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    fingerprint_slot_id: int = Field(ge=1)
 
 
 class StudentList(BaseModel):

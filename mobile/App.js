@@ -7,6 +7,26 @@ import { TIMEOUTS_MS } from '../shared/ble_protocol.js';
 
 const STORE_KEY = 'biometric-attendance-settings-v1';
 
+// Hermes (React Native) has no btoa — minimal Basic-auth encoder, no dependency.
+function basicAuth(user, pass) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const bytes = [];
+  const text = `${user}:${pass}`;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if (code > 255) throw new Error('Credentials must be Latin-1 characters.');
+    bytes.push(code);
+  }
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 3) {
+    const a = bytes[i], b = i + 1 < bytes.length ? bytes[i + 1] : 0, c = i + 2 < bytes.length ? bytes[i + 2] : 0;
+    out += chars[a >> 2] + chars[((a & 3) << 4) | (b >> 4)] +
+      (i + 1 < bytes.length ? chars[((b & 15) << 2) | (c >> 6)] : '=') +
+      (i + 2 < bytes.length ? chars[c & 63] : '=');
+  }
+  return 'Basic ' + out;
+}
+
 function normalizeUrl(raw) {
   const t = (raw || '').trim().replace(/\/+$/, '');
   if (!/^https?:\/\/[^/]+/.test(t)) throw new Error('Use http(s)://host[:port], e.g. http://192.168.1.100:8000');
@@ -23,7 +43,7 @@ async function loadSettings() {
 
 function useApi(cfg) {
   const headers = () => ({
-    Authorization: 'Basic ' + btoa(`${cfg.user}:${cfg.pass}`),
+    Authorization: basicAuth(cfg.user, cfg.pass),
     'Content-Type': 'application/json',
   });
   const get = async (p, opts = {}) => {

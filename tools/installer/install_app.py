@@ -168,11 +168,21 @@ class Wizard(tk.Tk):
                     dst = os.path.join(apps, os.path.basename(src))
                     shutil.copy2(src, dst)
                     copied.append(dst)
+            # The desktop shell is an exact web-UI wrapper: it needs the
+            # backend + web trees next to the exe (never .env with secrets).
+            for tree in ("backend", "web"):
+                src, dst = os.path.join(self.root, tree), os.path.join(apps, tree)
+                if os.path.isdir(src):
+                    shutil.copytree(src, dst, dirs_exist_ok=True,
+                                    ignore=shutil.ignore_patterns(
+                                        ".env", "__pycache__", "*.db*", "*.log",
+                                        ".venv", "node_modules"))
+                    copied.append(dst + "/")
             bat = os.path.join(apps, "BiometricDesktop.bat")
             with open(bat, "w", encoding="utf-8") as f:
                 f.write("@echo off\r\nstart \"\" \"%~dp0BiometricDesktop.exe\"\r\n")
-            self.mark("install-apps", f"PASS — {len(copied)} exe(s) + launcher in {apps}"
-                      if copied else f"WARN — no dist exes yet; launcher only in {apps}")
+            self.mark("install-apps", f"PASS - {len(copied)} item(s) + launcher in {apps}"
+                      if copied else f"WARN - no dist exes yet; launcher only in {apps}")
         except Exception as e:  # noqa: BLE001
             self.mark("install-apps", f"FAIL: {e}")
 
