@@ -1,4 +1,4 @@
-"""Biometric Attendance desktop shell v1.4.0.
+"""Biometric Attendance desktop shell v1.5.0.
 
 A native window (Edge WebView2) hosting the exact web console served by
 the local backend — the desktop UI is pixel-identical to the web UI by

@@ -7,18 +7,19 @@ tags:
   - entry-point
 ---
 
-# Biometric Attendance System v1.3.0
+# Employee Attendance System v1.5.0
 
-Local-first fingerprint attendance: ESP32 + R307S sensor + DS3231 RTC, a
-FastAPI/SQLite backend, a web dashboard, an Expo mobile app, Windows tools,
+Local-first fingerprint attendance for small businesses: ESP32 + R307S sensor + DS3231 RTC, a
+FastAPI/SQLite backend, an offline-capable web console, an Expo mobile app, Windows tools,
 and a Gemini assistant. No cloud required.
 
 ## 1. What this project is
 
-A school attendance system. Students enroll a finger once; daily check-ins
+An employee attendance system for small businesses. Employees enroll a finger once; daily check-ins
 take seconds: scan → match → timestamp → SQLite record → dashboard. It runs
 on an isolated local network (optionally with internet only for Gemini
-summaries).
+summaries). The web console keeps recording offline (local queue + auto-sync);
+see `docs/offline-mode.md`.
 
 ## 2. Architecture
 
@@ -37,10 +38,11 @@ Backend PC: FastAPI + SQLite (uvicorn 127.0.0.1:8000)
 ## 3. Features
 
 Dashboard, attendance explorer (search/filter/sort/paginate/export),
-students (CRUD/deactivate/delete/profiles), analytics, CSV+XLSX export, BLE device
+employees (CRUD/deactivate/delete/profiles), analytics, CSV+XLSX export, BLE device
 management (17 commands), AI assistant, diagnostics, installer, test utility.
 The ESP32 scans autonomously at boot — no client needs to be open. Connected
 clients get real-time attendance overlays plus an assisted check-in flow.
+Offline queue with idempotent batch sync covers server/network outages.
 
 ## 4. Hardware
 
@@ -94,7 +96,7 @@ python -m pip install fastapi "uvicorn[standard]" pydantic aiosqlite tzdata pyth
 .\scripts\server.ps1 start  # or: python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Expect `{"status":"ok","schema_version":2}` at `/health`. Console at `/`.
+Expect `{"status":"ok","schema_version":3}` at `/health`. Console at `/`.
 
 ## 9. SQLite setup
 
@@ -162,8 +164,10 @@ bound to the LAN IP. See `docs/self-hosting.md`.
 ## 18. Web setup
 
 Served by the backend at `/` (same origin, no CORS needed). Sign in with
-admin creds (dialog, tab-session only). Views: Dashboard/Attendance/
-Students/Device/AI/Help. `Ctrl+K` palette, dark-mode toggle.
+admin creds (dialog, tab-session only). Views: Home/Attendance/
+Employees/Analytics/Devices/Fingerprints/AI/Help. `Ctrl+K` palette, dark-mode toggle.
+Works offline once visited: check-ins queue locally and sync on reconnect
+(see `docs/offline-mode.md`).
 
 ## 19. Windows setup
 
@@ -196,10 +200,10 @@ Bearer token, SHA-256 hashed in SQLite (`devices.token_hash`). Rotate: set
 device `REVOKED`, provision a replacement. Revoke: update status to
 `REVOKED` (invalid immediately). Never commit tokens/UUIDs (see 34).
 
-## 24. Student setup
+## 24. Employee setup
 
-Students → Add (roll/name/class/section) → PENDING_ENROLLMENT + slot →
-enroll finger into that slot (Device tab or `tools/enroll_guide/`) →
+Employees → Add (ID/name/department/team) → PENDING_ENROLLMENT + slot →
+enroll finger into that slot (Fingerprints tab or `tools/enroll_guide/`) →
 Open → Mark enrolled → ACTIVE.
 
 ## 25. Fingerprint enrollment
@@ -214,14 +218,15 @@ The device scans on its own from boot: match → RTC timestamp → LittleFS
 record → Wi-Fi sync when configured (offline queue otherwise, same UUID —
 no duplicates on reconnect). With any client open, place a finger anytime:
 Home SCAN button, auto-scan toggle, or the guide — match resolves the
-student, assisted check-in stores the event (60 s debounce), and every open
+employee, assisted check-in stores the event (60 s debounce; offline it
+queues in the browser with a client UUID and syncs later), and every open
 client shows a large attendance overlay within seconds. Scan → Open →
-Mark enrolled activates new students; Delete removes them (orphan count
+Mark enrolled activates new employees; Delete removes them (orphan count
 reported).
 
 ## 27. Analytics
 
-Overview (today), 7–60-day trends, per-class comparison, busy hours,
+Overview (today), 7–60-day trends, per-department comparison, busy hours,
 absentees — all aggregate SQL in `backend/app/stats.py`, shared with AI.
 
 ## 28. Exports

@@ -192,6 +192,11 @@ export default function App() {
   if (!cfg) return <View style={styles.root}><ActivityIndicator size="large" /></View>;
   if (!cfg.done) return <ScrollView style={styles.root}><Setup initial={cfg} onDone={setCfg} /><StatusBar style="auto" /></ScrollView>;
 
+  // RFC4122 UUIDv4 without native crypto (Hermes-safe) for idempotent retries.
+  const newEventId = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
   const run = async (label, fn) => {
     setBusy(true);
     try { push(`> ${label}`); push(await fn()); }
@@ -212,7 +217,7 @@ export default function App() {
         if (r.code === 'match') {
           push(`Match slot ${r.slot} — recording…`);
           try {
-            const a = await api.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+            const a = await api.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot, event_uuid: newEventId() });
             push(`Check-in: ${a.outcome}`);
           } catch (e) { push(`Check-in FAILED: ${e.message}`); }
           await new Promise((r2) => setTimeout(r2, 4000));
@@ -242,7 +247,7 @@ export default function App() {
     setCfg({ host: '', user, pass: '', done: false });
   };
 
-  const tabs = ['home', 'attend', 'students', 'analytics', 'devices', 'finger', 'diag', 'ai', 'settings'];
+  const tabs = ['home', 'attend', 'employees', 'analytics', 'devices', 'finger', 'diag', 'ai', 'settings'];
   return (
     <ScrollView style={styles.root}>
       <Text style={styles.h1}>Attendance</Text>
@@ -257,14 +262,14 @@ export default function App() {
         <Button title="SCAN — place finger" color="#2f5fd0" onPress={() => run('scan-now', async () => {
           const r = await client.send('FINGERPRINT_SEARCH', {}, TIMEOUTS_MS.SEARCH);
           if (r.code !== 'match') return r;
-          const a = await api.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+          const a = await api.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot, event_uuid: newEventId() });
           setLastEvent({ ...a, confidence: r.confidence });
           return { match: r.slot, outcome: a.outcome };
         })} />
         {lastEvent && <View style={styles.overlay}>
           <Text style={styles.h2}>{lastEvent.outcome === 'RECORDED' ? '✓ PRESENT' : '⧗ ALREADY RECORDED'}</Text>
           <Text style={styles.big}>{lastEvent.first_name} {lastEvent.last_name}</Text>
-          <Text>Class {lastEvent.grade_class}{lastEvent.section} · {(lastEvent.captured_at_utc || '').slice(11, 16)} UTC</Text>
+          <Text>Department {lastEvent.department || lastEvent.grade_class}{lastEvent.team || lastEvent.section} · {(lastEvent.captured_at_utc || '').slice(11, 16)} UTC</Text>
           <Text style={styles.mut}>Fingerprint #{lastEvent.fingerprint_slot_id}{lastEvent.confidence != null ? ` · conf ${lastEvent.confidence}` : ''}</Text>
         </View>}
         <Button title="Load dashboard" onPress={() => run('overview', () => api.get('/api/v1/statistics/overview'))} />
@@ -277,14 +282,14 @@ export default function App() {
       </Section>}
 
       {tab === 'attend' && <Section title="Attendance">
-        <TextInput style={styles.input} value={query} onChangeText={setQuery} placeholder="Name, roll, class" />
+        <TextInput style={styles.input} value={query} onChangeText={setQuery} placeholder="Name, employee ID, department" />
         <Button title="Search" onPress={() => run('search', () => api.get(`/api/v1/attendance?q=${encodeURIComponent(query)}&limit=25`))} />
         <Button title="Today" onPress={() => run('today', () => api.get('/api/v1/attendance?limit=25'))} />
       </Section>}
 
-      {tab === 'students' && <Section title="Students">
-        <TextInput style={styles.input} value={query} onChangeText={setQuery} placeholder="Name or roll" />
-        <Button title="Search students" onPress={() => run('students', () => api.get(`/api/v1/students?q=${encodeURIComponent(query)}&limit=25`))} />
+      {tab === 'employees' && <Section title="Employees">
+        <TextInput style={styles.input} value={query} onChangeText={setQuery} placeholder="Name or employee ID" />
+        <Button title="Search employees" onPress={() => run('employees', () => api.get(`/api/v1/students?q=${encodeURIComponent(query)}&limit=25`))} />
       </Section>}
 
       {tab === 'analytics' && <Section title="Analytics">

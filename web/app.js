@@ -139,18 +139,24 @@
 
   // ---- dashboard (home) ----
   let dashFirst = true;
+  const empName = (r) => r.employee_name || `${r.first_name || ''} ${r.last_name || ''}`.trim() || 'Unknown';
+  const empCode = (r) => r.employee_code || r.roll_number || '—';
+  const empDept = (r) => r.department || r.grade_class || '—';
+  const empTeam = (r) => r.team ?? r.section ?? '';
   async function loadDash() {
     if (dashFirst) skeleton($id('statCards'), 1);
     try {
       const s = await API.get('/api/v1/statistics/overview?trend_days=7');
       setApi(true);
+      try { if (s.employees || s.overview) await Offline.saveEmployees((await API.get('/api/v1/sync/snapshot')).employees || []); } catch (e) {}
       const o = s.overview;
+      const total = o.total_employees ?? o.total_students ?? 0;
       $id('heroPct').textContent = '';
       countUp($id('heroPct'), o.attendance_percentage, '%');
-      $id('heroCount').textContent = `${o.present_today}/${o.total_students} students`;
+      $id('heroCount').textContent = `${o.present_today}/${total} employees`;
       $id('devDot').className = 'dot ok'; $id('devTxt').textContent = 'live';
       const cards = [[o.present_today, 'present today'], [o.absent_today, 'absent today'],
-        [o.attendance_percentage + '%', 'attendance'], [o.total_students, 'students'], [o.checkins_today, 'check-ins']];
+        [o.attendance_percentage + '%', 'attendance'], [total, 'employees'], [o.checkins_today, 'check-ins']];
       $id('statCards').innerHTML = cards.map(([n, l]) => `<div class="card"><div class="num" data-n="${n}"></div><div class="lbl">${l}</div></div>`).join('');
       $id('statCards').querySelectorAll('.num').forEach((el) => {
         const raw = el.dataset.n;
@@ -159,15 +165,27 @@
       });
       const recent = await API.get('/api/v1/attendance?limit=8&offset=0');
       $id('recentList').innerHTML = recent.items.length ? recent.items.map((r) =>
-        `<div>${esc(r.captured_at_utc.slice(11, 16))} — ${esc(r.first_name)} ${esc(r.last_name)} <span style="color:var(--muted)">(${esc(r.grade_class)}${esc(r.section)})</span></div>`).join('')
+        `<div>${esc(r.captured_at_utc.slice(11, 16))} — ${esc(empName(r))} <span style="color:var(--muted)">(${esc(empDept(r))}${esc(empTeam(r))})</span></div>`).join('')
         : '<div class="empty"><span class="glyph">○</span>No check-ins yet today.</div>';
       $id('absentList').innerHTML = s.absent.length ? s.absent.slice(0, 8).map((a) =>
-        `<div>${esc(a.first_name)} ${esc(a.last_name)} <span style="color:var(--muted)">(${esc(a.grade_class)}${esc(a.section)})</span></div>`).join('')
+        `<div>${esc(empName(a))} <span style="color:var(--muted)">(${esc(empDept(a))}${esc(empTeam(a))})</span></div>`).join('')
         : '<div class="empty"><span class="glyph">✓</span>Everyone present.</div>';
       dashFirst = false;
     } catch (e) {
       setApi(false, e.message);
-      $id('statCards').innerHTML = `<div class="errorbox">Dashboard unavailable: ${esc(e.message)}</div>`;
+      // Offline fallback: render from the cached directory + queued events.
+      try {
+        const { employees } = await Offline.cachedEmployees();
+        const q = await Offline.listQueue();
+        const names = employees.slice(0, 8).map((x) => `<div>${esc(x.name)} <span style="color:var(--muted)">(${esc(x.department)}${esc(x.team)})</span></div>`).join('');
+        $id('statCards').innerHTML = `<div class="errorbox">Dashboard offline — showing cached directory (${employees.length} employees, ${q.length} queued). ${esc(e.message)}</div>`;
+        $id('recentList').innerHTML = q.length
+          ? q.slice(-8).reverse().map((x) => `<div>${esc((x.captured_at_utc || '').slice(11, 16))} — ${esc((x.employee && x.employee.name) || ('Slot ' + x.fingerprint_slot_id))} <span style="color:var(--muted)">queued</span></div>`).join('')
+          : '<div class="empty"><span class="glyph">○</span>No queued check-ins.</div>';
+        $id('absentList').innerHTML = names || '<div class="empty"><span class="glyph">○</span>No cached directory yet — connect once to cache it.</div>';
+      } catch (err) {
+        $id('statCards').innerHTML = `<div class="errorbox">Dashboard unavailable: ${esc(e.message)}</div>`;
+      }
       $id('devDot').className = 'dot bad'; $id('devTxt').textContent = 'unreachable';
     }
   }
@@ -187,9 +205,9 @@
     try {
       const s = await API.get('/api/v1/statistics/overview?trend_days=30');
       line($id('chTrend'), s.trend.map((t) => t.date), s.trend.map((t) => t.present));
-      $id('classTable').innerHTML = s.classes.length ? '<table><thead><tr><th>Class</th><th>Sec</th><th>Present</th><th>Active</th><th>%</th></tr></thead><tbody>' +
-        s.classes.map((c) => `<tr><td>${esc(c.class)}</td><td>${esc(c.section)}</td><td>${c.present}</td><td>${c.active}</td><td>${c.percentage}%</td></tr>`).join('') + '</tbody></table>'
-        : '<div class="empty"><span class="glyph">▦</span>No classes yet — add students first.</div>';
+      $id('classTable').innerHTML = s.classes.length ? '<table><thead><tr><th>Department</th><th>Team</th><th>Present</th><th>Active</th><th>%</th></tr></thead><tbody>' +
+        s.classes.map((c) => `<tr><td>${esc(c.department ?? c.class)}</td><td>${esc(c.team ?? c.section)}</td><td>${c.present}</td><td>${c.active}</td><td>${c.percentage}%</td></tr>`).join('') + '</tbody></table>'
+        : '<div class="empty"><span class="glyph">▦</span>No departments yet — add employees first.</div>';
       bars($id('chBusy'), s.busy_times.map((t) => 'xx' + t.hour), s.busy_times.map((t) => t.checkins));
       const month = s.trend.reduce((a, t) => a + t.present, 0);
       $id('monthTable').innerHTML = `<table><tbody><tr><td>Check-ins (30d)</td><td><b>${month}</b></td></tr><tr><td>Active days</td><td><b>${s.trend.filter((t) => t.present > 0).length}</b></td></tr></tbody></table>`;
@@ -217,7 +235,7 @@
     const ov = $id('overlay');
     const name = `${rec.first_name || ''} ${rec.last_name || ''}`.trim() || 'Unknown fingerprint';
     $id('ovName').textContent = name;
-    $id('ovClass').textContent = rec.grade_class ? `Class ${rec.grade_class}${rec.section || ''}` : `Slot ${rec.fingerprint_slot_id ?? '—'}`;
+    $id('ovClass').textContent = (rec.department || rec.grade_class) ? `Department ${rec.department || rec.grade_class}${rec.team || rec.section || ''}` : `Slot ${rec.fingerprint_slot_id ?? '—'}`;
     const dup = rec.outcome === 'DUPLICATE_SUPPRESSED' || kind === 'duplicate';
     $id('ovKicker').textContent = kind === 'nomatch' ? 'NO MATCH' : kind === 'error' ? 'SENSOR' : 'ATTENDANCE';
     $id('ovCheck').textContent = kind === 'nomatch' ? '?' : dup ? '⧗' : '✓';
@@ -261,11 +279,19 @@
       const r = await window.BLE.send('FINGERPRINT_SEARCH', {}, 30000);
       if (r.code === 'match') {
         showOverlay({ ...r, first_name: '', last_name: '' }, 'match');
+        const eventUuid = (crypto.randomUUID ? crypto.randomUUID() : null) || ('scan-' + Date.now() + '-' + r.slot);
         try {
-          const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+          const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot, event_uuid: eventUuid });
           showOverlay({ ...a, confidence: r.confidence }, a.outcome === 'RECORDED' ? 'match' : 'duplicate');
           loadDash();
-        } catch (err) { toast('Check-in: ' + err.message, 'err'); }
+        } catch (err) {
+          if (/backend unreachable|timed out|Failed to fetch|NetworkError/i.test(err.message || '')) {
+            // Genuine offline path: durable local queue, sync later. No fake success.
+            const queued = await Offline.enqueueCheckin({ fingerprint_slot_id: r.slot, clock_uncertain: true });
+            showOverlay({ fingerprint_slot_id: r.slot, captured_at_utc: queued.captured_at_utc }, 'match');
+            toast(`Offline — check-in queued (#${queued.client_seq}, will sync)`, 'warn');
+          } else { toast('Check-in: ' + err.message, 'err'); }
+        }
       } else if (r.code === 'no_match') {
         showOverlay({ fingerprint_slot_id: null }, 'nomatch');
       } else {
@@ -291,8 +317,8 @@
     if (v('fTo')) p.set('date_to', v('fTo'));
     if (v('fTFrom')) p.set('time_from', v('fTFrom'));
     if (v('fTTo')) p.set('time_to', v('fTTo'));
-    if (v('fClass')) p.set('grade_class', v('fClass'));
-    if (v('fSection')) p.set('section', v('fSection'));
+    if (v('fClass')) p.set('department', v('fClass'));
+    if (v('fSection')) p.set('team', v('fSection'));
     if (v('fSlot')) p.set('slot', v('fSlot'));
     if (v('fOutcome')) p.set('outcome', v('fOutcome'));
     return p;
@@ -303,12 +329,26 @@
     try {
       const r = await API.get('/api/v1/attendance?' + attParams());
       $id('attErr').innerHTML = '';
-      $id('attMeta').textContent = `${r.total} record(s)`;
-      tb.innerHTML = r.items.map((x, i) =>
-        `<tr class="${i === 0 && attPage === 0 ? 'fresh' : ''}"><td>${esc(x.captured_at_utc.slice(0, 10))}</td><td>${esc(x.captured_at_utc.slice(11, 16))}</td><td>${esc(x.first_name)} ${esc(x.last_name)}</td><td>${esc(x.roll_number)}</td><td>${esc(x.grade_class)}</td><td>${esc(x.section)}</td><td>${x.fingerprint_slot_id}</td><td>${x.outcome}</td></tr>`).join('')
-        || '<tr><td colspan="8"><div class="empty"><span class="glyph">∅</span>No records match these filters.</div></td></tr>';
+      const queued = await Offline.listQueue().catch(() => []);
+      const pendingNote = queued.length ? ` · ${queued.length} queued offline` : '';
+      $id('attMeta').textContent = `${r.total} record(s)${pendingNote}`;
+      const queuedRows = (attPage === 0 ? queued.slice(-5).reverse().map((x) =>
+        `<tr class="fresh"><td>${esc((x.captured_at_utc || '').slice(0, 10))}</td><td>${esc((x.captured_at_utc || '').slice(11, 16))}</td><td>${esc((x.employee && x.employee.name) || '—')}</td><td>${esc((x.employee && x.employee.employee_code) || '—')}</td><td>${esc((x.employee && x.employee.department) || '—')}</td><td></td><td>${x.fingerprint_slot_id}</td><td>QUEUED_OFFLINE</td></tr>`).join('') : '');
+      tb.innerHTML = queuedRows + r.items.map((x, i) =>
+        `<tr class="${i === 0 && attPage === 0 && !queuedRows ? 'fresh' : ''}"><td>${esc(x.captured_at_utc.slice(0, 10))}</td><td>${esc(x.captured_at_utc.slice(11, 16))}</td><td>${esc(empName(x))}</td><td>${esc(empCode(x))}</td><td>${esc(empDept(x))}</td><td>${esc(empTeam(x))}</td><td>${x.fingerprint_slot_id}</td><td>${x.outcome}</td></tr>`).join('')
+        || (queuedRows || '<tr><td colspan="8"><div class="empty"><span class="glyph">∅</span>No records match these filters.</div></td></tr>');
       $id('pgInfo').textContent = `Page ${attPage + 1} of ${Math.max(1, Math.ceil(r.total / attLimit))}`;
-    } catch (e) { $id('attErr').innerHTML = `<div class="errorbox">Attendance unavailable: ${esc(e.message)}</div>`; }
+    } catch (e) {
+      // Offline: show the durable queue so operators see what will sync.
+      try {
+        const queued = await Offline.listQueue();
+        $id('attErr').innerHTML = `<div class="errorbox">Attendance offline — showing ${queued.length} queued event(s). ${esc(e.message)}</div>`;
+        tb.innerHTML = queued.length ? queued.slice().reverse().map((x) =>
+          `<tr><td>${esc((x.captured_at_utc || '').slice(0, 10))}</td><td>${esc((x.captured_at_utc || '').slice(11, 16))}</td><td>${esc((x.employee && x.employee.name) || '—')}</td><td>${esc((x.employee && x.employee.employee_code) || '—')}</td><td>${esc((x.employee && x.employee.department) || '—')}</td><td></td><td>${x.fingerprint_slot_id}</td><td>QUEUED_OFFLINE</td></tr>`).join('')
+          : '<tr><td colspan="8"><div class="empty"><span class="glyph">∅</span>No queued events.</div></td></tr>';
+        $id('attMeta').textContent = `${queued.length} queued offline`;
+      } catch (err) { $id('attErr').innerHTML = `<div class="errorbox">Attendance unavailable: ${esc(e.message)}</div>`; }
+    }
     requestAnimationFrame(() => tb.classList.remove('fading'));
   }
   $id('flt').onsubmit = (e) => { e.preventDefault(); attPage = 0; loadAtt(); };
@@ -319,8 +359,9 @@
   $id('btnCsv').onclick = (e) => busy(e.target, () => API.download('/api/v1/export.csv?' + attParams(), 'attendance.csv').then(() => toast('Export complete', 'ok')).catch((err) => toast(err.message, 'err')))();
   $id('btnXlsx').onclick = (e) => busy(e.target, () => API.download('/api/v1/export.xlsx?' + attParams(), 'attendance.xlsx').then(() => toast('Export complete', 'ok')).catch((err) => toast(err.message, 'err')))();
 
-  // ---- students ----
+  // ---- employees ----
   let editing = null;
+  const empId = (s) => s.employee_uuid || s.student_uuid;
   async function loadStu() {
     try {
       const devs = await API.get('/api/v1/devices');
@@ -331,20 +372,31 @@
     try {
       const p = new URLSearchParams({ limit: 100, offset: 0 });
       if ($id('sQ').value.trim()) p.set('q', $id('sQ').value.trim());
-      if ($id('sClass').value.trim()) p.set('grade_class', $id('sClass').value.trim());
+      if ($id('sClass').value.trim()) p.set('department', $id('sClass').value.trim());
       if ($id('sStatus').value) p.set('status', $id('sStatus').value);
       const r = await API.get('/api/v1/students?' + p);
+      try { await Offline.saveEmployees(r.items); } catch (e) {}
       $id('stuTable').querySelector('tbody').innerHTML = r.items.map((s) =>
-        `<tr><td>${esc(s.first_name)} ${esc(s.last_name)}</td><td>${esc(s.roll_number)}</td><td>${esc(s.grade_class)}</td><td>${esc(s.section)}</td><td>${s.status}</td><td>${s.fingerprint_slot_id ?? '—'}</td><td><button data-act="view" data-id="${s.student_uuid}">Open</button></td></tr>`).join('')
-        || '<tr><td colspan="7"><div class="empty"><span class="glyph">○</span>No students found. Add one to begin enrollment.</div></td></tr>';
+        `<tr><td>${esc(s.first_name)} ${esc(s.last_name)}</td><td>${esc(s.employee_code || s.roll_number)}</td><td>${esc(s.department || s.grade_class)}</td><td>${esc(s.team ?? s.section)}</td><td>${s.status}</td><td>${s.fingerprint_slot_id ?? '—'}</td><td><button data-act="view" data-id="${empId(s)}">Open</button></td></tr>`).join('')
+        || '<tr><td colspan="7"><div class="empty"><span class="glyph">○</span>No employees found. Add one to begin enrollment.</div></td></tr>';
       $id('stuTable').querySelectorAll('button').forEach((b) => { b.onclick = () => openStudent(b.dataset.id); });
-    } catch (e) { toast(e.message, 'err') }
+    } catch (e) {
+      try {
+        const { employees, cached_at_utc } = await Offline.cachedEmployees();
+        const q = $id('sQ').value.trim().toLowerCase();
+        const rows = employees.filter((x) => !q || x.name.toLowerCase().includes(q) || (x.employee_code || '').toLowerCase().includes(q));
+        $id('stuTable').querySelector('tbody').innerHTML = rows.map((s) =>
+          `<tr><td>${esc(s.name)}</td><td>${esc(s.employee_code)}</td><td>${esc(s.department)}</td><td>${esc(s.team)}</td><td>cached</td><td>${s.fingerprint_slot_id ?? '—'}</td><td></td></tr>`).join('')
+          || '<tr><td colspan="7"><div class="empty"><span class="glyph">○</span>Offline — no cached directory yet.</div></td></tr>';
+        toast(`Employees offline — cached directory${cached_at_utc ? ' from ' + cached_at_utc.slice(0, 16) : ''}`, 'warn');
+      } catch (err) { toast(e.message, 'err'); }
+    }
   }
   $id('stuFlt').onsubmit = (e) => { e.preventDefault(); loadStu(); };
-  $id('btnStuNew').onclick = () => { editing = null; $id('stuDlgTitle').textContent = 'Add student'; $id('stuForm').reset(); $id('stuDlg').showModal(); };
+  $id('btnStuNew').onclick = () => { editing = null; $id('stuDlgTitle').textContent = 'Add employee'; $id('stuForm').reset(); $id('stuDlg').showModal(); };
   $id('stuCancel').onclick = () => $id('stuDlg').close();
   $id('stuForm').onsubmit = async (e) => {
-    const body = { roll_number: $id('stuRoll').value.trim(), first_name: $id('stuFirst').value.trim(), last_name: $id('stuLast').value.trim(), grade_class: $id('stuClass').value.trim(), section: $id('stuSection').value.trim() };
+    const body = { employee_code: $id('stuRoll').value.trim(), first_name: $id('stuFirst').value.trim(), last_name: $id('stuLast').value.trim(), department: $id('stuClass').value.trim(), team: $id('stuSection').value.trim() };
     try {
       if (editing) { await API.patch('/api/v1/students/' + editing, body); }
       else { await API.post('/api/v1/students', body); }
@@ -359,16 +411,17 @@
   async function openStudent(id) {
     try {
       const s = await API.get('/api/v1/students/' + id + '/summary?days=30');
-      const d = $('stuDetail'); d.hidden = false;
-      $('stuDetailName').textContent = `${s.first_name} ${s.last_name} (${s.roll_number} · ${s.grade_class}${s.section} · ${s.status})`;
-      $('btnStuActivate').hidden = s.status !== 'PENDING_ENROLLMENT';
-      d.innerHTML = `<h2>${esc(s.first_name)} ${esc(s.last_name)} <span style="color:var(--muted)">(${esc(s.roll_number)} · ${esc(s.grade_class)}${esc(s.section)} · ${s.status})</span></h2>
+      const code = s.employee_code || s.roll_number, dept = s.department || s.grade_class, team = s.team ?? s.section;
+      const d = $id('stuDetail'); d.hidden = false;
+      $id('stuDetailName').textContent = `${s.first_name} ${s.last_name} (${code} · ${dept}${team} · ${s.status})`;
+      const act0 = $id('btnStuActivate'); if (act0) act0.hidden = s.status !== 'PENDING_ENROLLMENT';
+      d.innerHTML = `<h2>${esc(s.first_name)} ${esc(s.last_name)} <span style="color:var(--muted)">(${esc(code)} · ${esc(dept)}${esc(team)} · ${s.status})</span></h2>
         <div class="progress"><i style="width:${s.attendance_percentage}%"></i></div>
         <p>30-day attendance: <b>${s.attendance_percentage}%</b> · days present: ${s.days_present}/${s.window_days} · first: ${s.first || '—'} · last: ${s.last || '—'}</p>
         <div class="row"><button id="btnStuEdit">Edit</button>${s.status === 'PENDING_ENROLLMENT' ? '<button id="btnStuActivate">Mark enrolled</button>' : ''}<button id="btnStuDeact">Deactivate</button><button id="btnStuDel">Delete</button></div>`;
-      $('btnStuEdit').onclick = () => { editing = id; $('stuDlgTitle').textContent = 'Edit student'; $('stuRoll').value = s.roll_number; $('stuFirst').value = s.first_name; $('stuLast').value = s.last_name; $('stuClass').value = s.grade_class; $('stuSection').value = s.section; $('stuDlg').showModal(); };
-      $('btnStuDeact').onclick = async () => { if (confirm('Deactivate this student?')) { await API.post(`/api/v1/students/${id}/deactivate`); toast('Deactivated', 'ok'); loadStu(); d.hidden = true; } };
-      $('btnStuDel').onclick = async () => {
+      $id('btnStuEdit').onclick = () => { editing = id; $id('stuDlgTitle').textContent = 'Edit employee'; $id('stuRoll').value = code; $id('stuFirst').value = s.first_name; $id('stuLast').value = s.last_name; $id('stuClass').value = dept; $id('stuSection').value = team; $id('stuDlg').showModal(); };
+      $id('btnStuDeact').onclick = async () => { if (confirm('Deactivate this employee?')) { await API.post(`/api/v1/students/${id}/deactivate`); toast('Deactivated', 'ok'); loadStu(); d.hidden = true; } };
+      $id('btnStuDel').onclick = async () => {
         if (!confirm(`Permanently DELETE ${s.first_name} ${s.last_name}? Their attendance rows stay but lose the name link.`)) return;
         try {
           const r = await API.del(`/api/v1/students/${id}`);
@@ -376,13 +429,129 @@
           loadStu(); d.hidden = true;
         } catch (err) { toast(err.message, 'err') }
       };
-      const act = $('btnStuActivate');
+      const act = $id('btnStuActivate');
       if (act) act.onclick = async () => {
         if (!confirm(`Confirm the finger template is stored in slot ${s.fingerprint_slot_id}, then activate?`)) return;
-        try { await API.post(`/api/v1/students/${id}/activate`); toast('Student activated', 'ok'); loadStu(); openStudent(id); }
+        try { await API.post(`/api/v1/students/${id}/activate`); toast('Employee activated', 'ok'); loadStu(); openStudent(id); }
         catch (err) { toast(err.message, 'err') };
       };
       d.scrollIntoView({ block: 'nearest' });
     } catch (e) { toast(e.message, 'err') };
   }
+
+  // ---- AI assistant (was dead UI: form had no handler — now wired) ----
+  const AI_SUGGESTIONS = ['Who is absent today?', 'What is attendance for department Engineering?',
+    'Show the 7-day trend summary', 'Who has low attendance this month?'];
+  function aiMsg(role, text) {
+    const log = $id('aiLog');
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+  async function aiAsk(question) {
+    const q = (question || '').trim();
+    if (!q) return;
+    aiMsg('you', q);
+    $id('aiQ').value = '';
+    try {
+      const r = await API.post('/api/v1/ai/chat', { question: q });
+      aiMsg('bot', (r.ai_available ? '' : '[local data] ') + r.answer);
+    } catch (e) { aiMsg('bot', 'Assistant unavailable: ' + e.message); }
+  }
+  $id('aiForm').onsubmit = (e) => { e.preventDefault(); aiAsk($id('aiQ').value); };
+  $id('aiChips').innerHTML = AI_SUGGESTIONS.map((s) => `<button type="button">${esc(s)}</button>`).join('');
+  $id('aiChips').querySelectorAll('button').forEach((b) => { b.onclick = () => aiAsk(b.textContent); });
+  (async () => {
+    try {
+      const s = await API.get('/api/v1/settings/ai', true);
+      $id('keyState').textContent = s.gemini_configured ? 'key configured' : 'no key — local answers only';
+      if (!s.gemini_configured) $id('aiNote').hidden = false, $id('aiNote').textContent = 'No Gemini key configured — answers come from local data.';
+    } catch (e) {}
+  })();
+  $id('btnKeySave').onclick = async () => {
+    const key = $id('aiKey').value.trim();
+    try {
+      const r = await API.put('/api/v1/settings/ai', { gemini_api_key: key });
+      $id('keyState').textContent = r.gemini_configured ? 'key saved' : 'key cleared';
+      $id('aiKey').value = '';
+      $id('aiNote').hidden = r.gemini_configured;
+      toast(r.gemini_configured ? 'AI key saved (server-side only)' : 'AI key cleared', 'ok');
+    } catch (e) { toast(e.message, 'err'); }
+  };
+
+  // ---- command palette (was dead UI: Ctrl+K hint with no implementation) ----
+  const COMMANDS = [
+    ['Go: Home', () => goto('dash')], ['Go: Attendance', () => goto('att')],
+    ['Go: Employees', () => goto('stu')], ['Go: Analytics', () => goto('ana')],
+    ['Go: Devices', () => goto('devs')], ['Go: Fingerprints', () => goto('dev')],
+    ['Go: AI Assistant', () => goto('ai')], ['Go: Help', () => goto('help')],
+    ['Refresh dashboard', () => loadDash()], ['Sync now', () => window.SyncEngine && SyncEngine.syncNow()],
+    ['Toggle dark mode', () => $id('btnTheme').click()],
+  ];
+  function closePal() { $id('palette').classList.remove('open'); }
+  function openPal() {
+    $id('palette').classList.add('open');
+    $id('palInput').value = '';
+    renderPal('');
+    setTimeout(() => $id('palInput').focus(), 30);
+  }
+  function renderPal(filter) {
+    const q = filter.trim().toLowerCase();
+    const list = COMMANDS.filter(([name]) => !q || name.toLowerCase().includes(q));
+    $id('palList').innerHTML = list.map(([name], i) => `<li data-i="${COMMANDS.indexOf(list[i])}" class="${i === 0 ? 'sel' : ''}">${esc(name)}</li>`).join('')
+      || '<li>(no matching command)</li>';
+    $id('palList').querySelectorAll('li[data-i]').forEach((li) => {
+      li.onclick = () => { closePal(); COMMANDS[parseInt(li.dataset.i, 10)][1](); };
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $id('palette').classList.contains('open') ? closePal() : openPal(); }
+    if (e.key === 'Escape') closePal();
+  });
+  $id('palInput').oninput = (e) => renderPal(e.target.value);
+  $id('palette').addEventListener('click', (e) => { if (e.target === $id('palette')) closePal(); });
+
+  // ---- offline sync UI ----
+  function renderSync(s) {
+    const label = s.state === 'syncing' ? 'Sync: syncing…'
+      : s.state === 'offline' ? `Sync: offline (${s.pending} pending)`
+      : s.pending ? `Sync: online (${s.pending} pending)` : 'Sync: up to date';
+    $id('syncTxt').textContent = label;
+    $id('syncDot').className = 'dot ' + (s.state === 'offline' ? 'bad' : s.pending ? 'warn' : 'ok');
+    const banner = $id('syncBanner');
+    const degraded = s.state === 'offline' || s.state === 'syncing' || s.pending > 0 || s.failed > 0;
+    banner.hidden = !degraded;
+    banner.classList.toggle('ok', s.state !== 'offline' && s.failed === 0 && s.state !== 'syncing');
+    $id('syncBannerDot').className = 'dot ' + (s.state === 'offline' ? 'bad' : s.state === 'syncing' ? 'warn' : 'ok');
+    $id('syncBannerTxt').textContent = s.state === 'offline'
+      ? 'Offline — check-ins are queued locally and will sync on reconnect.'
+      : s.state === 'syncing' ? 'Syncing queued check-ins…' : 'Back online — queue draining.';
+    $id('syncCounts').textContent = `pending ${s.pending} · failed ${s.failed}${s.lastSync ? ' · last sync ' + String(s.lastSync).slice(11, 16) : ''} · ${s.storage || ''}`;
+    $id('btnSyncRetry').hidden = s.failed === 0;
+    const panel = $id('syncPanel');
+    if (panel) panel.innerHTML = `<dt>State</dt><dd>${esc(s.state)}</dd><dt>Pending</dt><dd>${s.pending}</dd><dt>Failed</dt><dd>${s.failed}</dd><dt>Last sync</dt><dd>${esc(s.lastSync || 'never')}</dd><dt>Storage</dt><dd>${esc(s.storage || '?')}</dd>`;
+    const retry2 = $id('btnSyncRetry2'); if (retry2) retry2.hidden = s.failed === 0;
+  }
+  async function bootOffline() {
+    try { await Offline.init(); } catch (e) {}
+    if (window.SyncEngine) {
+      SyncEngine.onStatus(renderSync);
+      SyncEngine.start();
+    }
+    const go = () => { if (window.SyncEngine) SyncEngine.syncNow().catch(() => {}); };
+    $id('btnSyncNow').onclick = go;
+    const b2 = $id('btnSyncNow2'); if (b2) b2.onclick = go;
+    const retry = async () => { await Offline.resetFailed().catch(() => {}); go(); };
+    $id('btnSyncRetry').onclick = retry;
+    const r2 = $id('btnSyncRetry2'); if (r2) r2.onclick = retry;
+    // Company name in the brand bar (best effort, cached default otherwise).
+    try {
+      const c = await API.get('/api/v1/settings/company', true);
+      if (c && c.company_name) $id('brandName').textContent = c.company_name + ' Attendance';
+    } catch (e) {}
+    if (document.hidden === false && $id('view-dash').classList.contains('on')) loadDash();
+  }
+  bootOffline();
 })();

@@ -1,4 +1,4 @@
-/* Attendance Console visual system.
+/* Employee Attendance Console visual system.
  * Motion language: INSTANT 100ms / QUICK 160ms / STANDARD 280ms /
  * EMPHASIS 480ms. Ease: standard (out), spring (tactile), entrance.
  * Only transform/opacity animate on hot paths. */
@@ -270,3 +270,10 @@ code { background: var(--line-soft); padding: 1px 6px; border-radius: 5px; font-
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .view.on > * { animation: none; }
 }
+/* Offline sync banner + states. Banner only appears when degraded. */
+.syncbanner { display: flex; align-items: center; gap: 10px; padding: 8px 14px; margin: 0 0 12px;
+  border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--warn-soft); font-size: 13px; }
+.syncbanner[hidden] { display: none; }
+.syncbanner.ok { background: var(--ok-soft); }
+.syncbanner .grow { flex: 1; }
+.syncbanner button { padding: 4px 10px; font-size: 12px; }

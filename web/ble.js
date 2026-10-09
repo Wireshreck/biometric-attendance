@@ -177,9 +177,17 @@
           ScanUI.set('MATCH FOUND', `Slot ${r.slot} · confidence ${r.confidence}`);
           say($('fpMsg'), r);
           try {
-            const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot });
+            const eventUuid = (crypto.randomUUID ? crypto.randomUUID() : null) || ('auto-' + Date.now() + '-' + r.slot);
+            const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot, event_uuid: eventUuid });
             toast(`Attendance: ${a.outcome === 'RECORDED' ? 'recorded' : 'duplicate (60s window)'}`, a.outcome === 'RECORDED' ? 'ok' : 'warn');
-          } catch (err) { toast('Check-in: ' + err.message, 'err'); }
+          } catch (err) {
+            if (/backend unreachable|timed out|Failed to fetch|NetworkError/i.test(err.message || '')) {
+              try {
+                const queued = await window.Offline.enqueueCheckin({ fingerprint_slot_id: r.slot, clock_uncertain: true });
+                toast(`Offline — check-in queued (#${queued.client_seq}, will sync)`, 'warn');
+              } catch (qerr) { toast('Queue full: ' + qerr.message, 'err'); }
+            } else { toast('Check-in: ' + err.message, 'err'); }
+          }
           await new Promise((res) => setTimeout(res, 4000));
           if (autoTimer) ScanUI.set('READY', 'Place any enrolled finger anytime…');
         } else if (r.code === 'no_match') {

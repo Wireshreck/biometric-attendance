@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Attendance Console</title>
-<link rel="stylesheet" href="styles.css?v=114">
+<title>Employee Attendance Console</title>
+<link rel="stylesheet" href="styles.css?v=115">
 <script>try { document.documentElement.dataset.theme = localStorage.getItem('att-theme') || 'light'; } catch (e) {}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
   <aside class="side" aria-label="Primary">
-    <div class="brand"><span class="mark" aria-hidden="true"></span>Attendance Console</div>
+    <div class="brand"><span class="mark" aria-hidden="true"></span><span id="brandName">Employee Attendance</span></div>
     <nav id="nav" aria-label="Sections">
       <button data-view="dash" class="on" aria-current="page">Home</button>
       <button data-view="att">Attendance</button>
-      <button data-view="stu">Students</button>
+      <button data-view="stu">Employees</button>
       <button data-view="ana">Analytics</button>
       <button data-view="devs">Devices</button>
       <button data-view="dev">Fingerprints</button>
@@ -25,12 +25,21 @@
     <div class="side-foot">
       <div id="apiState" class="conn" role="status"><span class="dot" id="apiDot"></span><span id="apiTxt">API: signing in…</span></div>
       <div id="bleState" class="conn" role="status"><span class="dot" id="bleDot"></span><span id="bleTxt">BLE: disconnected</span></div>
+      <div id="syncState" class="conn" role="status"><span class="dot" id="syncDot"></span><span id="syncTxt">Sync: checking…</span></div>
     </div>
   </aside>
   <main id="main" class="main" tabindex="-1">
     <div class="topbar">
       <button id="btnTheme" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
       <span class="searchhint">Press <kbd>Ctrl K</kbd> for commands</span>
+    </div>
+    <div id="syncBanner" class="syncbanner" hidden>
+      <span class="dot" id="syncBannerDot"></span>
+      <span id="syncBannerTxt">Offline — attendance will be queued locally.</span>
+      <span id="syncCounts" class="sub"></span>
+      <span class="grow"></span>
+      <button id="btnSyncNow">Sync now</button>
+      <button id="btnSyncRetry" hidden>Retry failed</button>
     </div>
     <section id="view-dash" class="view on" aria-label="Home">
       <div class="hero" aria-live="polite">
@@ -55,7 +64,7 @@
       <header class="pagehead"><h1>Analytics</h1><div class="actions"><button id="btnAnaRefresh">Refresh</button></div></header>
       <div class="panels">
         <div class="panel"><h2>7-day trend</h2><canvas id="chTrend" width="640" height="220" role="img" aria-label="Daily present counts"></canvas></div>
-        <div class="panel"><h2>Today by class</h2><div id="classTable"></div></div>
+        <div class="panel"><h2>Today by department</h2><div id="classTable"></div></div>
       </div>
       <div class="panels">
         <div class="panel"><h2>Busiest check-in hours</h2><canvas id="chBusy" width="640" height="180" role="img" aria-label="Check-ins per hour"></canvas></div>
@@ -69,42 +78,43 @@
         <tbody></tbody>
       </table></div>
       <div class="panel"><h2>BLE link</h2><div id="bleLinkInfo" class="kv"></div><div class="row"><button id="btnBle2">Connect BLE</button></div></div>
+      <div class="panel"><h2>Offline sync</h2><div id="syncPanel" class="kv"></div><div class="row"><button id="btnSyncNow2">Sync now</button><button id="btnSyncRetry2">Retry failed</button></div><p class="sub">Queued check-ins survive restarts and sync automatically when the server returns. Replays are idempotent — no duplicates.</p></div>
     </section>
     <section id="view-att" class="view" aria-label="Attendance">
       <header class="pagehead"><h1>Attendance</h1></header>
       <div id="attErr"></div>
       <form id="flt" class="filters" aria-label="Attendance filters">
-        <label>Search <input id="fQ" type="search" placeholder="Name, roll, ID" autocomplete="off"></label>
+        <label>Search <input id="fQ" type="search" placeholder="Name, employee ID" autocomplete="off"></label>
         <label>Date <input id="fDay" type="date"></label>
         <label>From <input id="fFrom" type="date"></label>
         <label>To <input id="fTo" type="date"></label>
         <label>Time <input id="fTFrom" type="time">–<input id="fTTo" type="time"></label>
-        <label>Class <input id="fClass" placeholder="10A"></label>
-        <label>Section <input id="fSection" placeholder="A"></label>
+        <label>Department <input id="fClass" placeholder="Engineering"></label>
+        <label>Team <input id="fSection" placeholder="A"></label>
         <label>Fingerprint <input id="fSlot" type="number" min="1"></label>
         <label>Status <select id="fOutcome"><option value="">recorded</option><option value="RECORDED">recorded</option><option value="DUPLICATE_SUPPRESSED">duplicates</option></select></label>
-        <label>Sort <select id="fSort"><option value="captured_at_utc">time</option><option value="student">student</option><option value="class">class</option></select></label>
+        <label>Sort <select id="fSort"><option value="captured_at_utc">time</option><option value="employee">employee</option><option value="department">department</option></select></label>
         <button type="submit">Apply</button>
         <button type="button" id="btnCsv">CSV</button>
         <button type="button" id="btnXlsx">XLSX</button>
       </form>
       <div id="attMeta" class="meta" aria-live="polite"></div>
       <div class="tablewrap"><table id="attTable">
-        <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Roll</th><th>Class</th><th>Sec</th><th>FP</th><th>Status</th></tr></thead>
+        <thead><tr><th>Date</th><th>Time</th><th>Employee</th><th>ID</th><th>Department</th><th>Team</th><th>FP</th><th>Status</th></tr></thead>
         <tbody></tbody>
       </table></div>
       <div class="pager"><button id="pgPrev">‹ Prev</button><span id="pgInfo"></span><button id="pgNext">Next ›</button></div>
     </section>
-    <section id="view-stu" class="view" aria-label="Students">
-      <header class="pagehead"><h1>Students</h1><div class="actions"><button id="btnStuNew">Add student</button></div></header>
-      <form id="stuFlt" class="filters" aria-label="Student filters">
-        <label>Search <input id="sQ" type="search" placeholder="Name or roll" autocomplete="off"></label>
-        <label>Class <input id="sClass" placeholder="10A"></label>
+    <section id="view-stu" class="view" aria-label="Employees">
+      <header class="pagehead"><h1>Employees</h1><div class="actions"><button id="btnStuNew">Add employee</button></div></header>
+      <form id="stuFlt" class="filters" aria-label="Employee filters">
+        <label>Search <input id="sQ" type="search" placeholder="Name or employee ID" autocomplete="off"></label>
+        <label>Department <input id="sClass" placeholder="Engineering"></label>
         <label>Status <select id="sStatus"><option value="">all</option><option>ACTIVE</option><option>PENDING_ENROLLMENT</option><option>INACTIVE</option></select></label>
         <button type="submit">Apply</button>
       </form>
       <div class="tablewrap"><table id="stuTable">
-        <thead><tr><th>Name</th><th>Roll</th><th>Class</th><th>Sec</th><th>Status</th><th>FP</th><th></th></tr></thead>
+        <thead><tr><th>Name</th><th>Employee ID</th><th>Department</th><th>Team</th><th>Status</th><th>FP</th><th></th></tr></thead>
         <tbody></tbody>
       </table></div>
       <div class="panel" id="stuDetail" hidden>
@@ -116,14 +126,14 @@
           <button id="btnStuDel">Delete</button>
         </div>
       </div>
-      <dialog id="stuDlg" aria-label="Student editor">
+      <dialog id="stuDlg" aria-label="Employee editor">
         <form method="dialog" id="stuForm">
-          <h2 id="stuDlgTitle">Add student</h2>
-          <label>Roll number <input id="stuRoll" required maxlength="40"></label>
+          <h2 id="stuDlgTitle">Add employee</h2>
+          <label>Employee ID <input id="stuRoll" required maxlength="40"></label>
           <label>First name <input id="stuFirst" required maxlength="80"></label>
           <label>Last name <input id="stuLast" required maxlength="80"></label>
-          <label>Class <input id="stuClass" required maxlength="40" placeholder="10A"></label>
-          <label>Section <input id="stuSection" maxlength="40" placeholder="A"></label>
+          <label>Department <input id="stuClass" required maxlength="40" placeholder="Engineering"></label>
+          <label>Team <input id="stuSection" maxlength="40" placeholder="A"></label>
           <div class="row"><button type="submit" id="stuSave">Save</button><button type="button" id="stuCancel">Cancel</button></div>
         </form>
       </dialog>
@@ -165,8 +175,9 @@
         <li>Sign in with your admin credentials when prompted (browser dialog).</li>
         <li>Hardware: R307S red→VIN, black→GND, yellow→GPIO32, green→GPIO33; DS3231 SDA→GPIO25, SCL→GPIO26; buzzer→GPIO27. OLED/LEDs removed.</li>
         <li>BLE: click Connect BLE in Device and pick <code>biometric-attendance-esp32</code> (Chrome/Edge).</li>
-        <li>Adding students requires one provisioned device. In <code>backend/</code> run:<br><code>python -m app.provision_device --name demo-terminal --location lab --sensor-capacity 1000</code><br>Save the printed bearer token for the device; no restart needed.</li></ol></div>
-      <div class="panel"><h2>Science-fair demo</h2><p>PING → dashboard refresh → enroll a slot → search it → attendance appears live → full diagnostic → CSV export.</p></div>
+        <li>Adding employees requires one provisioned device. In <code>backend/</code> run:<br><code>python -m app.provision_device --name demo-terminal --location lab --sensor-capacity 1000</code><br>Save the printed bearer token for the device; no restart needed.</li></ol></div>
+      <div class="panel"><h2>Offline mode</h2><p>The console keeps working when the server or network drops: check-ins are queued in this browser (IndexedDB, survives restarts) and sync automatically on reconnect. Replays are idempotent — no duplicates. Counts show pending / failed in the banner and Devices → Offline sync. Queued data is retained 30 days. If the queue is full, sync before recording more.</p></div>
+      <div class="panel"><h2>Demo walkthrough</h2><p>PING → dashboard refresh → enroll a slot → search it → attendance appears live → full diagnostic → CSV export.</p></div>
       <div class="panel"><h2>AI setup</h2><p>Enter the key in the AI Assistant view (Gemini key card) — it is stored server-side only. Or set <code>GEMINI_API_KEY</code> in <code>backend/.env</code> and restart. Without it the assistant answers from local data and says so. The key never leaves the server.</p></div>
     </section>
   </main>
@@ -195,9 +206,17 @@
     <div class="ov-fp" id="ovFp">—</div>
   </div>
 </div>
-<script src="api.js?v=114"></script>
-<script src="vendor/ble_protocol.js?v=114"></script>
-<script src="ble.js?v=114"></script>
-<script src="app.js?v=114"></script>
+<script src="api.js?v=115"></script>
+<script src="offline.js?v=115"></script>
+<script src="vendor/ble_protocol.js?v=115"></script>
+<script src="ble.js?v=115"></script>
+<script src="app.js?v=115"></script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>

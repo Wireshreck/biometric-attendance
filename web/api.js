@@ -31,13 +31,21 @@
       if (silent) throw new Error('signed out');
       await ensureAuth();
     }
+    const ctrl = new AbortController();
+    const timeoutMs = opts.timeoutMs || 15000;
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
     const send = () => fetch(path, {
       ...opts,
+      signal: ctrl.signal,
       headers: { ...(opts.headers || {}), Authorization: 'Basic ' + btoa(state.user + ':' + state.pass) },
     });
     let res;
     try { res = await send(); }
-    catch (e) { throw new Error('backend unreachable: ' + e.message); }
+    catch (e) {
+      if (e.name === 'AbortError') throw new Error('backend unreachable: request timed out');
+      throw new Error('backend unreachable: ' + e.message);
+    }
+    finally { clearTimeout(timer); }
     if (res.status === 401) {
       if (silent) throw new Error('unauthorized');
       forget();
@@ -63,6 +71,31 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   });
 
+  // Unauthenticated liveness probe (no credentials needed, never pops auth).
+  const ping = async () => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    try {
+      const res = await fetch('/health', { signal: ctrl.signal, cache: 'no-store' });
+      if (!res.ok) throw new Error('health ' + res.status);
+      return res.json();
+    } catch (e) {
+      throw new Error('backend unreachable: ' + (e.name === 'AbortError' ? 'timed out' : e.message));
+    } finally { clearTimeout(timer); }
+  };
+
+  // Offline-queue flush: bounded batches of client-UUID events. The server
+  // applies per-event idempotency + debounce, so replays are safe.
+  const batchSync = (events) => post('/api/v1/attendance/batch', {
+    events: events.map((e) => ({
+      event_uuid: e.event_uuid,
+      fingerprint_slot_id: e.fingerprint_slot_id,
+      captured_at: new Date(e.captured_at_utc).toISOString(),
+      client_seq: e.client_seq ?? null,
+      clock_uncertain: !!e.clock_uncertain,
+    })),
+  });
+
   // EventSource cannot send Authorization headers, so the web UI polls
   // the recent-attendance endpoint every few seconds instead (the SSE
   // /api/v1/events stream is used by first-party clients that can set
@@ -82,5 +115,7 @@
     return () => clearInterval(id);
   }
 
-  window.API = { get, post, put, del, patch, download, pollRecent, state, forget };
+  const isBrowserOffline = () => typeof navigator !== 'undefined' && navigator.onLine === false;
+
+  window.API = { get, post, put, del, patch, download, pollRecent, ping, batchSync, isBrowserOffline, state, forget };
 })();
