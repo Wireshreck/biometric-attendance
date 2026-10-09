@@ -28,7 +28,10 @@
     for (;;) {
       try {
         const v = P.parseResponse(dec.decode(await ch.readValue()));
-        if (v.status !== 'busy' || performance.now() - t0 > timeoutMs) return v;
+        if (v.status !== 'busy') return v;
+        if (performance.now() - t0 > timeoutMs) {
+          throw new Error(`BLE timeout: ${cmd} still busy after ${timeoutMs}ms`);
+        }
       } catch (e) {
         if (performance.now() - t0 > timeoutMs) throw e;
       }
@@ -177,7 +180,7 @@
           ScanUI.set('MATCH FOUND', `Slot ${r.slot} · confidence ${r.confidence}`);
           say($('fpMsg'), r);
           try {
-            const eventUuid = (crypto.randomUUID ? crypto.randomUUID() : null) || ('auto-' + Date.now() + '-' + r.slot);
+            const eventUuid = window.API.newEventUuid();
             const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot, event_uuid: eventUuid });
             toast(`Attendance: ${a.outcome === 'RECORDED' ? 'recorded' : 'duplicate (60s window)'}`, a.outcome === 'RECORDED' ? 'ok' : 'warn');
           } catch (err) {
@@ -198,16 +201,24 @@
           clearInterval(autoTimer); autoTimer = null;
           $('btnAuto').textContent = 'Auto-scan: off';
           ScanUI.set('IDLE', 'Stopped.');
+          say($('fpMsg'), 'Auto-scan stopped: BLE disconnected. Reconnect and restart it.');
+        } else if (/BLE timeout/i.test(err.message || '')) {
+          say($('fpMsg'), `Still waiting on device: ${err.message}`);
+        } else {
+          say($('fpMsg'), `Auto-scan error: ${err.message || err}`);
         }
       } finally { autoBusy = false; }
     }, 2500);
   };
   $('btnRtcGet').onclick = async () => { try { say($('rtcMsg'), await send('RTC_GET')); } catch (e) { say($('rtcMsg'), e.message); } };
   $('btnRtcSet').onclick = async () => {
-    const n = new Date();
+    // The DS3231 holds IST (+05:30) wall-clock by firmware convention, so
+    // convert through UTC instead of sending browser-local fields (a browser
+    // outside IST would otherwise mislabel the device clock by the zone delta).
+    const ist = new Date(Date.now() + (330 + new Date().getTimezoneOffset()) * 60000);
     try {
-      say($('rtcMsg'), await send('RTC_SET', { year: n.getFullYear(), month: n.getMonth() + 1, day: n.getDate(), hour: n.getHours(), minute: n.getMinutes(), second: n.getSeconds() }));
-      toast('RTC set', 'ok');
+      say($('rtcMsg'), await send('RTC_SET', { year: ist.getUTCFullYear(), month: ist.getUTCMonth() + 1, day: ist.getUTCDate(), hour: ist.getUTCHours(), minute: ist.getUTCMinutes(), second: ist.getUTCSeconds() }));
+      toast('RTC set (IST wall-clock)', 'ok');
     } catch (e) { say($('rtcMsg'), e.message); toast(e.message, 'err'); }
   };
   function toast(m) { window.toast ? window.toast(m) : null; }

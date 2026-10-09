@@ -233,3 +233,37 @@ def test_attendance_department_team_filters_and_exports(client: TestClient):
     assert csv_resp.status_code == 200 and "E-001" in csv_resp.text
     assert client.get("/api/v1/attendance?sort=employee&order=asc", auth=ADMIN).status_code == 200
     assert client.get("/api/v1/attendance?sort=department&order=asc", auth=ADMIN).status_code == 200
+
+
+def test_enterprise_mirrors_never_null(client: TestClient):
+    seed_device(client)
+    created = make_employee(client, code="E-900")
+    for key in ("student_uuid", "roll_number", "grade_class", "section",
+                "employee_uuid", "employee_code", "department", "team"):
+        assert isinstance(created[key], str), key
+    assert created["employee_uuid"] == created["student_uuid"]
+    fetched = client.get(f"/api/v1/students/{created['employee_uuid']}", auth=ADMIN).json()
+    for key in ("employee_uuid", "employee_code", "department", "team"):
+        assert isinstance(fetched[key], str), key
+    listed = client.get("/api/v1/students", auth=ADMIN).json()["items"][0]
+    assert listed["department"] == "Engineering" and listed["team"] == "A"
+
+
+def test_invalid_uuids_and_naive_timestamps_rejected(client: TestClient):
+    seed_device(client)
+    assert client.get("/api/v1/students/not-a-uuid", auth=ADMIN).status_code == 422
+    headers = {"Authorization": f"Bearer {DEVICE_TOKEN}"}
+    naive = client.post("/api/v1/attendance", headers=headers, json={
+        "event_uuid": str(uuid.uuid4()), "fingerprint_slot_id": 1,
+        "captured_at": "2026-10-01T12:00:00", "sync_status": "LIVE"})
+    assert naive.status_code == 422
+    assert naive.json()["error"]["code"] == "validation_error"
+    bad_uuid = client.post("/api/v1/assisted-checkin", auth=ADMIN, json={
+        "fingerprint_slot_id": 1, "event_uuid": "scan-123-1"})
+    assert bad_uuid.status_code == 422
+
+
+def test_snapshot_empty_fleet(client: TestClient):
+    snapshot = client.get("/api/v1/sync/snapshot", auth=ADMIN).json()
+    assert snapshot["employees"] == [] and snapshot["device"] is None
+    assert "server_time_utc" in snapshot and snapshot["timezone"] == "Asia/Kolkata"

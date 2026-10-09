@@ -68,26 +68,34 @@ const { randomUUID } = require('crypto');
   assert.ok(failed.attempts === 1 && failed.last_attempt_utc, 'attempt metadata required');
   assert.ok(Sync.backoffMs(0) === 5000 && Sync.backoffMs(1) === 10000 && Sync.backoffMs(99) === 160000, 'bounded backoff');
 
-  // 7. resetFailed re-queues; prune honors retention
+  // 7. resetFailed re-queues AND resets attempts; prune honors retention
+  // WITHOUT destroying unsynchronized evidence.
   await O.resetFailed();
   counts = await O.counts();
   assert.strictEqual(counts.pending, 1, 'resetFailed must re-queue');
-  await O.prune(3650); // nothing this fresh
+  const rq = (await O.listQueue())[0];
+  assert.strictEqual(rq.attempts, 0, 'manual retry must reset the attempt counter');
+  await O.prune(3650, 8); // nothing this fresh
   assert.strictEqual((await O.counts()).total, 1);
-  // Backdate then prune with 30d retention
-  const rows = await O.listQueue();
-  rows[0].created_at_utc = '2020-01-01T00:00:00Z';
-  // write back through the backend directly
-  await O.markResult(rows[0].event_uuid, false, 'aged');
-  const aged = (await O.listQueue())[0];
-  aged.created_at_utc = '2020-01-01T00:00:00Z';
-  // emulate persistence of the edit for the localStorage backend
-  const key = 'attendance-offline-v1:queue';
-  const raw = JSON.parse(localStorage.getItem(key));
-  raw.find((r) => r.event_uuid === aged.event_uuid).created_at_utc = '2020-01-01T00:00:00Z';
-  localStorage.setItem(key, JSON.stringify(raw));
-  await O.prune(30);
-  assert.strictEqual((await O.counts()).total, 0, 'prune must drop aged events');
+  // Backdate a FAILED, attempts-exhausted event -> eligible for prune.
+  await O.markResult((await O.listQueue())[0].event_uuid, false, 'aged');
+  const key7 = 'attendance-offline-v1:queue';
+  const raw7 = JSON.parse(localStorage.getItem(key7));
+  const doomed = raw7[0];
+  doomed.created_at_utc = '2020-01-01T00:00:00Z';
+  doomed.attempts = 99;
+  localStorage.setItem(key7, JSON.stringify(raw7));
+  await O.prune(30, 8);
+  assert.strictEqual((await O.counts()).total, 0, 'prune must drop only exhausted+aged failures');
+  // A recent failure below max attempts is NOT dropped by prune.
+  const fresh = await O.enqueueCheckin({ fingerprint_slot_id: 11 });
+  await O.markResult(fresh.event_uuid, false, 'boom');
+  const raw7b = JSON.parse(localStorage.getItem(key7));
+  raw7b.find((r) => r.event_uuid === fresh.event_uuid).created_at_utc = '2020-01-01T00:00:00Z';
+  localStorage.setItem(key7, JSON.stringify(raw7b));
+  await O.prune(30, 8);
+  assert.strictEqual((await O.counts()).total, 1, 'prune must never destroy recoverable evidence');
+  await O.markResult(fresh.event_uuid, true); // drain for the next section
 
   // 8. employee cache round-trip (minimal PII only)
   await O.saveEmployees([{ employee_uuid: 'e1', first_name: 'A', last_name: 'B',
@@ -173,5 +181,45 @@ const { randomUUID } = require('crypto');
   await Sync.syncNow();
   assert.strictEqual((await O.counts()).total, 0);
 
-  console.log('offline.test.js: all 14 checks passed (backend=' + kind + ')');
+  // 15. lost server response after a successful commit: the throw keeps the
+  // event queued; the replay then succeeds (idempotent) and drains it.
+  const q15 = await O.enqueueCheckin({ fingerprint_slot_id: 12 });
+  let tries = 0;
+  const realBatch = window.API.batchSync;
+  window.API.batchSync = async (batch) => {
+    tries += 1;
+    if (tries === 1) throw new Error('socket timeout after server commit');
+    return realBatch(batch);
+  };
+  await Sync.syncNow();
+  assert.strictEqual((await O.counts()).total, 1, 'lost response must keep the event queued');
+  const backoffKey = 'attendance-offline-v1:queue';
+  const backoffRaw = JSON.parse(localStorage.getItem(backoffKey));
+  backoffRaw.forEach((r) => { r.attempts = 0; r.last_attempt_utc = null; r.sync_state = 'pending'; });
+  localStorage.setItem(backoffKey, JSON.stringify(backoffRaw));
+  await Sync.syncNow();
+  assert.strictEqual((await O.counts()).total, 0, 'idempotent replay must drain after lost response');
+  window.API.batchSync = realBatch;
+
+  // 16. max-attempts gating: exhausted failures wait for manual retry.
+  const q16 = await O.enqueueCheckin({ fingerprint_slot_id: 13 });
+  const capKey = 'attendance-offline-v1:queue';
+  const capRaw = JSON.parse(localStorage.getItem(capKey));
+  capRaw.find((r) => r.event_uuid === q16.event_uuid).attempts = 99;
+  capRaw.find((r) => r.event_uuid === q16.event_uuid).sync_state = 'failed';
+  localStorage.setItem(capKey, JSON.stringify(capRaw));
+  const gated = (await O.listQueue()).find((r) => r.event_uuid === q16.event_uuid);
+  assert.strictEqual(Sync.shouldRetry(gated, 8), false, 'exhausted failures must not auto-retry');
+  const bc = calls.batch;
+  await Sync.syncNow();
+  assert.strictEqual(calls.batch, bc, 'gated events must not be sent');
+  assert.strictEqual((await O.listQueue()).length, 1, 'gated events stay visible');
+  await O.resetFailed(); // manual Retry failed re-enables
+  const ungated = (await O.listQueue()).find((r) => r.event_uuid === q16.event_uuid);
+  assert.strictEqual(Sync.shouldRetry(ungated, 8), true);
+  behavior = 'ok';
+  await Sync.syncNow();
+  assert.strictEqual((await O.counts()).total, 0);
+
+  console.log('offline.test.js: all 16 checks passed (backend=' + kind + ')');
 })().catch((e) => { console.error('offline.test.js FAILED:', e); process.exit(1); });

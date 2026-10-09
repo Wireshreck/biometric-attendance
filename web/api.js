@@ -71,10 +71,24 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   });
 
+  // RFC4122 UUIDv4 for idempotent check-ins. crypto.randomUUID needs a
+  // secure context; the Math.random fallback is uniqueness-only (not a
+  // secret), which is all an idempotency key requires. NEVER invent
+  // non-UUID placeholders ('scan-…', 'auto-…'): the server validates
+  // event_uuid as UUID and such rows would fail sync forever.
+  const newEventUuid = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    const rnd = (typeof crypto !== 'undefined' && crypto.getRandomValues)
+      ? crypto.getRandomValues(new Uint8Array(16))
+      : Array.from({ length: 16 }, () => Math.floor(Math.random() * 256));
+    rnd[6] = (rnd[6] & 0x0f) | 0x40;
+    rnd[8] = (rnd[8] & 0x3f) | 0x80;
+    const h = [...rnd].map((b) => b.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+  };
   // Unauthenticated liveness probe (no credentials needed, never pops auth).
   const ping = async () => {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const ctrl = new AbortController();    const timer = setTimeout(() => ctrl.abort(), 8000);
     try {
       const res = await fetch('/health', { signal: ctrl.signal, cache: 'no-store' });
       if (!res.ok) throw new Error('health ' + res.status);
@@ -117,5 +131,5 @@
 
   const isBrowserOffline = () => typeof navigator !== 'undefined' && navigator.onLine === false;
 
-  window.API = { get, post, put, del, patch, download, pollRecent, ping, batchSync, isBrowserOffline, state, forget };
+  window.API = { get, post, put, del, patch, download, pollRecent, ping, batchSync, isBrowserOffline, newEventUuid, state, forget };
 })();

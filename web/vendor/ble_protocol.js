@@ -60,6 +60,12 @@ const DIAG_RESULTS = ['PASS', 'FAIL', 'WARN', 'SKIPPED'];
 
 const TIMEOUTS_MS = { DEFAULT: 20000, ENROLL: 300000, SEARCH: 30000 };
 
+// Sensor/RTC/buzzer wiring (mirrors firmware config.h + ble_protocol.py PINS).
+// Lets JS clients validate pin references without hardcoding them.
+const PINS = {
+  DS3231_SDA: 25, DS3231_SCL: 26, R307S_RX: 32, R307S_TX: 33, BUZZER: 27,
+};
+
 function buildRequest(cmd, params = {}) {
   if (!COMMANDS.includes(cmd)) throw new Error(`unknown command ${cmd}`);
   return JSON.stringify({ cmd, ...params });
@@ -88,7 +94,7 @@ function isHonestDiagResult(entry, connected) {
 if (typeof window !== 'undefined') {
   window.BLE_PROTOCOL = {
     BLE_SERVICE_UUID, BLE_CHARS, COMMANDS, CHAR_FOR_COMMAND, STATUS,
-    ERROR_CODES, ENROLL_STATES, DIAG_TESTS, DIAG_RESULTS, TIMEOUTS_MS,
+    ERROR_CODES, ENROLL_STATES, DIAG_TESTS, DIAG_RESULTS, TIMEOUTS_MS, PINS,
     buildRequest, parseResponse, isHonestDiagResult,
   };
 }

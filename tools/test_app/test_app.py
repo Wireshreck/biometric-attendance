@@ -76,6 +76,15 @@ class DiagApp(tk.Tk):
             self.table.tag_configure(tag, foreground=color)
         self.logbox = scrolledtext.ScrolledText(self, height=14)
         self.logbox.pack(fill=tk.BOTH, padx=8, pady=6, expand=True)
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self):
+        try:
+            if self.client is not None:
+                asyncio.run_coroutine_threadsafe(self.client.disconnect(), self.loop).result(5)
+        except Exception:  # noqa: BLE001 - best-effort handle release
+            pass
+        self.destroy()
 
     def log(self, msg):
         stamp = datetime.now().astimezone().isoformat(timespec="seconds")
@@ -103,8 +112,10 @@ class DiagApp(tk.Tk):
         while True:
             raw = await asyncio.wait_for(self.client.read_gatt_char(uuid), timeout)
             msg = P.parse_response(bytes(raw).decode("utf-8"))
-            if msg.get("status") != "busy" or _time.monotonic() >= deadline:
+            if msg.get("status") != "busy":
                 return msg
+            if _time.monotonic() >= deadline:
+                raise TimeoutError(f"{cmd} still busy after {timeout}s")
             await asyncio.sleep(0.5)
 
     def need(self):
@@ -152,8 +163,9 @@ class DiagApp(tk.Tk):
             if e:
                 self.log(f"FULL SYSTEM TEST FAILED: {e}")
                 self.row("FULL", "FAIL", str(e)); return
+            connected = self.client is not None and self.client.is_connected
             for t in r.get("data", {}).get("results", []):
-                honest = P.is_honest_diag_result(t, True)
+                honest = P.is_honest_diag_result(t, connected)
                 self.row(t.get("test"), t.get("result"), t.get("reason", "") + ("" if honest else " [DISHONEST]"))
         self.run_coro(self._send("FULL_DIAGNOSTIC"), _done)
 
@@ -195,7 +207,10 @@ class DiagApp(tk.Tk):
         def _done(r, e):
             if e:
                 self.row("BUZZER", "FAIL", str(e)); return
-            self.row("BUZZER", "PASS", f"GPIO{P.PINS['BUZZER']} two-beep executed")
+            if r.get("status") == "ok" and r.get("code") == "buzzer_test":
+                self.row("BUZZER", "PASS", f"GPIO{P.PINS['BUZZER']} two-beep executed")
+            else:
+                self.row("BUZZER", "FAIL", f"unexpected response: {r.get('code', r.get('status'))}")
             self.log(r)
         self.run_coro(self._send("BUZZER_TEST"), _done)
 
@@ -205,7 +220,10 @@ class DiagApp(tk.Tk):
         def _done(r, e):
             if e:
                 self.row("BLE", "FAIL", str(e)); return
-            self.row("BLE", "PASS", "PING pong")
+            if r.get("status") == "ok" and r.get("code") == "pong":
+                self.row("BLE", "PASS", "PING pong")
+            else:
+                self.row("BLE", "FAIL", f"unexpected response: {r.get('code', r.get('status'))}")
             self.log(r)
         self.run_coro(self._send("PING"), _done)
 
@@ -226,7 +244,11 @@ class DiagApp(tk.Tk):
         def _done(r, e):
             if e:
                 self.row("ATTENDANCE", "FAIL", str(e)); return
-            self.row("ATTENDANCE", "PASS", f"{r.get('data', {}).get('records', 0)} records")
+            data = r.get("data", {}) if r.get("status") == "ok" else {}
+            if data.get("storage_ok"):
+                self.row("ATTENDANCE", "PASS", f"{data.get('records', 0)} records")
+            else:
+                self.row("ATTENDANCE", "FAIL", f"unexpected response: {r.get('code', r.get('status'))}")
             self.log(r)
         self.run_coro(self._send("ATTENDANCE_STATUS"), _done)
 

@@ -70,7 +70,10 @@ export class DeviceClient {
       await new Promise((r) => setTimeout(r, 400));
       const w = await this.device.readCharacteristicForService(BLE_SERVICE_UUID, uuid);
       const msg = parseResponse(Buffer.from(w.value, 'base64').toString('utf8'));
-      if (msg.status !== 'busy' || Date.now() - t0 > timeoutMs) return msg;
+      if (msg.status !== 'busy') return msg;
+      if (Date.now() - t0 > timeoutMs) {
+        throw new Error(`BLE timeout: ${cmd} still busy after ${timeoutMs}ms`);
+      }
     }
   }
 }

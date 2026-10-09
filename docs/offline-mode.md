@@ -74,16 +74,23 @@ slots only). Passwords and tokens are never stored in IndexedDB.
   (`5000 * 2^min(attempts,5)`); the queue view shows pending/failed counts
   and last-sync time. Nothing is silently discarded or marked synced while
   records fail.
+- `sync_retry_max` (company setting, default 8) caps *automatic* retries:
+  exhausted failures stay queued and visible but wait for manual **Retry
+  failed** (which resets the counter). No event is ever auto-deleted for
+  retrying too often.
 - Conflict rule: `event_uuid` owned by another device → `event_conflict`
   (409); evidence preserved, admin resolves. Debounce duplicates return
   `DUPLICATE_SUPPRESSED`, counted once in reports.
 
 ## Retention & recovery
 
-- Browser queue capped at 2000 events; entries older than **30 days**
-  (`retention_days` company setting) are pruned. If the queue is full, the
-  UI refuses new offline check-ins with an explicit error (fail loud, never
-  silently drop).
+- Browser queue capped at 2000 events. `retention_days` (company setting,
+  default 30) is enforced by `prune()`, which drops **only** events that
+  already failed, exhausted `sync_retry_max` automatic retries, **and** are
+  older than the window. Pending or recently-failed events are never pruned —
+  unsynchronized evidence is not silently destroyed. If the queue is full,
+  the UI refuses new offline check-ins with an explicit error (fail loud,
+  never silently drop).
 - Queue survives restarts/power loss (IndexedDB; localStorage fallback;
   in-memory last resort — the banner shows which storage is active).
 - Crash during write: IndexedDB transactions are atomic; a half-written

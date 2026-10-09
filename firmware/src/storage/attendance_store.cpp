@@ -160,7 +160,7 @@ size_t AttendanceStore::totalCount() {
     if (!lock.held) return 0;
     std::vector<Entry> entries;
     if (!healthy_ || !loadEntries(entries)) { healthy_ = false; return 0; }
-    return countPendingEntries(entries);
+    return entries.size();
 }
 
 bool AttendanceStore::readAll(AttendanceEvent* out, size_t capacity, size_t& count) {

@@ -279,7 +279,7 @@
       const r = await window.BLE.send('FINGERPRINT_SEARCH', {}, 30000);
       if (r.code === 'match') {
         showOverlay({ ...r, first_name: '', last_name: '' }, 'match');
-        const eventUuid = (crypto.randomUUID ? crypto.randomUUID() : null) || ('scan-' + Date.now() + '-' + r.slot);
+        const eventUuid = window.API.newEventUuid();
         try {
           const a = await API.post('/api/v1/assisted-checkin', { fingerprint_slot_id: r.slot, event_uuid: eventUuid });
           showOverlay({ ...a, confidence: r.confidence }, a.outcome === 'RECORDED' ? 'match' : 'duplicate');

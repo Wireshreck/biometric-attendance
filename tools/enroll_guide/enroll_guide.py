@@ -60,8 +60,10 @@ async def send(client, cmd, params=None, timeout=130):
     while True:
         raw = await asyncio.wait_for(client.read_gatt_char(char), timeout)
         msg = P.parse_response(bytes(raw).decode("utf-8"))
-        if msg.get("status") != "busy" or time.monotonic() >= deadline:
+        if msg.get("status") != "busy":
             return msg
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f"{cmd} still busy after {timeout}s")
         await asyncio.sleep(0.5)
 
 
@@ -82,7 +84,7 @@ async def enroll(client):
     input("Press ENTER to start (you will get a 3-2-1 first)... ")
     for i in (3, 2, 1):
         print(f"\rStarting in {i}...", end="", flush=True)
-        time.sleep(1)
+        await asyncio.sleep(1)
     print("\r" + "=" * 60)
     stop = asyncio.Event()
     ka = asyncio.ensure_future(keepalive(client, stop))
@@ -120,7 +122,7 @@ async def status(client):
             result = await send(client, cmd, {}, timeout=30)
         except Exception as exc:  # noqa: BLE001
             print(cmd, "FAILED:", str(exc)[:100])
-            return
+            continue
         if cmd == "FULL_DIAGNOSTIC":
             for t in result["data"]["results"]:
                 print(f"  {t['test']:15s} {t['result']} {t.get('reason', '')}")

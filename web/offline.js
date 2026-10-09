@@ -249,20 +249,56 @@
     },
 
     async resetFailed() {
+      // Manual retry: fully reset so max-attempts gating does not block it.
       await Store.init();
       const rows = await Store.backend.all('queue');
       for (const row of rows) {
-        if (row.sync_state === 'failed') { row.sync_state = 'pending'; await Store.backend.put('queue', row); }
+        if (row.sync_state === 'failed') {
+          row.sync_state = 'pending';
+          row.attempts = 0;
+          row.last_attempt_utc = null;
+          row.last_error = null;
+          await Store.backend.put('queue', row);
+        }
       }
     },
 
-    async prune(days = RETENTION_DAYS_DEFAULT) {
+    // Retention NEVER destroys unsynchronized evidence silently: only
+    // events that already failed, exhausted max auto-retries, AND are older
+    // than the retention window are dropped. Pending/recent events are kept
+    // even past retention (the queue cap + refuse-new backstop applies).
+    async prune(days = RETENTION_DAYS_DEFAULT, maxAttempts = 8) {
       await Store.init();
       const cutoff = Date.now() - days * 864e5;
       const rows = await Store.backend.all('queue');
       for (const row of rows) {
-        if (Date.parse(row.created_at_utc) < cutoff) await Store.backend.del('queue', row.event_uuid);
+        if (row.sync_state === 'failed'
+            && (row.attempts || 0) >= maxAttempts
+            && Date.parse(row.created_at_utc) < cutoff) {
+          await Store.backend.del('queue', row.event_uuid);
+        }
       }
+    },
+
+    /* ----- company sync policy (retention_days / sync_retry_max) ----- */
+    async getPolicy() {
+      await Store.init();
+      const cached = await Store.backend.get('meta', 'company_policy');
+      if (cached && cached.value) return cached.value;
+      return { retention_days: RETENTION_DAYS_DEFAULT, sync_retry_max: 8 };
+    },
+
+    async refreshPolicy() {
+      // Best effort: silent probe never pops sign-in or wipes credentials.
+      try {
+        const p = await window.API.get('/api/v1/settings/company', true);
+        const policy = {
+          retention_days: Math.min(Math.max(parseInt(p.retention_days, 10) || RETENTION_DAYS_DEFAULT, 1), 3650),
+          sync_retry_max: Math.min(Math.max(parseInt(p.sync_retry_max, 10) || 8, 1), 100),
+        };
+        await Store.backend.put('meta', { key: 'company_policy', value: policy });
+        return policy;
+      } catch (e) { return this.getPolicy(); }
     },
 
     /* ----- employee directory cache ----- */
@@ -322,7 +358,8 @@
       return Math.min(5000 * 2 ** Math.min(attempts || 0, 5), 5 * 60 * 1000);
     },
 
-    shouldRetry(row) {
+    shouldRetry(row, maxAttempts = 8) {
+      if ((row.attempts || 0) >= maxAttempts && row.sync_state === 'failed') return false;
       if (!row.last_attempt_utc) return true;
       return Date.now() - Date.parse(row.last_attempt_utc) >= this.backoffMs(row.attempts);
     },
@@ -341,8 +378,9 @@
       await Offline.init();
       if (this.syncing) return this.status();
       if (this.isBrowserOffline()) { this.state = 'offline'; return this.emit(); }
+      const policy = await Offline.refreshPolicy().catch(() => ({ retention_days: 30, sync_retry_max: 8 }));
       const rows = (await Offline.listQueue()).filter((r) => r.sync_state !== 'syncing');
-      const due = rows.filter((r) => this.shouldRetry(r));
+      const due = rows.filter((r) => this.shouldRetry(r, policy.sync_retry_max));
       if (!due.length) {
         // Still probe the server so the banner reflects reality.
         try { await window.API.ping(); this.state = 'online'; }
@@ -375,7 +413,7 @@
           this.state = 'online';
         }
         await Offline.setLastSync(nowISO());
-        await Offline.prune();
+        await Offline.prune(policy.retention_days, policy.sync_retry_max);
       } finally {
         this.syncing = false;
         if (this.state === 'syncing') this.state = 'online';
